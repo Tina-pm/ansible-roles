@@ -1,0 +1,17 @@
+# vim: sw=2:sts=2
+---
+# Simple service configuration.
+# ferm__services:
+#   openvpn:
+#     saddr: 0/0
+#     daddr: 0/0
+#     sport: ':'
+#     dport: openvpn
+#     proto: [udp, tcp]
+ferm__services: {}
+
+# Custom configuration snippets.
+# ferm__custom_configs:
+#   foo: |
+#     chain FORWARD REJECT;
+ferm__custom_configs: {}

@@ -1,0 +1,10 @@
+{% if node_exporter_allow_from %}
+@def $promhost = @resolve({{ node_exporter_allow_from|join(" ") }});
+domain (ip ip6) table filter chain INPUT {
+    proto tcp saddr @ipfilter($promhost) dport {{ node_exporter_listen_port }} ACCEPT;
+}
+{% else %}
+domain (ip ip6) table filter chain INPUT {
+    proto tcp dport {{ node_exporter_listen_port }} ACCEPT;
+}
+{% endif %}

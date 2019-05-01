@@ -1,0 +1,21 @@
+# vim: sw=2:sts=2
+---
+
+prometheus_listen_port: 9090
+prometheus_listen_addr: ''
+prometheus_retention: '60d'
+prometheus_external_url:
+prometheus_extra_args:
+
+prometheus_monitored_pushgateways: []
+prometheus_monitored_prometheus: []
+prometheus_monitored_nodes: []
+prometheus_alertmanagers: []
+
+prometheus_federated_prometheus: []
+# Only import metrics that have a ':' in their name (derived from explicit
+# rules), or the special up metric.
+prometheus_federate_filter:
+  - '{__name__=~":"}'
+  - '{job="prometheus"}'
+  - up

@@ -1,0 +1,10 @@
+---
+- name: restart fail2ban
+  service:
+    name: fail2ban
+    state: restarted
+
+- name: reload ferm
+  service:
+    name: ferm
+    state: reloaded

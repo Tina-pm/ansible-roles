@@ -1,0 +1,71 @@
+# -*- shell-script -*-
+#
+#  Configuration file for ferm(1).
+#
+# {{ ansible_managed }}
+
+table filter {
+    chain INPUT-pre;
+    chain OUTPUT-pre;
+    chain FORWARD-pre;
+
+    chain INPUT {
+        policy DROP;
+
+        mod state state INVALID DROP;
+        mod state state (ESTABLISHED RELATED) ACCEPT;
+
+        jump INPUT-pre;
+        interface lo ACCEPT;
+        proto icmp ACCEPT; 
+
+        proto tcp dport ssh ACCEPT;
+    }
+    chain FORWARD {
+        policy DROP;
+
+        mod state state INVALID DROP;
+        mod state state (ESTABLISHED RELATED) ACCEPT;
+
+        jump FORWARD-pre;
+    }
+    chain OUTPUT {
+        policy ACCEPT;
+        jump OUTPUT-pre;
+    }
+}
+
+domain ip6 table filter {
+    chain INPUT-pre;
+    chain OUTPUT-pre;
+    chain FORWARD-pre;
+
+    chain INPUT {
+        policy DROP;
+
+        mod state state INVALID DROP;
+        mod state state (ESTABLISHED RELATED) ACCEPT;
+
+        jump INPUT-pre;
+        interface lo ACCEPT;
+        proto ipv6-icmp ACCEPT;
+
+        proto tcp dport ssh ACCEPT;
+    }
+    chain FORWARD {
+        policy DROP;
+
+        mod state state INVALID DROP;
+        mod state state (ESTABLISHED RELATED) ACCEPT;
+
+        jump FORWARD-pre;
+    }
+    chain OUTPUT {
+        policy ACCEPT;
+        jump OUTPUT-pre;
+    }
+}
+
+# This requires ferm >= 2.3.
+#@include @glob('ferm.d/*.conf')';
+@include 'ferm.d/';

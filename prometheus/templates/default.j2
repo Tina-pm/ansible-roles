@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+
+ARGS=' \
+{% if prometheus_external_url %}
+           --web.external-url={{ prometheus_external_url }} \
+{% endif %}
+           --web.listen-address={{
+             prometheus_listen_addr ~ ':' ~ prometheus_listen_port
+           }} \
+           --storage.tsdb.retention={{ prometheus_retention }} \
+           {{ prometheus_extra_args }}'

@@ -1,0 +1,14 @@
+---
+apt_mirror: http://deb.debian.org/debian/
+apt_distro: stretch
+
+base_setup_pkg_install: []
+base_setup_svc_enable_start: []
+
+create_users: []
+create_groups: []
+create_users_local: []
+create_groups_local: []
+
+root_mail_forward: ~
+mail_relay: ~

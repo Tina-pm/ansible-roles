@@ -1,0 +1,31 @@
+# vim: sw=2:sts=2
+---
+
+- name: install package
+  package:
+    name: fail2ban
+    state: latest
+
+- name: start and enable service
+  service:
+    name: fail2ban
+    state: started
+    enabled: yes
+
+- name: place jail.local file
+  template:
+    src: jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart fail2ban
+
+- name: place ferm config file
+  template:
+    src: ferm.conf.j2
+    dest: /etc/ferm/ferm.d/fail2ban.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload ferm

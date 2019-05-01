@@ -1,0 +1,133 @@
+# vim: sw=2:sts=2
+---
+
+- name: configure APT
+  template:
+    src: sources.list.j2
+    dest: /etc/apt/sources.list
+
+- name: disable installation of Recommends
+  template:
+    src: 02recommends.j2
+    dest: /etc/apt/apt.conf.d/02recommends
+
+- name: update & upgrade packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: install base packages
+  apt:
+    name: '{{ ["postfix", "sudo"] + base_setup_pkg_install }}'
+    state: latest
+
+- name: start and enable services
+  service:
+    name: '{{ item }}'
+    state: started
+    enabled: yes
+  loop: '{{ ["postfix"] + base_setup_svc_enable_start }}'
+
+- name: create groups
+  group:
+    state: present
+    name: '{{ item.name }}'
+    system: '{{ item.system | d() | bool }}'
+  loop: '{{ _create_groups }}'
+
+- name: create system users
+  user:
+    state: present
+    system: true
+    name: '{{ item.name }}'
+    comment: '{{ item.gecos | default(item.name) }}'
+    password: '{{ item.password | d(omit) }}'
+    groups: '{{ item.groups | default([]) | join(",") }}'
+    append: '{{ item.append | d() | bool }}'
+    createhome: '{{ item.createhome | d() | bool }}'
+    home: '{{ item.home | d("/") }}'
+    shell: '{{ item.shell | d("/bin/bash") }}'
+    generate_ssh_key: '{{ item.generate_ssh_key | d() | bool }}'
+  loop: '{{ _create_users }}'
+  when: 'item.system | d("")'
+
+- name: create normal users
+  user:
+    state: present
+    system: false
+    name: '{{ item.name }}'
+    comment: '{{ item.gecos }}'
+    password: '{{ item.password | d(omit) }}'
+    groups: '{{ item.groups | default([]) | join(",") }}'
+    append: '{{ item.append | d() | bool }}'
+    home: '{{ item.home | d("/home/" ~ item.name) }}'
+    createhome: yes
+    move_home: yes
+    generate_ssh_key: '{{ item.generate_ssh_key | d() | bool }}'
+    update_password: '{{ item.update_password | d("always") }}'
+  loop: '{{ _create_users }}'
+  when: 'not (item.system | d(""))'
+
+- name: set mail forwarding
+  lineinfile:
+    dest: /etc/aliases
+    line: '{{ item.name }}: {{ item.forward | d("") }}'
+    regexp: '^{{ item.name }}:.*'
+    state: '{{ "present" if (item.forward | d("")) else "absent" }}'
+  loop: '{{ _create_users }}'
+  notify: run newaliases
+
+- name: set mail forwarding for root
+  lineinfile:
+    dest: /etc/aliases
+    line: 'root: {{ root_mail_forward }}'
+    regexp: '^root:.*'
+    state: present
+  when: root_mail_forward is defined and root_mail_forward
+  notify: run newaliases
+
+- name: set mail relay
+  lineinfile:
+    dest: /etc/postfix/main.cf
+    line: 'relayhost = {{ mail_relay }}'
+    regexp: '^relayhost\s*='
+    insertafter: '^#relayhost'
+    state: present
+  when: mail_relay is defined and mail_relay
+  notify: reload postfix
+
+- name: set SSH authorized keys
+  authorized_key:
+    user: '{{ item.name }}'
+    key: '{{ "\n".join(item.authorized) }}'
+  loop: '{{ _create_users }}'
+  when: item.authorized is defined and item.authorized
+
+- name: 'set-up sudoers: sudo group'
+  lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^%sudo\s'
+      line: '%sudo ALL=(ALL) ALL'
+      validate: 'visudo -cf %s'
+
+- name: 'set-up sudoers: sudo-nopw group'
+  lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^%sudo-nopw\s'
+      line: '%sudo-nopw ALL=(ALL) NOPASSWD: ALL'
+      validate: 'visudo -cf %s'
+
+#- name: 'set-up sudoers: notty'
+#  # This is needed for pipelining, rsync, etc.
+#  lineinfile:
+#      dest: /etc/sudoers
+#      state: absent
+#      regexp: '^Defaults\s+requiretty'
+#      validate: 'visudo -cf %s'
+
+- name: bash defaults
+  template:
+    src: bash.bashrc.j2
+    dest: /etc/bash.bashrc

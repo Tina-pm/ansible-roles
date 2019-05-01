@@ -1,0 +1,6 @@
+---
+extra_packages_to_install: []
+extra_services_to_enable: []
+extra_services_to_start: []
+
+run_apt_upgrade: false

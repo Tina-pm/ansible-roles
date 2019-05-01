@@ -1,0 +1,10 @@
+---
+create_groups_base:
+  - name: sudo
+    system: true
+  - name: sudo-nopw
+    system: true
+create_users_base: []
+
+_create_groups: '{{ create_groups_base + create_groups + create_groups_local }}'
+_create_users: '{{ create_users_base + create_users + create_users_local }}'

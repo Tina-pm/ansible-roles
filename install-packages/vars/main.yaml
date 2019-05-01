@@ -1,0 +1,24 @@
+---
+base_packages_to_install:
+  - bash-completion
+  - ntpdate
+  - ntp
+  - screen
+  - mlocate
+  - host
+  - netcat-openbsd 
+  - strace
+  - tcpdump
+  - nmap
+
+_packages_to_install: '{{ base_packages_to_install + packages_to_install + extra_packages_to_install }}'
+
+base_services_to_enable:
+  - ntpdate
+  - ntpd
+_services_to_enable: '{{ base_services_to_enable + services_to_enable + extra_services_to_enable }}'
+
+base_services_to_start:
+  - ntpdate
+  - ntpd
+_services_to_start: '{{ base_services_to_start + services_to_start + extra_services_to_start }}'

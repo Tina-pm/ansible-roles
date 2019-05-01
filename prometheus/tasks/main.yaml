@@ -1,0 +1,54 @@
+# vim: sw=2:sts=2
+---
+- name: install prometheus
+  apt:
+    name: prometheus
+    default_release: stretch-backports
+    state: latest
+
+- name: start and enable service
+  service:
+    name: prometheus
+    state: started
+    enabled: yes
+
+- name: configure prometheus cmdline
+  template:
+    src: default.j2
+    dest: /etc/default/prometheus
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart prometheus
+
+- name: configure prometheus
+  template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload prometheus
+
+- name: create rules directory
+  file:
+    path: /etc/prometheus/rules
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+#- name: configure prometheus rules
+#  template:
+#    src: prometheus.rules.j2
+#    dest: /etc/prometheus/prometheus.rules
+#  notify: reload prometheus
+
+- name: install ferm configuration
+  template:
+    src: ferm.conf.j2
+    dest: /etc/ferm/ferm.d/prometheus.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload ferm

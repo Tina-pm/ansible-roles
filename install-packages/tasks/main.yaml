@@ -1,0 +1,24 @@
+# vim: sw=2:sts=2
+---
+- name: update package lists
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: update packages
+  apt:
+    upgrade: dist
+  when: run_apt_upgrade
+
+- name: install packages
+  apt:
+    name: '{{_packages_to_install}}'
+    state: latest
+
+- name: enable services
+  service: name={{item}} enabled=yes
+  loop: '{{_services_to_enable}}'
+
+- name: start services
+  service: name={{item}} state=started
+  loop: '{{_services_to_start}}'

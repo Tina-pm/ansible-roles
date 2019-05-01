@@ -1,0 +1,31 @@
+# vim: sw=2:sts=2
+---
+- name: install node_exporter
+  apt:
+      name: prometheus-node-exporter
+      default_release: stretch-backports
+      state: latest
+
+- name: start and enable service
+  service:
+    name: prometheus-node-exporter
+    state: started
+    enabled: yes
+
+- name: configure node_exporter
+  template:
+    src: default.j2
+    dest: /etc/default/prometheus-node-exporter
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart node_exporter
+
+- name: install ferm configuration
+  template:
+    src: ferm.conf.j2
+    dest: /etc/ferm/ferm.d/prometheus-node-exporter.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload ferm

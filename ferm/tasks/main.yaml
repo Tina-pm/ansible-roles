@@ -1,0 +1,65 @@
+# vim: sw=2:sts=2
+---
+- name: preseed debconf
+  debconf:
+    name: ferm
+    question: ferm/enable
+    value: yes
+    vtype: boolean
+  changed_when: False
+
+- name: install package
+  apt:
+    name: [ferm, libnet-dns-perl]
+    state: latest
+
+- name: start and enable service
+  service:
+    name: ferm
+    state: started
+    enabled: yes
+
+- name: disable caching
+  lineinfile:
+    dest: /etc/default/ferm
+    line: 'CACHE=no'
+    regexp: '^CACHE[ =]'
+    state: 'present'
+  notify: reload ferm
+
+- name: create ferm.d directory
+  file:
+    path: /etc/ferm/ferm.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: place main config file
+  template:
+    src: ferm.conf.j2
+    dest: /etc/ferm/ferm.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload ferm
+
+- name: place service config files
+  template:
+    src: service.conf.j2
+    dest: /etc/ferm/ferm.d/{{ item.key }}.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload ferm
+  with_dict: '{{ ferm__services }}'
+
+- name: place custom config files
+  copy:
+    content: '{{ item.value }}'
+    dest: /etc/ferm/ferm.d/{{ item.key }}.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload ferm
+  with_dict: '{{ ferm__custom_configs }}'
