@@ -19,7 +19,9 @@ table filter {
         interface lo ACCEPT;
         proto icmp ACCEPT; 
 
+{% if ferm__open_ssh %}
         proto tcp dport ssh ACCEPT;
+{% endif %}
     }
     chain FORWARD {
         policy DROP;
@@ -50,7 +52,9 @@ domain ip6 table filter {
         interface lo ACCEPT;
         proto ipv6-icmp ACCEPT;
 
+{% if ferm__open_ssh %}
         proto tcp dport ssh ACCEPT;
+{% endif %}
     }
     chain FORWARD {
         policy DROP;

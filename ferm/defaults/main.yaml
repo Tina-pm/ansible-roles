@@ -1,5 +1,8 @@
 # vim: sw=2:sts=2
 ---
+# Allow incoming SSH connections from all hosts.
+ferm__open_ssh: True
+
 # Simple service configuration.
 # ferm__services:
 #   openvpn:
