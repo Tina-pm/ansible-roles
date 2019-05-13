@@ -73,3 +73,20 @@
     mode: 0644
   notify: reload ferm
   with_dict: '{{ ferm__custom_configs }}'
+
+- name: place blacklist config file
+  copy:
+    dest: /etc/ferm/ferm.d/00-blacklist.conf
+    owner: root
+    group: root
+    mode: 0644
+    content: |
+      domain (ip ip6) table filter chain blacklist
+          saddr @ipfilter(({{ saddr }}))
+          REJECT;
+  notify: reload ferm
+  when: ferm__blacklist is defined and ferm__blacklist
+  vars:
+    saddr: >-
+      {{ ferm__blacklist if ferm__blacklist is string else
+        ferm__blacklist | join(' ') }}

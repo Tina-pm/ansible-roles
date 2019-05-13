@@ -8,6 +8,7 @@ domain (ip ip6) table filter {
     chain INPUT-pre;
     chain OUTPUT-pre;
     chain FORWARD-pre;
+    chain blacklist;
 
     chain INPUT {
         policy DROP;
@@ -17,6 +18,7 @@ domain (ip ip6) table filter {
 
         interface lo ACCEPT;
         jump INPUT-pre;
+        jump blacklist;
 
 {% if ferm__open_ssh %}
         proto tcp dport ssh ACCEPT;
@@ -29,6 +31,7 @@ domain (ip ip6) table filter {
         mod state state (ESTABLISHED RELATED) ACCEPT;
 
         jump FORWARD-pre;
+        jump blacklist;
     }
     chain OUTPUT {
         policy ACCEPT;
