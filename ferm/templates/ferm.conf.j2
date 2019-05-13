@@ -70,6 +70,8 @@ domain ip6 table filter {
     }
 }
 
-# This requires ferm >= 2.3.
-#@include @glob('ferm.d/*.conf')';
+{% if ferm__version is version('2.3', 'ge') %}
+@include @glob('ferm.d/*.conf')';
+{% else %}
 @include 'ferm.d/';
+{% endif %}

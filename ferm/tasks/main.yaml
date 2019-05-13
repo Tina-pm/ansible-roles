@@ -13,6 +13,16 @@
     name: [ferm, libnet-dns-perl]
     state: latest
 
+- name: find installed version
+  shell: >-
+    /usr/sbin/ferm --version | sed -n 's/^ferm \([0-9].*\)/\1/p'
+  register: ferm__version_check
+  changed_when: False
+
+- name: find installed version
+  set_fact:
+    ferm__version: '{{ ferm__version_check.stdout | d("0") }}'
+
 - name: start and enable service
   service:
     name: ferm
