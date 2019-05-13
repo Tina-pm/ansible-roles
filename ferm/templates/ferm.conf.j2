@@ -4,7 +4,7 @@
 #
 # {{ ansible_managed }}
 
-table filter {
+domain (ip ip6) table filter {
     chain INPUT-pre;
     chain OUTPUT-pre;
     chain FORWARD-pre;
@@ -15,9 +15,8 @@ table filter {
         mod state state INVALID DROP;
         mod state state (ESTABLISHED RELATED) ACCEPT;
 
-        jump INPUT-pre;
         interface lo ACCEPT;
-        proto icmp ACCEPT; 
+        jump INPUT-pre;
 
 {% if ferm__open_ssh %}
         proto tcp dport ssh ACCEPT;
@@ -37,38 +36,8 @@ table filter {
     }
 }
 
-domain ip6 table filter {
-    chain INPUT-pre;
-    chain OUTPUT-pre;
-    chain FORWARD-pre;
-
-    chain INPUT {
-        policy DROP;
-
-        mod state state INVALID DROP;
-        mod state state (ESTABLISHED RELATED) ACCEPT;
-
-        jump INPUT-pre;
-        interface lo ACCEPT;
-        proto ipv6-icmp ACCEPT;
-
-{% if ferm__open_ssh %}
-        proto tcp dport ssh ACCEPT;
-{% endif %}
-    }
-    chain FORWARD {
-        policy DROP;
-
-        mod state state INVALID DROP;
-        mod state state (ESTABLISHED RELATED) ACCEPT;
-
-        jump FORWARD-pre;
-    }
-    chain OUTPUT {
-        policy ACCEPT;
-        jump OUTPUT-pre;
-    }
-}
+domain ip table filter chain INPUT proto icmp ACCEPT;
+domain ip6 table filter chain INPUT proto ipv6-icmp ACCEPT;
 
 {% if ferm__version is version('2.3', 'ge') %}
 @include @glob('ferm.d/*.conf')';

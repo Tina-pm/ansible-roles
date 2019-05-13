@@ -1,18 +1,24 @@
 # {{ ansible_managed }}
 
 {% with %}
+{%- set chain = 'svc-' + item.key %}
 {%- set saddr = item.value.get('saddr', ('::/0', '0/0')) %}
 {%- set daddr = item.value.get('daddr', ('::/0', '0/0')) %}
 {%- set proto = item.value.get('proto', ('tcp', 'udp')) %}
-{%- set sport = item.value.get('sport', (':',)) %}
+{%- set sport = item.value.get('sport', '') %}
 {%- set dport = item.value.get('dport', (item.key,)) %}
 {%- set saddr = saddr if saddr is string else saddr | join(' ') %}
 {%- set daddr = daddr if daddr is string else daddr | join(' ') %}
 {%- set proto = proto if proto is string else proto | join(' ') %}
 {%- set sport = sport if sport is string or sport is number else sport | join(' ') %}
 {%- set dport = dport if dport is string or dport is number else dport | join(' ') %}
-domain (ip ip6) table filter chain INPUT {
+domain (ip ip6) table filter chain "{{ chain }}" {
     saddr @ipfilter(({{ saddr }})) daddr @ipfilter(({{ daddr }}))
-    proto ({{ proto }}) sport ({{ sport }}) dport ({{ dport }}) ACCEPT;
+{% if sport %}
+    proto ({{ proto }}) sport ({{ sport }})
+{% endif %}
+    ACCEPT;
 }
+domain (ip ip6) table filter chain INPUT
+    proto ({{ proto }}) dport ({{ dport }}) jump {{ chain }};
 {% endwith %}
