@@ -46,7 +46,7 @@
     append: '{{ item.append | d() | bool }}'
     createhome: '{{ item.createhome | d() | bool }}'
     home: '{{ item.home | d("/") }}'
-    shell: '{{ item.shell | d("/bin/bash") }}'
+    shell: '{{ item.shell | d("/bin/false") }}'
     generate_ssh_key: '{{ item.generate_ssh_key | d() | bool }}'
   loop: '{{ _create_users }}'
   when: 'item.system | d("")'
@@ -63,6 +63,7 @@
     home: '{{ item.home | d("/home/" ~ item.name) }}'
     createhome: yes
     move_home: yes
+    shell: '{{ item.shell | d("/bin/bash") }}'
     generate_ssh_key: '{{ item.generate_ssh_key | d() | bool }}'
     update_password: '{{ item.update_password | d("always") }}'
   loop: '{{ _create_users }}'
