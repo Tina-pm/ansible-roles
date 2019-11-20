@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 
-ARGS=' \
+ARGS=" \
 {% if node_exporter_disk_ignored_devs %}
       --collector.diskstats.ignored-devices={{
           node_exporter_disk_ignored_devs
@@ -24,4 +24,4 @@ ARGS=' \
       --web.listen-address={{
           node_exporter_listen_addr ~ ':' ~ node_exporter_listen_port
           }} \
-      {{ node_exporter_extra_args }}'
+      {{ node_exporter_extra_args }}"
