@@ -1,9 +1,8 @@
 # vim: sw=2:sts=2
 ---
 - name: install prometheus
-  apt:
+  package:
     name: prometheus
-    default_release: stretch-backports
     state: latest
 
 - name: start and enable service
