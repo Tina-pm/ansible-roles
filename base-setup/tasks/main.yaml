@@ -1,6 +1,15 @@
 # vim: sw=2:sts=2
 ---
 
+- name: abort if distribution mismatch
+  fail:
+    msg: |
+      distribution mismatch: {{ ansible_distribution_release }} !=
+      {{ apt_distro }}. Set FORCE_APT_DIST_UPGRADE=1 to override.
+  when:
+    ansible_distribution_release != apt_distro and
+    not lookup('env','FORCE_APT_DIST_UPGRADE')
+
 - name: check cloud-init presence
   stat:
     path: /etc/cloud/cloud.cfg
