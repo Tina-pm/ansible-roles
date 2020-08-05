@@ -28,3 +28,4 @@
     group: root
     mode: 0644
   notify: reload ferm
+  when: node_exporter_install_ferm_svc | bool

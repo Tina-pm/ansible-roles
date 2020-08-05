@@ -2,10 +2,15 @@
 
 ARGS=" \
 {% if prometheus_external_url %}
-           --web.external-url={{ prometheus_external_url }} \
+  --web.external-url={{ prometheus_external_url }} \
 {% endif %}
-           --web.listen-address={{
-             prometheus_listen_addr ~ ':' ~ prometheus_listen_port
-           }} \
-           --storage.tsdb.retention={{ prometheus_retention }} \
-           {{ prometheus_extra_args }}"
+  --web.listen-address={{
+    '%s:%s' % (prometheus_listen_addr or '', prometheus_listen_port)
+  }} \
+{% if prometheus_retention_time %}
+  --storage.tsdb.retention.time={{ prometheus_retention_time }} \
+{% endif %}
+{% if prometheus_retention_size %}
+  --storage.tsdb.retention.size={{ prometheus_retention_size }} \
+{% endif %}
+  {{ prometheus_extra_args or '' }}"

@@ -21,6 +21,7 @@ alerting:
 {% endif %}
 
 scrape_configs:
+{% if prometheus_monitored_prometheus %}
   - job_name: 'prometheus'
     scrape_interval: 5s
     scrape_timeout: 5s
@@ -29,6 +30,7 @@ scrape_configs:
 {% for target in prometheus_monitored_prometheus %}
         - '{{ target }}'
 {% endfor %}
+{% endif %}
 {% if prometheus_federated_prometheus %}
 
   - job_name: 'federate'
@@ -51,6 +53,7 @@ scrape_configs:
         - '{{ target }}'
 {% endfor %}
 {% endif %}
+{% if prometheus_monitored_nodes %}
 
   - job_name: 'node'
     static_configs:
@@ -58,3 +61,4 @@ scrape_configs:
 {% for target in prometheus_monitored_nodes %}
         - '{{ target }}'
 {% endfor %}
+{% endif %}

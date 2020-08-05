@@ -2,10 +2,13 @@
 ---
 
 prometheus_listen_port: 9090
-prometheus_listen_addr: ''
-prometheus_retention: '60d'
+prometheus_listen_addr:
+prometheus_retention_time:
+prometheus_retention_size:
 prometheus_external_url:
 prometheus_extra_args:
+prometheus_install_ferm_svc: false
+prometheus_allow_from:
 
 prometheus_monitored_pushgateways: []
 prometheus_monitored_prometheus: []
