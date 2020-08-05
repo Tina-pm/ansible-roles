@@ -1,0 +1,8 @@
+---
+- name: reload bind
+  service:
+    name: bind9
+    state: reloaded
+
+- name: reload ferm
+  service: name=ferm state=reloaded

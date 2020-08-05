@@ -1,0 +1,34 @@
+// {{ ansible_managed }}
+
+{% for zone in simple_bind__forward_zones or [] -%}
+zone "{{ zone.zone }}" {
+        type forward;
+        forward {{ zone.forward | default('first') }};
+        forwarders {
+{% for forwarder in zone.get('forwarders') or [] %}
+            {{ forwarder }};
+{% endfor -%}
+        };
+        file "db.{{ zone.zone }}";
+{% for extra in zone.get('extra_conf') or [] %}
+            {{ extra }};
+{% endfor %}
+};
+
+{% endfor -%}
+
+{% for zone in simple_bind__secondary_zones or [] -%}
+zone "{{ zone.zone }}" {
+        type slave;
+        masters {
+{% for primary in zone.get('primaries') or [] %}
+            {{ primary }};
+{% endfor %}
+        };
+        file "db.{{ zone.zone }}";
+{% for extra in zone.get('extra_conf') or [] %}
+            {{ extra }};
+{% endfor %}
+};
+
+{% endfor %}

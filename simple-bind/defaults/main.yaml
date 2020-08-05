@@ -1,0 +1,30 @@
+---
+# vim:ts=2:sw=2:et:ai:sts=2
+
+simple_bind__options:
+  forward: first
+  forwarders: []
+  listen_on:
+    - port: 53
+      match_list: ['any']
+  listen_on_v6:
+    - port: 53
+      match_list: ['any']
+  extra_conf:
+#    - 'foo: bar'
+
+simple_bind__includes:
+  - /etc/bind/zones.rfc1918
+
+simple_bind__secondary_zones:
+#  - zone: example.com
+#    primaries: [192.168.1.1]
+#    extra_conf:
+#      - 'foo: bar'
+
+simple_bind__forward_zones:
+#  - zone: example.com
+#    forwarders: [192.168.1.1]
+#    forward: only
+#    extra_conf:
+#      - 'foo: bar'

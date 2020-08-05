@@ -1,0 +1,30 @@
+# {{ ansible_managed }}
+
+{% with -%}
+{%- set opt = simple_bind__options or {} -%}
+{%- set listen4def = [{'match_list': 'none'}] -%}
+{%- set listen6def = [{'match_list': 'none'}] -%}
+{%- set listen4 = opt.get('listen_on') or listen4def -%}
+{%- set listen6 = opt.get('listen_on_v6') or listen6def -%}
+
+{% for domain, any, conf in (
+    ('ip', ['0/0'], listen4),
+    ('ip6', ['::/0'], listen6),
+    ) -%}
+domain {{ domain }} table filter chain bind {
+{% for listen in conf | default([]) %}
+    {%- set port = listen.get('port', 53) -%}
+    {%- set mlist = listen.get('match_list', []) -%}
+    {%- set mlist = [mlist] if mlist is string else mlist -%}
+    {%- set mlist = mlist | reject('eq', 'none') | list -%}
+    {%- set mlist = any if 'any' in mlist else mlist -%}
+{% if mlist %}
+    proto (tcp udp) dport {{ port }}
+        daddr ({{ mlist | join(' ') }}) ACCEPT;
+{% endif %}
+{%- endfor %}
+}
+
+{% endfor -%}
+domain (ip ip6) table filter chain INPUT jump bind;
+{% endwith %}

@@ -1,0 +1,10 @@
+// This is the primary configuration file for the BIND DNS server named.
+//
+// {{ ansible_managed }}
+
+include "/etc/bind/named.conf.options";
+include "/etc/bind/named.conf.local";
+include "/etc/bind/named.conf.default-zones";
+{% for file in simple_bind__includes or [] %}
+include "{{ file }}";
+{% endfor %}
