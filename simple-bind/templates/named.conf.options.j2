@@ -2,10 +2,12 @@
 
 {% with -%}
 {%- set opt = simple_bind__options or {} -%}
+{%- set listen4lo = [{'match_list': '127.0.0.0/8'}] -%}
+{%- set listen6lo = [{'match_list': '::1/128'}] -%}
 {%- set listen4def = [{'match_list': 'none'}] -%}
 {%- set listen6def = [{'match_list': 'none'}] -%}
-{%- set listen4 = opt.get('listen_on') or listen4def -%}
-{%- set listen6 = opt.get('listen_on_v6') or listen6def -%}
+{%- set listen4 = listen4lo + (opt.get('listen_on') or listen4def) -%}
+{%- set listen6 = listen6lo + (opt.get('listen_on_v6') or listen6def) -%}
 
 options {
 	directory "/var/cache/bind";
