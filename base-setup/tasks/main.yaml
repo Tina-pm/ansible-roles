@@ -1,6 +1,20 @@
 # vim: sw=2:sts=2
 ---
 
+- name: check cloud-init presence
+  stat:
+    path: /etc/cloud/cloud.cfg
+  register: _cloud_init_cfg
+  when: disable_cloud_init | bool
+
+- name: disable cloud-init
+  file:
+    path: /etc/cloud/cloud-init.disabled
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+  when: disable_cloud_init | bool and _cloud_init_cfg.stat.exists
+
 - name: configure APT
   template:
     src: sources.list.j2

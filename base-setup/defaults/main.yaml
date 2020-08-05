@@ -1,4 +1,6 @@
 ---
+disable_cloud_init: False
+
 apt_mirror: http://deb.debian.org/debian/
 apt_distro: stretch
 
