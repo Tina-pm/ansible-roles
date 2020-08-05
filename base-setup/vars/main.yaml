@@ -1,4 +1,6 @@
 ---
+_hostname_short: '{{ set_hostname.split(".")[0] if set_hostname }}'
+
 create_groups_base:
   - name: sudo
     system: true

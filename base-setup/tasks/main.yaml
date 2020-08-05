@@ -15,6 +15,20 @@
     access_time: preserve
   when: disable_cloud_init | bool and _cloud_init_cfg.stat.exists
 
+- name: set hostname
+  hostname:
+    name: '{{ _hostname_short }}'
+  when: set_hostname and _hostname_short
+
+- name: set FDQN
+  lineinfile:
+    dest: /etc/hosts
+    line: 127.0.1.1 {{ set_hostname }} {{ _hostname_short }}
+    regexp: '^127\.0\.1\.1\s'
+    insertafter: '^127\.0\.0\.1'
+    state: present
+  when: set_hostname and _hostname_short
+
 - name: configure APT
   template:
     src: sources.list.j2
