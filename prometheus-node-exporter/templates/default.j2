@@ -12,9 +12,15 @@ ARGS=" \
           }} \
 {% endif %}
 {% if node_exporter_net_ignored_devs %}
+{% if node_exporter__version is version('1.0.0', 'ge') %}
+      --collector.netdev.device-blacklist={{
+          node_exporter_net_ignored_devs
+          }} \
+{% else %}
       --collector.netdev.ignored-devices={{
           node_exporter_net_ignored_devs
           }} \
+{% endif %}
 {% endif %}
 {% if node_exporter_enabled_collectors %}
       --collectors.enabled={{
