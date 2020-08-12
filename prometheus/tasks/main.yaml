@@ -27,6 +27,7 @@
     owner: root
     group: root
     mode: 0644
+    validate: /usr/bin/promtool check config %s
   notify: reload prometheus
 
 - name: create rules directory

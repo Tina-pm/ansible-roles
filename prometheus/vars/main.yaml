@@ -1,0 +1,33 @@
+# vim: sw=2:sts=2
+---
+
+__prom_scrape_config:
+  job_name: 'prometheus'
+  scrape_interval: 5s
+  scrape_timeout: 5s
+  static_configs:
+  - targets: '{{ (prometheus_monitored_prometheus or []) | list }}'
+
+__node_scrape_config:
+  job_name: 'node'
+  scrape_interval: 5s
+  scrape_timeout: 5s
+  static_configs:
+  - targets: '{{ (prometheus_monitored_nodes or []) | list }}'
+
+__federated_scrape_config:
+  job_name: 'federate'
+  honor_labels: true
+  metrics_path: '/federate'
+  params:
+    'match[]': '{{ prometheus_federate_filter }}'
+  static_configs:
+  - targets: '{{ (prometheus_federated_prometheus or []) | list }}'
+
+__all_scrape_configs: |
+  {{
+    ([__prom_scrape_config] if prometheus_monitored_prometheus else []) +
+    ([__federated_scrape_config] if prometheus_federated_prometheus else []) +
+    ([__node_scrape_config] if prometheus_monitored_nodes else []) +
+    (prometheus_scrape_configs or [])
+  }}

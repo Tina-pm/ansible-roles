@@ -9,6 +9,7 @@ global:
 
 rule_files:
   - '/etc/prometheus/rules/*.yaml'
+  - '/etc/prometheus/rules/*.yml'
 {% if prometheus_alertmanagers %}
 
 alerting:
@@ -21,44 +22,7 @@ alerting:
 {% endif %}
 
 scrape_configs:
-{% if prometheus_monitored_prometheus %}
-  - job_name: 'prometheus'
-    scrape_interval: 5s
-    scrape_timeout: 5s
-    static_configs:
-      - targets:
-{% for target in prometheus_monitored_prometheus %}
-        - '{{ target }}'
+{% for config in __all_scrape_configs %}
+{# Make the output more readable by manually rendering the first level #}
+  - {{ config | to_nice_yaml(indent=2) | indent(4) }}
 {% endfor %}
-{% endif %}
-{% if prometheus_federated_prometheus %}
-
-  - job_name: 'federate'
-    honor_labels: true
-    metrics_path: '/federate'
-    params:
-      'match[]': {{ prometheus_federate_filter }}
-    static_configs:
-{% for target in prometheus_federated_prometheus %}
-      - targets:
-        - '{{ target }}'
-{% endfor %}
-{% endif %}
-{% if prometheus_monitored_pushgateways %}
-
-  - job_name: 'pushgateway'
-    static_configs:
-      - targets:
-{% for target in prometheus_monitored_pushgateways %}
-        - '{{ target }}'
-{% endfor %}
-{% endif %}
-{% if prometheus_monitored_nodes %}
-
-  - job_name: 'node'
-    static_configs:
-      - targets:
-{% for target in prometheus_monitored_nodes %}
-        - '{{ target }}'
-{% endfor %}
-{% endif %}
