@@ -7,10 +7,17 @@
     state: latest
 
 - name: start and enable service
-  service:
-    name: bind9
-    state: started
-    enabled: yes
+  block:
+    - service:
+        name: bind9
+        state: started
+        enabled: yes
+  rescue:
+    # systemd unit name changed in Debian bullseye.
+    - service:
+        name: named
+        state: started
+        enabled: yes
 
 - name: install configuration files
   template:
