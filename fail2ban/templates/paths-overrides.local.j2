@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+
+[DEFAULT]
+{% for logname, path in (fail2ban__path_overrides or {}).items() %}
+{{ logname }} = {{ path if path is string else '\n  '.join(path) }}
+{% endfor %}

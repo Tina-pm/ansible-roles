@@ -14,3 +14,9 @@ fail2ban__jail_config:
 #  apache-noscript:
 #    enabled: true
 #    maxretry: 10
+
+fail2ban__path_overrides:
+#  apache_error_log: /var/log/apache2/error.log
+#  apache_access_log:
+#    - /var/log/apache2/access.log
+#    - /var/log/apache2/*/access.log

@@ -21,6 +21,15 @@
     mode: 0644
   notify: restart fail2ban
 
+- name: place paths-overrides.local file
+  template:
+    src: paths-overrides.local.j2
+    dest: /etc/fail2ban/paths-overrides.local
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart fail2ban
+
 - name: place ferm config file
   template:
     src: ferm.conf.j2
