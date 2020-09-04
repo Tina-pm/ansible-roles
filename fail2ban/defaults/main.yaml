@@ -1,0 +1,16 @@
+# vim: sw=2:sts=2
+---
+
+fail2ban__jail_config:
+#  apache-auth:
+#    enabled: true
+#
+#  apache-badbots:
+#    enabled: true
+#
+#  apache-overflows:
+#    enabled: true
+#
+#  apache-noscript:
+#    enabled: true
+#    maxretry: 10
