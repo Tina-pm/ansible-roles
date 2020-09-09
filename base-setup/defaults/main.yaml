@@ -13,6 +13,7 @@ create_users: []
 create_groups: []
 create_users_local: []
 create_groups_local: []
+home_dir_templates: home/
 
 root_mail_forward: ~
 mail_relay: ~

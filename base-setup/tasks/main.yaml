@@ -169,3 +169,10 @@
   template:
     src: bash.bashrc.j2
     dest: /etc/bash.bashrc
+
+- name: set-up user homes
+  include_tasks: homes.yaml
+  loop: '{{ _create_users }}'
+  loop_control:
+    loop_var: user
+  when: 'not (item.system | d(""))'
