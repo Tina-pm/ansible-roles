@@ -10,8 +10,6 @@ __prom_scrape_config:
 
 __node_scrape_config:
   job_name: 'node'
-  scrape_interval: 5s
-  scrape_timeout: 5s
   static_configs:
   - targets: '{{ (prometheus_monitored_nodes or []) | list }}'
 

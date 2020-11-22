@@ -137,7 +137,7 @@
 - name: set SSH authorized keys
   authorized_key:
     user: '{{ item.name }}'
-    key: '{{ "\n".join(item.authorized) }}'
+    key: "{{ '\n'.join(item.authorized) }}"
   loop: '{{ _create_users }}'
   when: item.authorized is defined and item.authorized
 

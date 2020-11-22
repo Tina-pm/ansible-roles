@@ -23,12 +23,6 @@
   set_fact:
     ferm__version: '{{ ferm__version_check.stdout | d("0") }}'
 
-- name: start and enable service
-  service:
-    name: ferm
-    state: started
-    enabled: yes
-
 - name: disable caching
   lineinfile:
     dest: /etc/default/ferm
@@ -122,3 +116,9 @@
     saddr: >-
       {{ ferm__blacklist if ferm__blacklist is string else
         ferm__blacklist | join(' ') }}
+
+- name: start and enable service
+  service:
+    name: ferm
+    state: started
+    enabled: yes

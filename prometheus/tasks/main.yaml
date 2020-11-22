@@ -5,12 +5,6 @@
     name: prometheus
     state: latest
 
-- name: start and enable service
-  service:
-    name: prometheus
-    state: started
-    enabled: yes
-
 - name: configure prometheus cmdline
   template:
     src: default.j2
@@ -43,6 +37,12 @@
 #    src: prometheus.rules.j2
 #    dest: /etc/prometheus/prometheus.rules
 #  notify: reload prometheus
+
+- name: start and enable service
+  service:
+    name: prometheus
+    state: started
+    enabled: yes
 
 - name: install ferm configuration
   template:
