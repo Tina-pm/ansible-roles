@@ -175,4 +175,4 @@
   loop: '{{ _create_users }}'
   loop_control:
     loop_var: user
-  when: 'not (item.system | d(""))'
+  when: 'not (user.system | d(""))'
