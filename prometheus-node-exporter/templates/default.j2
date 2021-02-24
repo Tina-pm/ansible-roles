@@ -13,7 +13,7 @@ ARGS=" \
 {% endif %}
 {% if node_exporter_net_ignored_devs %}
 {% if node_exporter__version is version('1.0.0', 'ge') %}
-      --collector.netdev.device-blacklist={{
+      --collector.netdev.device-exclude={{
           node_exporter_net_ignored_devs
           }} \
 {% else %}
