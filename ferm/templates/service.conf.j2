@@ -6,19 +6,29 @@
 {%- set daddr = item.value.get('daddr', ('::/0', '0/0')) %}
 {%- set proto = item.value.get('proto', ('tcp', 'udp')) %}
 {%- set sport = item.value.get('sport', '') %}
-{%- set dport = item.value.get('dport', (item.key,)) %}
-{%- set saddr = saddr if saddr is string else saddr | join(' ') %}
-{%- set daddr = daddr if daddr is string else daddr | join(' ') %}
-{%- set proto = proto if proto is string else proto | join(' ') %}
-{%- set sport = sport if sport is string or sport is number else sport | join(' ') %}
-{%- set dport = dport if dport is string or dport is number else dport | join(' ') %}
+{%- set dport = item.value.get('dport', '') %}
+{%- set saddr = saddr.split() if saddr is string else saddr %}
+{%- set daddr = daddr.split() if daddr is string else daddr %}
+{%- set proto = proto.split() if proto is string else proto %}
+{%- set sport = sport.split() if sport is string else sport %}
+{%- set sport = (sport,) if sport is number else sport %}
+{%- set dport = dport.split() if dport is string else dport %}
+{%- set dport = (dport,) if dport is number else dport %}
+{% if not (proto | difference(('tcp', 'udp')) or dport) %}
+{%- set dport = (item.key,) %}
+{% endif %}
 domain (ip ip6) table filter chain "{{ chain }}" {
-    saddr @ipfilter(({{ saddr }})) daddr @ipfilter(({{ daddr }}))
+    saddr @ipfilter(({{ saddr | join(' ') }}))
+    daddr @ipfilter(({{ daddr | join(' ') }}))
 {% if sport %}
-    proto ({{ proto }}) sport ({{ sport }})
+    proto ({{ proto | join(' ') }}) sport ({{ sport | join(' ') }})
 {% endif %}
     ACCEPT;
 }
 domain (ip ip6) table filter chain INPUT
-    proto ({{ proto }}) dport ({{ dport }}) jump {{ chain }};
+    proto ({{ proto | join(' ') }})
+{% if dport %}
+    dport ({{ dport | join(' ') }})
+{% endif %}
+    jump {{ chain }};
 {% endwith %}
