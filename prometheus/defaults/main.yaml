@@ -19,6 +19,6 @@ prometheus_federated_prometheus: []
 # Only import metrics that have a ':' in their name (derived from explicit
 # rules), or the special up metric.
 prometheus_federate_filter:
-  - '{__name__=~":"}'
+  - '{__name__=~".+:.+"}'
   - '{job="prometheus"}'
   - up
