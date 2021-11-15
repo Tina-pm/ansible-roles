@@ -58,16 +58,6 @@
   when: base_setup__mail_relay is defined and base_setup__mail_relay
   notify: reload postfix
 
-- name: set mail forwarding for root
-  lineinfile:
-    dest: /etc/aliases
-    line: 'root: {{ base_setup__root_mail_forward }}'
-    regexp: '^root:.*'
-    state: present
-  when: >
-    base_setup__root_mail_forward is defined and base_setup__root_mail_forward
-  notify: run newaliases
-
 - name: bash defaults
   template:
     src: bash.bashrc.j2
@@ -96,3 +86,7 @@
 #      state: absent
 #      regexp: '^Defaults\s+requiretty'
 #      validate: 'visudo -cf %s'
+
+- name: create users
+  include_role:
+    name: users

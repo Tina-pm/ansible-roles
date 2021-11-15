@@ -29,3 +29,13 @@
       forward: '{{ item.forward | d("") }}'
       authorized: '{{ item.authorized | d([]) }}'
   loop: '{{ users__create_users }}'
+
+- name: set mail forwarding for root
+  lineinfile:
+    dest: /etc/aliases
+    line: 'root: {{ users__root_mail_forward }}'
+    regexp: '^root:.*'
+    state: present
+  when: >
+    users__root_mail_forward is defined and users__root_mail_forward
+  notify: run newaliases

@@ -1,7 +1,4 @@
 # vim: sw=2:sts=2
 ---
-- name: run newaliases
-  command: newaliases
-
 - name: reload postfix
   service: name=postfix state=reloaded
