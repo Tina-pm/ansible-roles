@@ -1,9 +1,11 @@
+# vim: sw=2:sts=2
 ---
 - name: restart prometheus
-  service: name=prometheus state=restarted
+  service:
+    name: prometheus
+    state: restarted
 
 - name: reload prometheus
-  service: name=prometheus state=reloaded
-
-- name: reload ferm
-  service: name=ferm state=reloaded
+  service:
+    name: prometheus
+    state: reloaded
