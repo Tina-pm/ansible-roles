@@ -1,15 +1,5 @@
 # vim: sw=2:sts=2
 ---
-
-- name: abort if distribution mismatch
-  fail:
-    msg: |
-      distribution mismatch: {{ ansible_distribution_release }} !=
-      {{ apt_distro }}. Set FORCE_APT_DIST_UPGRADE=1 to override.
-  when:
-    ansible_distribution_release != apt_distro and
-    not lookup('env','FORCE_APT_DIST_UPGRADE')
-
 - name: check cloud-init presence
   stat:
     path: /etc/cloud/cloud.cfg
@@ -38,91 +28,25 @@
     state: present
   when: set_hostname and _hostname_short
 
-- name: configure APT
-  template:
-    src: sources.list.j2
-    dest: /etc/apt/sources.list
-
-- name: disable installation of Recommends
-  template:
-    src: 02recommends.j2
-    dest: /etc/apt/apt.conf.d/02recommends
-
-- name: update & upgrade packages
-  apt:
-    update_cache: yes
-    upgrade: dist
-
-- name: install base packages
-  apt:
-    name: '{{ ["postfix", "sudo"] + base_setup_pkg_install }}'
-    state: latest
-
-- name: start and enable services
-  service:
-    name: '{{ item }}'
-    state: started
-    enabled: yes
-  loop: '{{ ["postfix"] + base_setup_svc_enable_start }}'
-
-- name: create groups
-  group:
-    state: present
-    name: '{{ item.name }}'
-    system: '{{ item.system | d() | bool }}'
-  loop: '{{ _create_groups }}'
-
-- name: create system users
-  user:
-    state: present
-    system: true
-    name: '{{ item.name }}'
-    comment: '{{ item.gecos | default(item.name) }}'
-    password: '{{ item.password | d(omit) }}'
-    groups: '{{ item.groups | default([]) | join(",") }}'
-    append: '{{ item.append | d() | bool }}'
-    createhome: '{{ item.createhome | d() | bool }}'
-    home: '{{ item.home | d("/") }}'
-    shell: '{{ item.shell | d("/bin/false") }}'
-    generate_ssh_key: '{{ item.generate_ssh_key | d() | bool }}'
-  loop: '{{ _create_users }}'
-  when: 'item.system | d("")'
-
-- name: create normal users
-  user:
-    state: present
-    system: false
-    name: '{{ item.name }}'
-    comment: '{{ item.gecos }}'
-    password: '{{ item.password | d(omit) }}'
-    groups: '{{ item.groups | default([]) | join(",") }}'
-    append: '{{ item.append | d() | bool }}'
-    home: '{{ item.home | d("/home/" ~ item.name) }}'
-    createhome: yes
-    move_home: yes
-    shell: '{{ item.shell | d("/bin/bash") }}'
-    generate_ssh_key: '{{ item.generate_ssh_key | d() | bool }}'
-    update_password: '{{ item.update_password | d("always") }}'
-  loop: '{{ _create_users }}'
-  when: 'not (item.system | d(""))'
-
-- name: set mail forwarding
-  lineinfile:
-    dest: /etc/aliases
-    line: '{{ item.name }}: {{ item.forward | d("") }}'
-    regexp: '^{{ item.name }}:.*'
-    state: '{{ "present" if (item.forward | d("")) else "absent" }}'
-  loop: '{{ _create_users }}'
-  notify: run newaliases
-
-- name: set mail forwarding for root
-  lineinfile:
-    dest: /etc/aliases
-    line: 'root: {{ root_mail_forward }}'
-    regexp: '^root:.*'
-    state: present
-  when: root_mail_forward is defined and root_mail_forward
-  notify: run newaliases
+- name: setup APT, upgrade installed packages, and install base packages
+  include_role:
+    name: apt
+  vars:
+    apt__run_upgrade: true
+    apt__run_autoremove: true
+    apt__purge_removed: true
+    apt__packages_to_install: '{{
+      ["postfix", "sudo"] +
+      base_setup_pkg_install | d([])
+      }}'
+    apt__services_to_enable: '{{
+      ["postfix"] +
+      base_setup_svc_enable_start | d([])
+      }}'
+    apt__services_to_start: '{{
+      ["postfix"] +
+      base_setup_svc_enable_start | d([])
+      }}'
 
 - name: set mail relay
   lineinfile:
@@ -134,12 +58,19 @@
   when: mail_relay is defined and mail_relay
   notify: reload postfix
 
-- name: set SSH authorized keys
-  authorized_key:
-    user: '{{ item.name }}'
-    key: "{{ '\n'.join(item.authorized) }}"
-  loop: '{{ _create_users }}'
-  when: item.authorized is defined and item.authorized
+- name: set mail forwarding for root
+  lineinfile:
+    dest: /etc/aliases
+    line: 'root: {{ root_mail_forward }}'
+    regexp: '^root:.*'
+    state: present
+  when: root_mail_forward is defined and root_mail_forward
+  notify: run newaliases
+
+- name: bash defaults
+  template:
+    src: bash.bashrc.j2
+    dest: /etc/bash.bashrc
 
 - name: 'set-up sudoers: sudo group'
   lineinfile:
@@ -164,15 +95,3 @@
 #      state: absent
 #      regexp: '^Defaults\s+requiretty'
 #      validate: 'visudo -cf %s'
-
-- name: bash defaults
-  template:
-    src: bash.bashrc.j2
-    dest: /etc/bash.bashrc
-
-- name: set-up user homes
-  include_tasks: homes.yaml
-  loop: '{{ _create_users }}'
-  loop_control:
-    loop_var: user
-  when: 'not (user.system | d(""))'

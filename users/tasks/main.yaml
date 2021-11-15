@@ -1,0 +1,31 @@
+# vim: sw=2:sts=2
+---
+
+- name: create groups
+  group:
+    state: present
+    name: '{{ item.name }}'
+    system: '{{ item.system | d() | bool }}'
+  loop: '{{ users__create_groups }}'
+
+- name: create users
+  include_tasks: user.yaml
+  vars:
+    user:
+      system: '{{ item.system | d() | bool }}'
+      name: '{{ item.name }}'
+      comment: '{{ item.gecos | default(item.name) }}'
+      password: '{{ item.password | d("*") }}'
+      groups: '{{ item.groups | default([]) | join(",") }}'
+      append: '{{ item.append | d() | bool }}'
+      home: '{{
+        item.home | d("/" if item.get("system") else "/home/" ~ item.name) }}'
+      create_home: '{{ item.create_home | d(True) | bool }}'
+      move_home: '{{ item.move_home | d(not item.system) | bool }}'
+      shell: '{{
+        item.shell | d("/bin/false" if item.get("system") else "/bin/bash") }}'
+      generate_ssh_key: '{{ item.generate_ssh_key | d() | bool }}'
+      update_password: '{{ item.update_password | d("on_create") }}'
+      forward: '{{ item.forward | d("") }}'
+      authorized: '{{ item.authorized | d([]) }}'
+  loop: '{{ users__create_users }}'
