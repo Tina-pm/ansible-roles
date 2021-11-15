@@ -1,0 +1,54 @@
+# vim: sw=2:sts=2
+---
+- name: abort if distribution mismatch
+  fail:
+    msg: |
+      distribution mismatch: {{ ansible_distribution_release }} !=
+      {{ apt_distro }}. Set FORCE_APT_DIST_UPGRADE=1 to override.
+  when:
+    ansible_distribution_release != apt__distro and
+    not lookup('env','FORCE_APT_DIST_UPGRADE')
+
+- name: configure APT sources
+  template:
+    src: sources.list.j2
+    dest: /etc/apt/sources.list
+
+- name: configure installation of recommended packages
+  template:
+    src: 02recommends.j2
+    dest: /etc/apt/apt.conf.d/02recommends
+
+- name: update package lists
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: update packages
+  apt:
+    upgrade: dist
+    purge: '{{ apt__purge_removed }}'
+  when: apt__run_upgrade
+
+- name: remove unneeded packages
+  apt:
+    autoremove: yes
+    purge: '{{ apt__purge_removed }}'
+  when: apt__run_autoremove
+
+- name: install packages
+  apt:
+    name: '{{ apt__packages_to_install }}'
+    state: latest
+
+- name: enable services
+  service:
+    name: '{{ item }}'
+    enabled: yes
+  loop: '{{ apt__services_to_enable }}'
+
+- name: start services
+  service:
+    name: '{{ item }}'
+    state: started
+  loop: '{{ apt__services_to_start }}'
