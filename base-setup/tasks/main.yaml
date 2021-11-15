@@ -4,7 +4,7 @@
   stat:
     path: /etc/cloud/cloud.cfg
   register: _cloud_init_cfg
-  when: disable_cloud_init | bool
+  when: base_setup__disable_cloud_init | bool
 
 - name: disable cloud-init
   file:
@@ -12,21 +12,21 @@
     state: touch
     modification_time: preserve
     access_time: preserve
-  when: disable_cloud_init | bool and _cloud_init_cfg.stat.exists
+  when: base_setup__disable_cloud_init | bool and _cloud_init_cfg.stat.exists
 
 - name: set hostname
   hostname:
     name: '{{ _hostname_short }}'
-  when: set_hostname and _hostname_short
+  when: base_setup__set_hostname and _hostname_short
 
 - name: set FDQN
   lineinfile:
     dest: /etc/hosts
-    line: 127.0.1.1 {{ set_hostname }} {{ _hostname_short }}
+    line: 127.0.1.1 {{ base_setup__set_hostname }} {{ _hostname_short }}
     regexp: '^127\.0\.1\.1\s'
     insertafter: '^127\.0\.0\.1'
     state: present
-  when: set_hostname and _hostname_short
+  when: base_setup__set_hostname and _hostname_short
 
 - name: setup APT, upgrade installed packages, and install base packages
   include_role:
@@ -37,34 +37,35 @@
     apt__purge_removed: true
     apt__packages_to_install: '{{
       ["postfix", "sudo"] +
-      base_setup_pkg_install | d([])
+      base_setup__pkg_install | d([])
       }}'
     apt__services_to_enable: '{{
       ["postfix"] +
-      base_setup_svc_enable_start | d([])
+      base_setup__svc_enable_start | d([])
       }}'
     apt__services_to_start: '{{
       ["postfix"] +
-      base_setup_svc_enable_start | d([])
+      base_setup__svc_enable_start | d([])
       }}'
 
 - name: set mail relay
   lineinfile:
     dest: /etc/postfix/main.cf
-    line: 'relayhost = {{ mail_relay }}'
+    line: 'relayhost = {{ base_setup__mail_relay }}'
     regexp: '^relayhost\s*='
     insertafter: '^#relayhost'
     state: present
-  when: mail_relay is defined and mail_relay
+  when: base_setup__mail_relay is defined and base_setup__mail_relay
   notify: reload postfix
 
 - name: set mail forwarding for root
   lineinfile:
     dest: /etc/aliases
-    line: 'root: {{ root_mail_forward }}'
+    line: 'root: {{ base_setup__root_mail_forward }}'
     regexp: '^root:.*'
     state: present
-  when: root_mail_forward is defined and root_mail_forward
+  when: >
+    base_setup__root_mail_forward is defined and base_setup__root_mail_forward
   notify: run newaliases
 
 - name: bash defaults

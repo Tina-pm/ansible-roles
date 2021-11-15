@@ -4,7 +4,7 @@
   fail:
     msg: |
       distribution mismatch: {{ ansible_distribution_release }} !=
-      {{ apt_distro }}. Set FORCE_APT_DIST_UPGRADE=1 to override.
+      {{ apt__distro }}. Set FORCE_APT_DIST_UPGRADE=1 to override.
   when:
     ansible_distribution_release != apt__distro and
     not lookup('env','FORCE_APT_DIST_UPGRADE')
