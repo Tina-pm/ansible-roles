@@ -1,0 +1,23 @@
+# {{ ansible_managed }}
+
+deb {{ apt__mirror }} {{ apt__distro }} main non-free contrib
+# deb-src {{ apt__mirror }} {{ apt__distro }} main non-free contrib
+
+{% if apt__distro in ("stretch", "buster") %}
+deb http://security.debian.org/debian-security {{ apt__distro }}/updates main contrib non-free
+# deb-src http://security.debian.org/debian-security {{ apt__distro }}/updates main contrib non-free
+{% endif %}
+{% if apt__distro in ("bullseye", "testing") %}
+deb http://security.debian.org/debian-security {{ apt__distro }}-security main contrib non-free
+# deb-src http://security.debian.org/debian-security {{ apt__distro }}-security main contrib non-free
+{% endif %}
+
+{% if apt__distro in ("stretch", "buster", "bullseye", "testing") %}
+# {{ apt__distro }}-updates, previously known as 'volatile'
+deb {{ apt__mirror }} {{ apt__distro }}-updates main contrib non-free
+# deb-src {{ apt__mirror }} {{ apt__distro }}-updates main contrib non-free
+
+# {{ apt__distro }}-backports, previously on backports.debian.org
+deb {{ apt__mirror }} {{ apt__distro }}-backports main contrib non-free
+# deb-src {{ apt__mirror }} {{ apt__distro }}-backports main contrib non-free
+{% endif %}

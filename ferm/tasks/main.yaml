@@ -4,7 +4,7 @@
   debconf:
     name: ferm
     question: ferm/enable
-    value: yes
+    value: 'yes'
     vtype: boolean
   changed_when: False
 

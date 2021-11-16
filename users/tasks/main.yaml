@@ -1,0 +1,44 @@
+# vim: sw=2:sts=2
+---
+
+- name: create groups
+  group:
+    state: present
+    name: '{{ item.name }}'
+    system: '{{ item.system | d() | bool }}'
+  loop: '{{ users__create_groups }}'
+
+- name: create users
+  include_tasks: user.yaml
+  vars:
+    user:
+      system: '{{ _user.system | d() | bool }}'
+      name: '{{ _user.name }}'
+      gecos: '{{ _user.gecos | d(_user.name) }}'
+      password: '{{ _user.password | d("*") }}'
+      groups: '{{ _user.groups | default([]) | join(",") }}'
+      append: '{{ _user.append | d() | bool }}'
+      home: '{{
+        _user.home | d("/" if _user.get("system") else "/home/" ~ _user.name) }}'
+      create_home: '{{ _user.create_home | d(True) | bool }}'
+      move_home: '{{ _user.move_home | d(not _user.get("system")) | bool }}'
+      shell: '{{
+        _user.shell | d("/bin/false" if _user.get("system") else "/bin/bash") }}'
+      generate_ssh_key: '{{ _user.generate_ssh_key | d() | bool }}'
+      update_password: '{{ _user.update_password | d("on_create") }}'
+      forward: '{{ _user.forward | d("") }}'
+      authorized: '{{ _user.authorized | d([]) }}'
+  loop: '{{ users__create_users }}'
+  loop_control:
+    loop_var: _user
+  no_log: true
+
+- name: set mail forwarding for root
+  lineinfile:
+    dest: /etc/aliases
+    line: 'root: {{ users__root_mail_forward }}'
+    regexp: '^root:.*'
+    state: present
+  when: >
+    users__root_mail_forward is defined and users__root_mail_forward
+  notify: run newaliases

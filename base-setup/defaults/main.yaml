@@ -1,19 +1,9 @@
+# vim: sw=2:sts=2
 ---
-disable_cloud_init: False
+base_setup__disable_cloud_init: False
+base_setup__set_hostname: ~
 
-set_hostname: ~
+base_setup__pkg_install: []
+base_setup__svc_enable_start: []
 
-apt_mirror: http://deb.debian.org/debian/
-apt_distro: stretch
-
-base_setup_pkg_install: []
-base_setup_svc_enable_start: []
-
-create_users: []
-create_groups: []
-create_users_local: []
-create_groups_local: []
-home_dir_templates: home/
-
-root_mail_forward: ~
-mail_relay: ~
+base_setup__mail_relay: ~

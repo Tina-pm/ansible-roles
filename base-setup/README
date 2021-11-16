@@ -1,3 +1,5 @@
-This role sets up users, ssh keys, ntp, mail forwarding, and apt repositories.
+This role sets up hostname, mail forwarding, apt repositories, and sudo. It
+also disables cloud-init if present to prevent it from overwring
+configurations.
 
 On bullseye it requires lsb-release to be installed.

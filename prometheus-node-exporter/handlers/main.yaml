@@ -1,6 +1,6 @@
+# vim: sw=2:sts=2
 ---
 - name: restart node_exporter
-  service: name=prometheus-node-exporter state=restarted
-
-- name: reload ferm
-  service: name=ferm state=reloaded
+  service:
+    name: prometheus-node-exporter
+    state: restarted

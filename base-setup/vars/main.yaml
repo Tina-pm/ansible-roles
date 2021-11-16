@@ -1,12 +1,2 @@
 ---
-_hostname_short: '{{ set_hostname.split(".")[0] if set_hostname }}'
-
-create_groups_base:
-  - name: sudo
-    system: true
-  - name: sudo-nopw
-    system: true
-create_users_base: []
-
-_create_groups: '{{ create_groups_base + create_groups + create_groups_local }}'
-_create_users: '{{ create_users_base + create_users + create_users_local }}'
+_hostname_short: '{{ base_setup__set_hostname.split(".")[0] if base_setup__set_hostname }}'

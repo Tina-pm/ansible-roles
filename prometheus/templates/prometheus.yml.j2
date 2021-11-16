@@ -10,13 +10,13 @@ global:
 rule_files:
   - '/etc/prometheus/rules/*.yaml'
   - '/etc/prometheus/rules/*.yml'
-{% if prometheus_alertmanagers %}
+{% if prometheus__alertmanagers %}
 
 alerting:
   alertmanagers:
     - static_configs:
       - targets:
-{% for target in prometheus_alertmanagers %}
+{% for target in prometheus__alertmanagers %}
         - '{{ target }}'
 {% endfor %}
 {% endif %}

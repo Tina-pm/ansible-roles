@@ -1,16 +1,16 @@
 # {{ ansible_managed }}
 
 ARGS=" \
-{% if prometheus_external_url %}
-  --web.external-url={{ prometheus_external_url }} \
+{% if prometheus__external_url %}
+  --web.external-url={{ prometheus__external_url }} \
 {% endif %}
   --web.listen-address={{
-    '%s:%s' % (prometheus_listen_addr or '', prometheus_listen_port)
+    '%s:%s' % (prometheus__listen_addr or '', prometheus__listen_port)
   }} \
-{% if prometheus_retention_time %}
-  --storage.tsdb.retention.time={{ prometheus_retention_time }} \
+{% if prometheus__retention_time %}
+  --storage.tsdb.retention.time={{ prometheus__retention_time }} \
 {% endif %}
-{% if prometheus_retention_size %}
-  --storage.tsdb.retention.size={{ prometheus_retention_size }} \
+{% if prometheus__retention_size %}
+  --storage.tsdb.retention.size={{ prometheus__retention_size }} \
 {% endif %}
-  {{ prometheus_extra_args or '' }}"
+  {{ prometheus__extra_args or '' }}"

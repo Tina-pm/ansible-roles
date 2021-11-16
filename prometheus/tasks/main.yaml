@@ -52,4 +52,4 @@
     group: root
     mode: 0644
   notify: reload ferm
-  when: prometheus_install_ferm_svc | bool
+  when: prometheus__install_ferm_svc | bool

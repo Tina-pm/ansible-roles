@@ -1,33 +1,33 @@
 # {{ ansible_managed }}
 
 ARGS=" \
-{% if node_exporter_disk_ignored_devs %}
+{% if node_exporter__disk_ignored_devs %}
       --collector.diskstats.ignored-devices={{
-          node_exporter_disk_ignored_devs
+          node_exporter__disk_ignored_devs
           }} \
 {% endif %}
-{% if node_exporter_fs_ignored_mounts %}
+{% if node_exporter__fs_ignored_mounts %}
       --collector.filesystem.ignored-mount-points={{
-          node_exporter_fs_ignored_mounts
+          node_exporter__fs_ignored_mounts
           }} \
 {% endif %}
-{% if node_exporter_net_ignored_devs %}
+{% if node_exporter__net_ignored_devs %}
 {% if node_exporter__version is version('1.0.0', 'ge') %}
       --collector.netdev.device-exclude={{
-          node_exporter_net_ignored_devs
+          node_exporter__net_ignored_devs
           }} \
 {% else %}
       --collector.netdev.ignored-devices={{
-          node_exporter_net_ignored_devs
+          node_exporter__net_ignored_devs
           }} \
 {% endif %}
 {% endif %}
-{% if node_exporter_enabled_collectors %}
+{% if node_exporter__enabled_collectors %}
       --collectors.enabled={{
-          node_exporter_enabled_collectors
+          node_exporter__enabled_collectors
           }} \
 {% endif %}
       --web.listen-address={{
-          node_exporter_listen_addr ~ ':' ~ node_exporter_listen_port
+          node_exporter__listen_addr ~ ':' ~ node_exporter__listen_port
           }} \
-      {{ node_exporter_extra_args }}"
+      {{ node_exporter__extra_args }}"

@@ -1,0 +1,16 @@
+# vim: sw=2:sts=2
+---
+apt__mirror: http://deb.debian.org/debian/
+apt__distro: bullseye
+apt__install_recommends: false
+
+apt__packages_to_install: []
+apt__services_to_enable: []
+apt__services_to_start: []
+
+# Run `apt dist-upgrade` if true.
+apt__run_upgrade: false
+# Run `apt autoremove` if true.
+apt__run_autoremove: false
+# Add `--purge` to apt invocations.
+apt__purge_removed: false

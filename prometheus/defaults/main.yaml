@@ -1,24 +1,24 @@
 # vim: sw=2:sts=2
 ---
 
-prometheus_listen_port: 9090
-prometheus_listen_addr:
-prometheus_retention_time:
-prometheus_retention_size:
-prometheus_external_url:
-prometheus_extra_args:
-prometheus_install_ferm_svc: false
-prometheus_allow_from:
+prometheus__listen_port: 9090
+prometheus__listen_addr:
+prometheus__retention_time:
+prometheus__retention_size:
+prometheus__external_url:
+prometheus__extra_args:
+prometheus__install_ferm_svc: false
+prometheus__allow_from:
 
-prometheus_monitored_nodes: []
-prometheus_scrape_configs: []
+prometheus__monitored_nodes: []
+prometheus__scrape_configs: []
 
-prometheus_alertmanagers: []
-prometheus_monitored_prometheus: []
-prometheus_federated_prometheus: []
+prometheus__alertmanagers: []
+prometheus__monitored_prometheus: []
+prometheus__federated_prometheus: []
 # Only import metrics that have a ':' in their name (derived from explicit
 # rules), or the special up metric.
-prometheus_federate_filter:
+prometheus__federate_filter:
   - '{__name__=~".+:.+"}'
   - '{job="prometheus"}'
   - up
