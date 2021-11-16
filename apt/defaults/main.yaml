@@ -2,6 +2,7 @@
 ---
 apt__mirror: http://deb.debian.org/debian/
 apt__distro: bullseye
+apt__suites: main contrib non-free
 apt__install_recommends: false
 
 apt__packages_to_install: []
