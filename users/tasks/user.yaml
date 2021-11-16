@@ -2,7 +2,7 @@
 ---
 # This task file is executed in a loop over users__create_users.
 
-- name: 'create user {{ user.name }}'
+- name: '[{{ user.name }}] create user'
   user:
     state: present
     system: '{{ user.system }}'
@@ -18,7 +18,7 @@
     generate_ssh_key: '{{ user.generate_ssh_key }}'
     update_password: '{{ user.update_password }}'
 
-- name: set mail forwarding
+- name: '[{{ user.name }}] set mail forwarding'
   lineinfile:
     dest: /etc/aliases
     line: '{{ user.name }}: {{ user.forward }}'
@@ -26,24 +26,17 @@
     state: '{{ "present" if user.forward else "absent" }}'
   notify: run newaliases
 
-- name: set SSH authorized keys
+- name: '[{{ user.name }}] set SSH authorized keys'
   authorized_key:
     user: '{{ user.name }}'
-    key: '{{
+    key: "{{
       user.authorized
       if user.authorized is string else
-      "\n".join(user.authorized)
-      }}'
+      '\n'.join(user.authorized)
+      }}"
     exclusive: true
 
-- name: set-up user home
-  include_tasks: homes.yaml
-  loop: '{{ users__create_users }}'
-  loop_control:
-    loop_var: user
-  when: 'not user.system'
-
-- name: 'set-up user home: directories'
+- name: '[{{ user.name }}] set-up user home: directories'
   file:
     path: '{{ user.home }}/{{ item.path }}'
     mode: '{{ item.mode }}'
@@ -53,27 +46,27 @@
   with_filetree: '{{ users__home_dir_templates }}/{{ user.name }}'
   when: item.state == 'directory'
 
-- name: 'set-up user home: normal files'
+- name: '[{{ user.name }}] set-up user home: normal files'
   copy:
     src: '{{ item.src }}'
     dest: '{{ user.home }}/{{ item.path | regex_replace("\.j2$", "") }}'
     mode: '{{ item.mode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
-  with_filetree: '{{ home_dir_templates }}/{{ user.name }}'
+  with_filetree: '{{ users__home_dir_templates }}/{{ user.name }}'
   when: item.state == 'file' and not item.src.endswith('.j2')
 
-- name: 'set-up user home: templates'
+- name: '[{{ user.name }}] set-up user home: templates'
   template:
     src: '{{ item.src }}'
     dest: '{{ user.home }}/{{ item.path | regex_replace("\.j2$", "") }}'
     mode: '{{ item.mode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
-  with_filetree: '{{ home_dir_templates }}/{{ user.name }}'
+  with_filetree: '{{ users__home_dir_templates }}/{{ user.name }}'
   when: item.state == 'file' and item.src.endswith('.j2')
 
-- name: 'set-up user home: symlinks'
+- name: '[{{ user.name }}] set-up user home: symlinks'
   file:
     src: '{{ item.src }}'
     path: '{{ user.home }}/{{ item.path }}'
@@ -83,5 +76,5 @@
     state: link
     force: true
     follow: false
-  with_filetree: '{{ home_dir_templates }}/{{ user.name }}'
+  with_filetree: '{{ users__home_dir_templates }}/{{ user.name }}'
   when: item.state == 'link'
