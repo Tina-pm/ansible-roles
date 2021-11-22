@@ -1,4 +1,4 @@
-# vim: sw=2:sts=2
+# vim:ts=2:sw=2:et:ai:sts=2
 ---
 base_setup__disable_cloud_init: False
 base_setup__set_hostname: ~
