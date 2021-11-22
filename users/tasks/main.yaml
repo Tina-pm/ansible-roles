@@ -1,12 +1,29 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
+- name: sanity check
+  fail:
+    msg: 'Cannot remove the user running ansible ({{ ansible_user }})!'
+  when: >-
+    ansible_user is defined and ansible_user in (users__remove_users | d([]))
+
+- name: remove users
+  include_tasks: remove_user.yaml
+  loop: '{{ users__remove_users | d([]) }}'
+  loop_control:
+    loop_var: user_name
+
+- name: remove groups
+  group:
+    state: absent
+    name: '{{ item.name }}'
+  loop: '{{ users__remove_groups | d([]) }}'
 
 - name: create groups
   group:
     state: present
     name: '{{ item.name }}'
     system: '{{ item.system | d() | bool }}'
-  loop: '{{ users__create_groups }}'
+  loop: '{{ users__create_groups | d([]) }}'
 
 - name: create users
   include_tasks: user.yaml
@@ -28,7 +45,7 @@
       update_password: '{{ _user.update_password | d("on_create") }}'
       forward: '{{ _user.forward | d("") }}'
       authorized: '{{ _user.authorized | d([]) }}'
-  loop: '{{ users__create_users }}'
+  loop: '{{ users__create_users | d([]) }}'
   loop_control:
     loop_var: _user
   no_log: true
