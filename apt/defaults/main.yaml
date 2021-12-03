@@ -2,8 +2,18 @@
 ---
 apt__mirror: http://deb.debian.org/debian/
 apt__distro: bullseye
-apt__suites: main contrib non-free
+apt__components: main contrib non-free
 apt__install_recommends: false
+
+# List with custom sources.lists.
+apt__custom_sources: []
+#  - name: my_repo
+#    mirror: http://myhost/debian
+#    distro: ./
+#    components: main
+#    options:
+#      trusted: 'yes'
+#    include_source: false
 
 apt__packages_to_install: []
 apt__services_to_enable: []

@@ -13,6 +13,14 @@
   template:
     src: sources.list.j2
     dest: /etc/apt/sources.list
+  register: _apt_sources
+
+- name: configure custom APT sources
+  template:
+    src: sources.list.d.j2
+    dest: '/etc/apt/sources.list.d/{{ item.name }}.list'
+  loop: '{{ apt__custom_sources | d([]) }}'
+  register: _apt_custom_sources
 
 - name: configure installation of recommended packages
   template:
@@ -22,7 +30,8 @@
 - name: update package lists
   apt:
     update_cache: yes
-    cache_valid_time: 3600
+    cache_valid_time: '{{
+      0 if _apt_custom_sources.changed or _apt_sources.changed else 3600 }}'
 
 - name: update packages
   apt:
@@ -45,10 +54,10 @@
   service:
     name: '{{ item }}'
     enabled: yes
-  loop: '{{ apt__services_to_enable }}'
+  loop: '{{ apt__services_to_enable | d([]) }}'
 
 - name: start services
   service:
     name: '{{ item }}'
     state: started
-  loop: '{{ apt__services_to_start }}'
+  loop: '{{ apt__services_to_start | d([]) }}'

@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+{% with -%}
+{%- set options = (
+    '[' + item.options.items() | map('join', '=') | join(' ') + '] '
+    ) if item.get('options') else '' %}
+{%- set distro = item.distro | d('./') %}
+{%- set components = item.get('components') or '' %}
+{%- set components = components if components is string else components | join(' ') -%}
+
+deb {{ options -}} {{ item.mirror }} {{ distro }} {{ components }}
+{% if item.get('include_source') %}
+deb-src {{ options -}} {{ item.mirror }} {{ distro }} {{ components }}
+{%- endif %}
+{%- endwith %}
