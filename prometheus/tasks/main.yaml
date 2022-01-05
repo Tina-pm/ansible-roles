@@ -14,6 +14,24 @@
     mode: 0644
   notify: restart prometheus
 
+- name: create rules directory
+  file:
+    path: /etc/prometheus/rules
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: install rules files
+  copy:
+    src: '{{ item }}'
+    dest: '/etc/prometheus/rules/{{ item | basename }}'
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload prometheus
+  with_items: '{{ prometheus__rules }}'
+
 - name: configure prometheus
   template:
     src: prometheus.yml.j2
@@ -23,20 +41,6 @@
     mode: 0644
     validate: /usr/bin/promtool check config %s
   notify: reload prometheus
-
-- name: create rules directory
-  file:
-    path: /etc/prometheus/rules
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-
-#- name: configure prometheus rules
-#  template:
-#    src: prometheus.rules.j2
-#    dest: /etc/prometheus/prometheus.rules
-#  notify: reload prometheus
 
 - name: start and enable service
   service:

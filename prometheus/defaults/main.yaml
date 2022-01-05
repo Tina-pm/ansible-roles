@@ -13,6 +13,7 @@ prometheus__allow_from:
 prometheus__monitored_nodes: []
 prometheus__scrape_configs: []
 
+prometheus__rules: []
 prometheus__alertmanagers: []
 prometheus__monitored_prometheus: []
 prometheus__federated_prometheus: []

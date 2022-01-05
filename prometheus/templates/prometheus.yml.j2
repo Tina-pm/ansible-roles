@@ -8,8 +8,10 @@ global:
     monitor: '{{ ansible_hostname }}'
 
 rule_files:
-  - '/etc/prometheus/rules/*.yaml'
-  - '/etc/prometheus/rules/*.yml'
+  - '/etc/prometheus/rules/local.*.yml'
+{% for file in prometheus__rules %}
+  - '/etc/prometheus/rules/{{ file | basename }}'
+{% endfor %}
 {% if prometheus__alertmanagers %}
 
 alerting:
