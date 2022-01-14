@@ -1,0 +1,19 @@
+---
+# vim:ts=2:sw=2:et:ai:sts=2
+
+net__use_udev_persistent_rules: true
+net__interfaces:
+  lo:
+    allow: auto
+    config:
+      inet:
+        method: loopback
+#  eno1:
+#    allow: hotplug
+#    udev_persistent_rule:
+#      address: 3c:ec:ef:77:66:62
+#    config:
+#      inet:
+#        method: static
+#        address: 135.148.168.168/24
+#        gateway: 135.148.168.254

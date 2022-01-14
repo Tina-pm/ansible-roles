@@ -1,0 +1,17 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+- name: reload udev
+  service:
+    name: udev
+    state: reloaded
+  listen: reload and trigger udev
+
+- name: trigger udev
+  command:
+    cmd: udevadm trigger
+  listen: reload and trigger udev
+
+- name: restart networking
+  service:
+    name: networking
+    state: restarted

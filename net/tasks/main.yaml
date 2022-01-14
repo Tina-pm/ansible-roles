@@ -1,0 +1,22 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+- name: create udev persistent rules
+  template:
+    src: 70-persistent-net.rules.j2
+    dest: /etc/udev/rules.d/70-persistent-net.rules
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload and trigger udev
+  when: net__use_udev_persistent_rules | bool
+
+- name: configure interfaces
+  template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart networking
+  when: net__interfaces

@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+
+{% for iface, config in net__interfaces.items() %}
+{% set rule = config.get('udev_persistent_rule') %}
+{% if rule %}
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*",
+{%- for attr, value in rule.items() %}
+{{ ' ATTR{%s}=="%s",' % (attr, value) }}
+{%- endfor %}
+{{ ' NAME="%s"' % iface }}
+{% endif %}
+{% endfor %}

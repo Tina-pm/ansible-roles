@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+{% for iface in net__interfaces %}
+{% set allow = net__interfaces[iface].get('allow') %}
+{% set iface_cfg = net__interfaces[iface].get('config', {}) %}
+{% if allow %}
+
+allow-{{ allow }} {{ iface }}
+{%- endif -%}
+{% for family in iface_cfg %}
+{% set cfg = iface_cfg[family].copy() %}
+{% set method = cfg.pop('method', 'static') %}
+
+iface {{ iface }} {{ family }} {{ method }}
+{% for key in cfg %}
+    {{ key }} {{ cfg[key] }}
+{% endfor %}
+{% endfor %}
+{% endfor %}
