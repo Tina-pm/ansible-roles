@@ -5,7 +5,7 @@ apt__distro: bullseye
 apt__components: main contrib non-free
 apt__install_recommends: false
 
-# List with custom sources.lists.
+# List with custom sources.list.d files.
 apt__custom_sources: []
 #  - name: my_repo
 #    mirror: http://myhost/debian
@@ -14,6 +14,9 @@ apt__custom_sources: []
 #    options:
 #      trusted: 'yes'
 #    include_source: false
+
+# List with custom GPG keyring files to add to trusted.gpg.d.
+apt__trusted_keys: []
 
 apt__packages_to_install: []
 apt__services_to_enable: []

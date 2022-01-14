@@ -22,6 +22,16 @@
   loop: '{{ apt__custom_sources | d([]) }}'
   register: _apt_custom_sources
 
+- name: configure custom APT trusted keys
+  copy:
+    src: '{{ item }}'
+    dest: '/etc/apt/trusted.gpg.d/{{ item | basename }}'
+    owner: root
+    group: root
+    mode: 0644
+  loop: '{{ apt__trusted_keys | d([]) }}'
+  register: _apt_trusted_keys
+
 - name: configure installation of recommended packages
   template:
     src: 02recommends.j2
@@ -31,7 +41,10 @@
   apt:
     update_cache: yes
     cache_valid_time: '{{
-      0 if _apt_custom_sources.changed or _apt_sources.changed else 3600 }}'
+      0 if (
+        _apt_custom_sources.changed or _apt_sources.changed or
+        _apt_trusted_keys.changed
+      ) else 3600 }}'
 
 - name: update packages
   apt:
