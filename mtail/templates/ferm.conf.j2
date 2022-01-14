@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+domain (ip ip6) table filter chain INPUT {
+    proto tcp
+{% if mtail__allow_from %}
+{% set saddr = mtail__allow_from %}
+{% set saddr = saddr if saddr is string else saddr | join(' ') %}
+    saddr @ipfilter(({{ saddr}}))
+{% endif %}
+    dport {{ mtail__listen_port }} ACCEPT;
+}

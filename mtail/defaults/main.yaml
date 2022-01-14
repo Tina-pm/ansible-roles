@@ -1,0 +1,12 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+mtail__listen_address: ''
+mtail__listen_port: 3903
+mtail__logs: []
+mtail__extra_args:
+mtail__install_ferm_svc: false
+mtail__allow_from:
+
+# Program files to copy.
+mtail__programs: []

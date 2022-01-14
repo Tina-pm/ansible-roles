@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+# List of files to monitor (mandatory), can include file globs.
+LOGS='{{ ','.join(mtail__logs) }}'
+
+## Metrics exporting.
+
+# HTTP port to listen on. (default "3903")
+PORT={{ mtail__listen_port }}
+
+# Address to bind to. (defaults to '::')
+HOST={{ mtail__listen_address }}
+
+# Extra command-line arguments to pass to the server.
+EXTRA_ARGS='{{ mtail__extra_args }}'

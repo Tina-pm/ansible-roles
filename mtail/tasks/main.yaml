@@ -1,0 +1,42 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+- name: install mtail
+  package:
+    name: mtail
+    state: latest
+  notify: restart mtail
+
+- name: configure mtail
+  template:
+    src: default.j2
+    dest: /etc/default/mtail
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart mtail
+
+- name: install mtail programs
+  copy:
+    src: '{{ item }}'
+    dest: '/etc/mtail/{{ item | basename }}'
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart mtail
+  with_items: '{{ mtail__programs }}'
+
+- name: start and enable service
+  service:
+    name: mtail
+    state: started
+    enabled: yes
+
+- name: install ferm configuration
+  template:
+    src: ferm.conf.j2
+    dest: /etc/ferm/ferm.d/mtail.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload ferm
+  when: mtail__install_ferm_svc | bool
