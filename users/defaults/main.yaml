@@ -5,6 +5,7 @@ users__create_users: []
 users__create_groups: []
 users__home_dir_templates: home_templates/
 users__root_mail_forward: ~
+users__force_update_password: false
 
 users__remove_users_files: true
 users__remove_users: []

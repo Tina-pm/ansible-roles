@@ -42,7 +42,10 @@
       shell: '{{
         _user.shell | d("/bin/false" if _user.get("system") else "/bin/bash") }}'
       generate_ssh_key: '{{ _user.generate_ssh_key | d() | bool }}'
-      update_password: '{{ _user.update_password | d("on_create") }}'
+      update_password: '{{
+        "always" if users__force_update_password else (
+          _user.update_password | d("on_create")
+        ) }}'
       forward: '{{ _user.forward | d("") }}'
       authorized: '{{ _user.authorized | d([]) }}'
   loop: '{{ users__create_users | d([]) }}'
