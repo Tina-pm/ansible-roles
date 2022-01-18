@@ -18,6 +18,9 @@ apt__custom_sources: []
 # List with custom GPG keyring files to add to trusted.gpg.d.
 apt__trusted_keys: []
 
+# List with custom preference files to add to preferences.d.
+apt__custom_preferences: []
+
 apt__packages_to_install: []
 apt__services_to_enable: []
 apt__services_to_start: []
