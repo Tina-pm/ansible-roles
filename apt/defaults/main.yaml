@@ -25,6 +25,8 @@ apt__packages_to_install: []
 apt__services_to_enable: []
 apt__services_to_start: []
 
+# Run `apt update` even if cache is recent.
+apt__force_run_update: false
 # Run `apt dist-upgrade` if true.
 apt__run_upgrade: false
 # Run `apt autoremove` if true.

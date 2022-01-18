@@ -52,6 +52,7 @@
     update_cache: yes
     cache_valid_time: '{{
       0 if (
+        apt__force_run_update or
         _apt_custom_sources.changed or _apt_sources.changed or
         _apt_trusted_keys.changed or _apt_custom_preferences.changed
       ) else 3600 }}'
