@@ -1,7 +1,10 @@
 # {{ ansible_managed }}
-{% for iface in net__interfaces %}
-{% set allow = net__interfaces[iface].get('allow') %}
-{% set iface_cfg = net__interfaces[iface].get('config', {}) %}
+{% with %}
+{% set interfaces = net__interfaces if 'lo' in net__interfaces else
+    (net__lo_config | combine(net__interfaces)) %}
+{% for iface in interfaces %}
+{% set allow = interfaces[iface].get('allow') %}
+{% set iface_cfg = interfaces[iface].get('config', {}) %}
 {% if allow %}
 
 allow-{{ allow }} {{ iface }}
@@ -23,3 +26,4 @@ iface {{ iface }} {{ family }} {{ method }}
 {% endfor %}
 {% endfor %}
 {% endfor %}
+{% endwith %}

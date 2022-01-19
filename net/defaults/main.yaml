@@ -3,11 +3,6 @@
 
 net__use_udev_persistent_rules: true
 net__interfaces:
-  lo:
-    allow: auto
-    config:
-      inet:
-        method: loopback
 #  eno1:
 #    allow: hotplug
 #    udev_persistent_rule:
@@ -19,3 +14,9 @@ net__interfaces:
 #        gateway: 135.148.168.254
 #        post-up:
 #          - ip addr flush
+net__lo_config:
+  lo:
+    allow: auto
+    config:
+      inet:
+        method: loopback
