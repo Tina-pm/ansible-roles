@@ -8,7 +8,7 @@
 
 - name: trigger udev
   command:
-    cmd: udevadm trigger
+    cmd: udevadm trigger -c add -s net
   listen: reload and trigger udev
 
 - name: restart networking
