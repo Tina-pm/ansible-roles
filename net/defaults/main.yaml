@@ -17,3 +17,5 @@ net__interfaces:
 #        method: static
 #        address: 135.148.168.168/24
 #        gateway: 135.148.168.254
+#        post-up:
+#          - ip addr flush
