@@ -10,6 +10,7 @@
   command:
     cmd: udevadm trigger -c add -s net
   listen: reload and trigger udev
+  notify: restart networking
 
 - name: restart networking
   service:
