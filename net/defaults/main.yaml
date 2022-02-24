@@ -1,7 +1,7 @@
 ---
 # vim:ts=2:sw=2:et:ai:sts=2
 
-net__use_udev_persistent_rules: true
+net__use_udev_persistent_rules: false
 net__interfaces:
 #  eno1:
 #    allow: hotplug

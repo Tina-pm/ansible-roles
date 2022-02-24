@@ -14,10 +14,10 @@ allow-{{ allow }} {{ iface }}
 {% set method = cfg.pop('method', 'static') %}
 
 iface {{ iface }} {{ family }} {{ method }}
-{% for cfg_key, cfg_value in cfg.items() %}
+{% for cfg_key, cfg_value in cfg.items() if cfg_value not in ('', none) %}
 {% if cfg_key in ('pre-up', 'up', 'post-up', 'pre-down', 'down', 'post-down') %}
 {% set cfg_value = cfg_value.split('\n') if cfg_value is string else cfg_value %}
-{% for value in cfg_value %}
+{% for value in cfg_value if value not in ('', none) %}
     {{ cfg_key }} {{ value }}
 {% endfor %}
 {% else %}

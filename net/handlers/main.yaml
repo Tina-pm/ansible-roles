@@ -4,15 +4,18 @@
   service:
     name: udev
     state: reloaded
-  listen: reload and trigger udev
+  listen: reload udev and reconfigure network
 
-- name: trigger udev
+- name: reconfigure network
   command:
-    cmd: udevadm trigger -c add -s net
-  listen: reload and trigger udev
-  notify: restart networking
-
-- name: restart networking
-  service:
-    name: networking
-    state: restarted
+    cmd: |
+      bash -c '
+        ifdown --all --force;
+        for dev in `ip -o link show | sed -n "s/[0-9]*: \(\S\+\):.*/\1/p"`; do
+          ip link set dev $dev down;
+        done;
+        udevadm trigger -c add -s net;
+        ip addr flush scope global;
+        ifup --all --force;
+      '
+  listen: reload udev and reconfigure network
