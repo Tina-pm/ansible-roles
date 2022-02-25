@@ -8,7 +8,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: reload udev and reconfigure network
+  notify: restart udev and reconfigure network
   when: net__use_udev_persistent_rules | bool
 
 - name: configure interfaces
