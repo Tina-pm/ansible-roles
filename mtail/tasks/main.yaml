@@ -23,7 +23,7 @@
     group: root
     mode: 0644
   notify: restart mtail
-  with_items: '{{ mtail__programs }}'
+  with_items: '{{ mtail__programs or [] }}'
 
 - name: start and enable service
   service:
