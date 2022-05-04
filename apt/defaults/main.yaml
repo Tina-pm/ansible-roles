@@ -5,21 +5,27 @@ apt__distro: bullseye
 apt__components: main contrib non-free
 apt__install_recommends: false
 
-# List with custom sources.list.d files.
-apt__custom_sources: []
-#  - name: my_repo
+# Dict with custom sources.list.d files.
+# Use an empty value to remove the source.
+apt__custom_sources: {}
+#  my_repo:
 #    mirror: http://myhost/debian
 #    distro: ./
 #    components: main
 #    options:
 #      trusted: 'yes'
 #    include_source: false
+#  deleted: ~
 
-# List with custom GPG keyring files to add to trusted.gpg.d.
-apt__trusted_keys: []
+# Dict with custom trusted keys (as strings containing GPG keyring contents) to
+# add to trusted.gpg.d.
+# Use an empty value to remove the trusted key file.
+apt__trusted_keys: {}
 
-# List with custom preference files to add to preferences.d.
-apt__custom_preferences: []
+# Dict with custom preferences (as strings containing the file contents) to add
+# to preferences.d.
+# Use an empty value to remove the preferences file.
+apt__custom_preferences: {}
 
 apt__packages_to_install: []
 apt__services_to_enable: []

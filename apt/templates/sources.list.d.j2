@@ -1,14 +1,15 @@
 # {{ ansible_managed }}
 {% with -%}
+{%- set repo = item.value %}
 {%- set options = (
-    '[' + item.options.items() | map('join', '=') | join(' ') + '] '
-    ) if item.get('options') else '' %}
-{%- set distro = item.distro | d('./') %}
-{%- set components = item.get('components') or '' %}
+    '[' + repo.options.items() | map('join', '=') | join(' ') + '] '
+    ) if repo.get('options') else '' %}
+{%- set distro = repo.distro | d('./') %}
+{%- set components = repo.get('components') or '' %}
 {%- set components = components if components is string else components | join(' ') -%}
 
-deb {{ options -}} {{ item.mirror }} {{ distro }} {{ components }}
-{% if item.get('include_source') %}
-deb-src {{ options -}} {{ item.mirror }} {{ distro }} {{ components }}
+deb {{ options -}} {{ repo.mirror }} {{ distro }} {{ components }}
+{% if repo.get('include_source') %}
+deb-src {{ options -}} {{ repo.mirror }} {{ distro }} {{ components }}
 {%- endif %}
 {%- endwith %}

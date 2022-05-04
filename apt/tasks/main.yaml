@@ -18,29 +18,56 @@
 - name: configure custom APT sources
   template:
     src: sources.list.d.j2
-    dest: '/etc/apt/sources.list.d/{{ item.name }}.list'
-  loop: '{{ apt__custom_sources | d([]) }}'
+    dest: '/etc/apt/sources.list.d/{{ item.key }}.list'
+  loop: '{{ apt__custom_sources | d({}) | dict2items }}'
+  when: item.value
   register: _apt_custom_sources
+
+- name: delete custom APT sources
+  file:
+    path: '/etc/apt/sources.list.d/{{ item.key }}.list'
+    state: absent
+  loop: '{{ apt__custom_sources | d({}) | dict2items }}'
+  when: not item.value
+  register: _apt_custom_sources_rm
 
 - name: configure custom APT trusted keys
   copy:
-    src: '{{ item }}'
-    dest: '/etc/apt/trusted.gpg.d/{{ item | basename }}'
+    dest: '/etc/apt/trusted.gpg.d/{{ item.key }}'
+    content: '{{ item.value }}'
     owner: root
     group: root
     mode: 0644
-  loop: '{{ apt__trusted_keys | d([]) }}'
+  loop: '{{ apt__trusted_keys | d({}) | dict2items }}'
+  when: item.value
   register: _apt_trusted_keys
+
+- name: delete custom APT trusted keys
+  file:
+    path: '/etc/apt/trusted.gpg.d/{{ item.key }}'
+    state: absent
+  loop: '{{ apt__trusted_keys | d({}) | dict2items }}'
+  when: not item.value
+  register: _apt_trusted_keys_rm
 
 - name: configure custom APT preferences
   copy:
-    src: '{{ item }}'
-    dest: '/etc/apt/preferences.d/{{ item | basename }}'
+    dest: '/etc/apt/preferences.d/{{ item.key }}'
+    content: '{{ item.value }}'
     owner: root
     group: root
     mode: 0644
-  loop: '{{ apt__custom_preferences | d([]) }}'
+  loop: '{{ apt__custom_preferences | d({}) | dict2items }}'
+  when: item.value
   register: _apt_custom_preferences
+
+- name: delete custom APT preferences
+  file:
+    path: '/etc/apt/preferences.d/{{ item.key }}'
+    state: absent
+  loop: '{{ apt__custom_preferences | d({}) | dict2items }}'
+  when: not item.value
+  register: _apt_custom_preferences_rm
 
 - name: configure installation of recommended packages
   template:
@@ -52,9 +79,13 @@
     update_cache: yes
     cache_valid_time: '{{
       0 if (
-        apt__force_run_update or
-        _apt_custom_sources.changed or _apt_sources.changed or
-        _apt_trusted_keys.changed or _apt_custom_preferences.changed
+        apt__force_run_update or _apt_sources.changed or
+        _apt_custom_sources.changed or
+        _apt_custom_sources_rm.changed or
+        _apt_trusted_keys.changed or
+        _apt_trusted_keys_rm.changed or
+        _apt_custom_preferences.changed or
+        _apt_custom_preferences_rm.changed
       ) else 3600 }}'
 
 - name: update packages
