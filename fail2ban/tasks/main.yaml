@@ -38,3 +38,4 @@
     group: root
     mode: 0644
   notify: reload ferm
+  when: fail2ban__install_ferm_svc | bool

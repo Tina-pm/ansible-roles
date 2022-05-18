@@ -20,3 +20,5 @@ fail2ban__path_overrides:
 #  apache_access_log:
 #    - /var/log/apache2/access.log
 #    - /var/log/apache2/*/access.log
+
+fail2ban__install_ferm_svc: false
