@@ -40,3 +40,4 @@
     group: root
     mode: 0644
   notify: reload ferm
+  when: simple_bind__install_ferm_svc | bool

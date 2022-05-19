@@ -28,3 +28,5 @@ simple_bind__forward_zones:
 #    forward: only
 #    extra_conf:
 #      - 'foo: bar'
+
+simple_bind__install_ferm_svc: false
