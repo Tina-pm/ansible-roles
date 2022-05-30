@@ -33,7 +33,7 @@
 
 - name: configure custom APT trusted keys
   copy:
-    dest: '/etc/apt/trusted.gpg.d/{{ item.key }}'
+    dest: '/etc/apt/trusted.gpg.d/{{ item.key }}.gpg'
     content: '{{ item.value }}'
     owner: root
     group: root
@@ -44,7 +44,7 @@
 
 - name: delete custom APT trusted keys
   file:
-    path: '/etc/apt/trusted.gpg.d/{{ item.key }}'
+    path: '/etc/apt/trusted.gpg.d/{{ item.key }}.gpg'
     state: absent
   loop: '{{ apt__trusted_keys | d({}) | dict2items }}'
   when: not item.value
