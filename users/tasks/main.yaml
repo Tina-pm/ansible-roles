@@ -15,7 +15,7 @@
 - name: remove groups
   group:
     state: absent
-    name: '{{ item.name }}'
+    name: '{{ item }}'
   loop: '{{ users__remove_groups | d([]) }}'
 
 - name: create groups
