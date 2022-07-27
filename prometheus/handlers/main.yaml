@@ -9,3 +9,8 @@
   service:
     name: prometheus
     state: reloaded
+
+- name: reload ferm
+  service:
+    name: ferm
+    state: reloaded

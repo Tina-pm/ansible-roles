@@ -4,3 +4,8 @@
   service:
     name: mtail
     state: restarted
+
+- name: reload ferm
+  service:
+    name: ferm
+    state: reloaded
