@@ -49,7 +49,7 @@
 - name: '[{{ user.name }}] set-up user home: normal files'
   copy:
     src: '{{ item.src }}'
-    dest: '{{ user.home }}/{{ item.path | regex_replace("\.j2$", "") }}'
+    dest: '{{ user.home }}/{{ item.path }}'
     mode: '{{ item.mode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'

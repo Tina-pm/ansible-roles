@@ -29,8 +29,26 @@
     owner: root
     group: root
     mode: 0644
+    validate: /usr/bin/promtool check rules %s
   notify: reload prometheus
   with_items: '{{ prometheus__rules }}'
+  when: not item.endswith('.j2')
+
+- name: install rules templates
+  template:
+    src: '{{ item }}'
+    dest: '/etc/prometheus/rules/{{
+      item | basename | regex_replace("\.j2$", "") }}'
+    # Avoid clashes with prometheus template language.
+    variable_start_string: '{='
+    variable_end_string: '=}'
+    owner: root
+    group: root
+    mode: 0644
+    validate: /usr/bin/promtool check rules %s
+  notify: reload prometheus
+  with_items: '{{ prometheus__rules }}'
+  when: item.endswith('.j2')
 
 - name: configure prometheus
   template:

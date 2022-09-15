@@ -10,7 +10,7 @@ global:
 rule_files:
   - '/etc/prometheus/rules/local.*.yml'
 {% for file in prometheus__rules %}
-  - '/etc/prometheus/rules/{{ file | basename }}'
+  - '/etc/prometheus/rules/{{ file | basename | regex_replace("\.j2$", "") }}'
 {% endfor %}
 {% if prometheus__alertmanagers %}
 
