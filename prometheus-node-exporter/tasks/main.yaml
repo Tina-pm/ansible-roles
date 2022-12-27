@@ -11,10 +11,14 @@
     sed -n 's/.* version \([0-9.]\+[0-9]\).*/\1/p'
   register: node_exporter__version_check
   changed_when: False
+  # Run normally even in check mode.
+  check_mode: no
 
 - name: find installed version
   set_fact:
     node_exporter__version: '{{ node_exporter__version_check.stdout | d("0") }}'
+  # Run normally even in check mode.
+  check_mode: no
 
 - name: configure node_exporter
   template:
