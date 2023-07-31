@@ -1,8 +1,13 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-apt__mirror: http://deb.debian.org/debian/
-apt__distro: bullseye
-apt__components: main contrib non-free
+
+apt__distro: '{{ apt__default_distro }}'
+apt__mirror: '{{ apt__default_mirror }}'
+apt__components: '{{ apt__default_components }}'
+
+apt__security_distro: '{{ apt__default_security_distro }}'
+apt__security_mirror: '{{ apt__default_security_mirror }}'
+
 apt__install_recommends: false
 
 # Dict with custom sources.list.d files.
@@ -39,3 +44,7 @@ apt__run_upgrade: false
 apt__run_autoremove: false
 # Add `--purge` to apt invocations.
 apt__purge_removed: false
+
+# Use distro information to determine correct Python interpreter.
+ansible_python_interpreter: |-
+  {{ '/usr/bin/python3' if apt__python3_is_default else '/usr/bin/python' }}

@@ -1,23 +1,29 @@
 # {{ ansible_managed }}
 
-deb {{ apt__mirror }} {{ apt__distro }} {{ apt__components }}
-# deb-src {{ apt__mirror }} {{ apt__distro }} {{ apt__components }}
+{% with -%}
+{%- set components = apt__components or '' %}
+{%- set components = components if components is string else components | join(' ') -%}
 
-{% if apt__distro in ("stretch", "buster") %}
-deb http://security.debian.org/debian-security {{ apt__distro }}/updates {{ apt__components }}
-# deb-src http://security.debian.org/debian-security {{ apt__distro }}/updates {{ apt__components }}
-{% elif '/debian' in apt__mirror %}
-deb http://security.debian.org/debian-security {{ apt__distro }}-security {{ apt__components }}
-# deb-src http://security.debian.org/debian-security {{ apt__distro }}-security {{ apt__components }}
-{% else %}
-deb {{ apt__mirror }} {{ apt__distro }}-security {{ apt__components }}
-# deb-src {{ apt__mirror }} {{ apt__distro }}-security {{ apt__components }}
+deb {{ apt__mirror }} {{ apt__distro }} {{ components }}
+# deb-src {{ apt__mirror }} {{ apt__distro }} {{ components }}
+{% if apt__distro_has_security %}
+
+deb {{ apt__security_mirror }} {{ apt__security_distro }} {{ components }}
+# deb-src {{ apt__security_mirror }} {{ apt__security_distro }} {{ components }}
 {% endif %}
+{% if apt__distro_has_updates %}
 
-{% if apt__distro not in ("sid", "unstable", "testing") %}
-deb {{ apt__mirror }} {{ apt__distro }}-updates {{ apt__components }}
-# deb-src {{ apt__mirror }} {{ apt__distro }}-updates {{ apt__components }}
-
-deb {{ apt__mirror }} {{ apt__distro }}-backports {{ apt__components }}
-# deb-src {{ apt__mirror }} {{ apt__distro }}-backports {{ apt__components }}
+deb {{ apt__mirror }} {{ apt__distro }}-updates {{ components }}
+# deb-src {{ apt__mirror }} {{ apt__distro }}-updates {{ components }}
 {% endif %}
+{% if apt__distro_has_proposed_updates %}
+
+deb {{ apt__mirror }} {{ apt__distro }}-proposed-updates {{ components }}
+# deb-src {{ apt__mirror }} {{ apt__distro }}-proposed-updates {{ components }}
+{% endif %}
+{% if apt__distro_has_backports %}
+
+deb {{ apt__mirror }} {{ apt__distro }}-backports {{ components }}
+# deb-src {{ apt__mirror }} {{ apt__distro }}-backports {{ components }}
+{% endif %}
+{%- endwith %}
