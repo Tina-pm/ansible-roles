@@ -1,0 +1,25 @@
+# {{ ansible_managed }}
+
+[Init]
+
+# Place all ban rules in this chain, which is hooked into ferm.
+chain = fail2ban
+
+# Override actions to create the chain on start-up.
+actionstart = { <iptables> -C <chain> -j <returntype> >/dev/null 2>&1; } || \
+              { <iptables> -N <chain> || true; <iptables> -A <chain> -j <returntype>; }
+              { <iptables> -C f2b-<name> -j <returntype> >/dev/null 2>&1; } || \
+              { <iptables> -N f2b-<name> || true; <iptables> -A f2b-<name> -j <returntype>; }
+              <_ipt_add_rules>
+
+actionstop = <_ipt_del_rules>
+             <actionflush>
+             <iptables> -X f2b-<name>
+
+# Override the paths to the iptables executables to ensure the right tool is
+# used independently of the Debian `alternatives` system.
+iptables = iptables-legacy <lockingopt>
+
+[Init?family=inet6]
+
+iptables = ip6tables-legacy <lockingopt>

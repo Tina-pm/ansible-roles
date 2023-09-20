@@ -1,7 +1,5 @@
 # {{ ansible_managed }}
 
-[DEFAULT]
-chain = fail2ban
 {% for jail, config in (fail2ban__jail_config or {}).items() %}
 
 [{{ jail }}]

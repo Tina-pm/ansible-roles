@@ -12,7 +12,7 @@
     state: started
     enabled: yes
 
-- name: place jail.local file
+- name: place jail configuration file
   template:
     src: jail.local.j2
     dest: /etc/fail2ban/jail.local
@@ -21,10 +21,19 @@
     mode: 0644
   notify: restart fail2ban
 
-- name: place paths-overrides.local file
+- name: place path overrides configuration file
   template:
     src: paths-overrides.local.j2
     dest: /etc/fail2ban/paths-overrides.local
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart fail2ban
+
+- name: place iptables action configuration file
+  template:
+    src: iptables.local.j2
+    dest: /etc/fail2ban/action.d/iptables.local
     owner: root
     group: root
     mode: 0644
