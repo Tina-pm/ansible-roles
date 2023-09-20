@@ -1,11 +1,11 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: restart fail2ban
+- name: fail2ban__restart_fail2ban
   service:
     name: fail2ban
     state: restarted
 
-- name: reload ferm
+- name: fail2ban__reload_ferm
   service:
     name: ferm
     state: reloaded

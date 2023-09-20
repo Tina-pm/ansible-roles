@@ -11,4 +11,4 @@
     dest: /etc/aliases
     state: absent
     regexp: '^{{ user_name }}:.*'
-  notify: run newaliases
+  notify: users__run_newaliases

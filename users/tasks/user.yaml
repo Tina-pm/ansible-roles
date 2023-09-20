@@ -24,7 +24,7 @@
     line: '{{ user.name }}: {{ user.forward }}'
     regexp: '^{{ user.name }}:.*'
     state: '{{ "present" if user.forward else "absent" }}'
-  notify: run newaliases
+  notify: users__run_newaliases
 
 - name: '[{{ user.name }}] set SSH authorized keys'
   authorized_key:

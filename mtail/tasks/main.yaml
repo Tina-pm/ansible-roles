@@ -4,7 +4,7 @@
   package:
     name: mtail
     state: latest
-  notify: restart mtail
+  notify: mtail__restart_mtail
 
 - name: configure mtail
   template:
@@ -13,7 +13,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart mtail
+  notify: mtail__restart_mtail
 
 - name: install mtail programs
   copy:
@@ -22,7 +22,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart mtail
+  notify: mtail__restart_mtail
   with_items: '{{ mtail__programs or [] }}'
 
 - name: start and enable service
@@ -38,5 +38,5 @@
     owner: root
     group: root
     mode: 0644
-  notify: reload ferm
+  notify: mtail__reload_ferm
   when: mtail__install_ferm_svc | bool

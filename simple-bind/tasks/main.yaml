@@ -30,7 +30,7 @@
     - named.conf
     - named.conf.options
     - named.conf.local
-  notify: reload bind
+  notify: simple_bind__reload_bind
 
 - name: place ferm config file
   template:
@@ -39,5 +39,5 @@
     owner: root
     group: root
     mode: 0644
-  notify: reload ferm
+  notify: simple_bind__reload_ferm
   when: simple_bind__install_ferm_svc | bool

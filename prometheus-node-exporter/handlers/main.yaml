@@ -1,11 +1,11 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: restart node_exporter
+- name: node_exporter__restart_node_exporter
   service:
     name: prometheus-node-exporter
     state: restarted
 
-- name: reload ferm
+- name: node_exporter__reload_ferm
   service:
     name: ferm
     state: reloaded

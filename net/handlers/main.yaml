@@ -1,12 +1,12 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: restart udev
+- name: net__restart_udev
   service:
     name: udev
     state: restarted
-  listen: restart udev and reconfigure network
+  listen: net__restart_all
 
-- name: reconfigure network
+- name: net__reconfigure_network
   command:
     cmd: |
       bash -c '
@@ -18,4 +18,4 @@
         ip addr flush scope global;
         ifup --all --force;
       '
-  listen: restart udev and reconfigure network
+  listen: net__restart_all

@@ -19,7 +19,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart fail2ban
+  notify: fail2ban__restart_fail2ban
 
 - name: place path overrides configuration file
   template:
@@ -28,7 +28,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart fail2ban
+  notify: fail2ban__restart_fail2ban
 
 - name: place iptables action configuration file
   template:
@@ -37,7 +37,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart fail2ban
+  notify: fail2ban__restart_fail2ban
 
 - name: place ferm config file
   template:
@@ -46,5 +46,5 @@
     owner: root
     group: root
     mode: 0644
-  notify: reload ferm
+  notify: fail2ban__reload_ferm
   when: fail2ban__install_ferm_svc | bool

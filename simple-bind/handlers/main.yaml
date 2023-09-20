@@ -1,11 +1,11 @@
 # vim: sw=2:sts=2
 ---
-- name: reload bind
+- name: simple_bind__reload_bind
   service:
     name: bind9
     state: reloaded
 
-- name: reload ferm
+- name: simple_bind__reload_ferm
   service:
     name: ferm
     state: reloaded

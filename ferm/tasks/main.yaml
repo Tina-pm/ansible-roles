@@ -33,7 +33,7 @@
     line: 'CACHE=no'
     regexp: '^CACHE[ =]'
     state: 'present'
-  notify: reload ferm
+  notify: ferm__reload_ferm
 
 - name: create ferm.d directory
   file:
@@ -50,7 +50,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: reload ferm
+  notify: ferm__reload_ferm
 
 - name: place service config files
   template:
@@ -59,7 +59,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: reload ferm
+  notify: ferm__reload_ferm
   with_dict: '{{ ferm__services }}'
 
 - name: find obsolete service config files
@@ -76,7 +76,7 @@
     state: absent
   with_items: '{{ ferm__config_files.stdout_lines }}'
   when: item not in ferm__services
-  notify: reload ferm
+  notify: ferm__reload_ferm
 
 - name: place custom config files
   copy:
@@ -85,7 +85,7 @@
     owner: root
     group: root
     mode: 0644
-  notify: reload ferm
+  notify: ferm__reload_ferm
   with_dict: '{{ ferm__custom_configs }}'
 
 - name: find obsolete custom config files
@@ -102,7 +102,7 @@
     state: absent
   with_items: '{{ ferm__config_files.stdout_lines }}'
   when: item not in ferm__custom_configs
-  notify: reload ferm
+  notify: ferm__reload_ferm
 
 - name: place blacklist config file
   copy:
@@ -114,7 +114,7 @@
       domain (ip ip6) table filter chain blacklist
           saddr @ipfilter(({{ saddr }}))
           REJECT;
-  notify: reload ferm
+  notify: ferm__reload_ferm
   when: ferm__blacklist is defined and ferm__blacklist
   vars:
     saddr: >-

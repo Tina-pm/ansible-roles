@@ -56,7 +56,7 @@
     insertafter: '^#relayhost'
     state: present
   when: base_setup__mail_relay is defined and base_setup__mail_relay
-  notify: reload postfix
+  notify: base_setup__reload_postfix
 
 - name: bash defaults
   template:
