@@ -5,7 +5,7 @@ global:
   scrape_timeout:      20s
 
   external_labels:
-    monitor: '{{ ansible_hostname }}'
+    monitor: '{{ inventory_hostname }}'
 
 rule_files:
   - '/etc/prometheus/rules/local.*.yml'
