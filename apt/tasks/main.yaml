@@ -109,10 +109,10 @@
   service:
     name: '{{ item }}'
     enabled: yes
-  loop: '{{ apt__services_to_enable | d([]) }}'
+  loop: '{{ apt__services_to_enable or [] }}'
 
 - name: start services
   service:
     name: '{{ item }}'
     state: started
-  loop: '{{ apt__services_to_start | d([]) }}'
+  loop: '{{ apt__services_to_start or [] }}'
