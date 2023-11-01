@@ -1,2 +1,23 @@
+# vim:ts=2:sw=2:et:ai:sts=2
 ---
-_hostname_short: '{{ base_setup__set_hostname.split(".")[0] if base_setup__set_hostname }}'
+_base_setup__hostname_short: |-
+  {{
+    base_setup__set_hostname.split(".")[0]
+    if base_setup__set_hostname else
+    base_setup__set_hostname
+  }}
+
+_base_setup__pkg_install: |-
+  {{
+    (['dbus'] if base_setup__set_hostname else []) +
+    (['sudo'] if base_setup__setup_sudo else []) +
+    (['postfix'] if base_setup__setup_postfix else []) +
+    (base_setup__pkg_install or [])
+  }}
+
+_base_setup__svc_enable_start: |-
+  {{
+    (['dbus'] if base_setup__set_hostname else []) +
+    (['postfix'] if base_setup__setup_postfix else []) +
+    (base_setup__svc_enable_start or [])
+  }}

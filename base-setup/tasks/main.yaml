@@ -14,20 +14,6 @@
     access_time: preserve
   when: base_setup__disable_cloud_init | bool and _cloud_init_cfg.stat.exists
 
-- name: set hostname
-  hostname:
-    name: '{{ _hostname_short }}'
-  when: base_setup__set_hostname and _hostname_short
-
-- name: set FDQN
-  lineinfile:
-    dest: /etc/hosts
-    line: 127.0.1.1 {{ base_setup__set_hostname }} {{ _hostname_short }}
-    regexp: '^127\.0\.1\.1\s'
-    insertafter: '^127\.0\.0\.1'
-    state: present
-  when: base_setup__set_hostname and _hostname_short
-
 - name: setup APT, upgrade installed packages, and install base packages
   include_role:
     name: apt
@@ -35,18 +21,25 @@
     apt__run_upgrade: true
     apt__run_autoremove: true
     apt__purge_removed: true
-    apt__packages_to_install: '{{
-      ["postfix", "sudo"] +
-      base_setup__pkg_install | d([])
-      }}'
-    apt__services_to_enable: '{{
-      ["postfix"] +
-      base_setup__svc_enable_start | d([])
-      }}'
-    apt__services_to_start: '{{
-      ["postfix"] +
-      base_setup__svc_enable_start | d([])
-      }}'
+    apt__packages_to_install: '{{ _base_setup__pkg_install }}'
+    apt__services_to_enable: '{{ _base_setup__svc_enable_start }}'
+    apt__services_to_start: '{{ _base_setup__svc_enable_start }}'
+
+# Needs to be executed after `dbus` is installed and started.
+- name: set hostname
+  hostname:
+    name: '{{ _base_setup__hostname_short }}'
+  when: base_setup__set_hostname
+
+- name: set FDQN
+  lineinfile:
+    dest: /etc/hosts
+    line: |-
+      127.0.1.1 {{ base_setup__set_hostname }} {{ _base_setup__hostname_short }}
+    regexp: '^127\.0\.1\.1\s'
+    insertafter: '^127\.0\.0\.1'
+    state: present
+  when: base_setup__set_hostname
 
 - name: set mail relay
   lineinfile:
@@ -55,13 +48,8 @@
     regexp: '^relayhost\s*='
     insertafter: '^#relayhost'
     state: present
-  when: base_setup__mail_relay is defined and base_setup__mail_relay
+  when: base_setup__mail_relay and base_setup__setup_postfix
   notify: base_setup__reload_postfix
-
-- name: bash defaults
-  template:
-    src: bash.bashrc.j2
-    dest: /etc/bash.bashrc
 
 - name: 'set-up sudoers: sudo group'
   lineinfile:
@@ -70,6 +58,7 @@
       regexp: '^%sudo\s'
       line: '%sudo ALL=(ALL) ALL'
       validate: 'visudo -cf %s'
+  when: base_setup__setup_sudo
 
 - name: 'set-up sudoers: sudo-nopw group'
   lineinfile:
@@ -78,14 +67,12 @@
       regexp: '^%sudo-nopw\s'
       line: '%sudo-nopw ALL=(ALL) NOPASSWD: ALL'
       validate: 'visudo -cf %s'
+  when: base_setup__setup_sudo
 
-#- name: 'set-up sudoers: notty'
-#  # This is needed for pipelining, rsync, etc.
-#  lineinfile:
-#      dest: /etc/sudoers
-#      state: absent
-#      regexp: '^Defaults\s+requiretty'
-#      validate: 'visudo -cf %s'
+- name: bash defaults
+  template:
+    src: bash.bashrc.j2
+    dest: /etc/bash.bashrc
 
 - name: create users
   include_role:
