@@ -1,7 +1,9 @@
 # {{ ansible_managed }}
 
-chain fail2ban;
-chain INPUT-pre jump fail2ban;
+domain (ip ip6) table filter {
+    chain fail2ban;
+    chain INPUT-pre jump fail2ban;
+}
 
 @hook post "type fail2ban-server > /dev/null && (fail2ban-client ping > /dev/null && fail2ban-client reload > /dev/null || true) || true";
 @hook flush "type fail2ban-server > /dev/null && (fail2ban-client ping > /dev/null && fail2ban-client reload > /dev/null || true) || true";
