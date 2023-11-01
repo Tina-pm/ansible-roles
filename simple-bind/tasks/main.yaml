@@ -37,7 +37,7 @@
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.d/bind.conf
     owner: root
-    group: root
+    group: adm
     mode: 0644
   notify: simple_bind__reload_ferm
   when: simple_bind__install_ferm_svc | bool

@@ -40,15 +40,15 @@
     path: /etc/ferm/ferm.d
     state: directory
     owner: root
-    group: root
-    mode: 0755
+    group: adm
+    mode: 02750
 
 - name: place main config file
   template:
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.conf
     owner: root
-    group: root
+    group: adm
     mode: 0644
   notify: ferm__reload_ferm
 
@@ -57,7 +57,7 @@
     src: service.conf.j2
     dest: /etc/ferm/ferm.d/svc-{{ item.key }}.conf
     owner: root
-    group: root
+    group: adm
     mode: 0644
   notify: ferm__reload_ferm
   with_dict: '{{ ferm__services }}'
@@ -83,7 +83,7 @@
     content: '{{ item.value }}'
     dest: /etc/ferm/ferm.d/custom-{{ item.key }}.conf
     owner: root
-    group: root
+    group: adm
     mode: 0644
   notify: ferm__reload_ferm
   with_dict: '{{ ferm__custom_configs }}'
@@ -108,7 +108,7 @@
   copy:
     dest: /etc/ferm/ferm.d/00-blacklist.conf
     owner: root
-    group: root
+    group: adm
     mode: 0644
     content: |
       domain (ip ip6) table filter chain blacklist

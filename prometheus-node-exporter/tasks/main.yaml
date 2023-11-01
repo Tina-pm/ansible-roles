@@ -40,7 +40,7 @@
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.d/prometheus-node-exporter.conf
     owner: root
-    group: root
+    group: adm
     mode: 0644
   notify: node_exporter__reload_ferm
   when: node_exporter__install_ferm_svc | bool
