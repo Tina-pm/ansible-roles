@@ -20,6 +20,12 @@ domain (ip ip6) table filter {
         jump INPUT-pre;
         jump blacklist;
 
+        # Network infrastructure: ICMP, ICMPv6, and DHCPv6.
+        proto icmp daddr @ipfilter((0/0)) ACCEPT;
+        proto ipv6-icmp daddr @ipfilter((::/0)) ACCEPT;
+        proto udp daddr @ipfilter((fe80::/10))
+            sport dhcpv6-server dport dhcpv6-client ACCEPT;
+
 {% if ferm__open_ssh %}
         proto tcp dport ssh ACCEPT;
 {% endif %}
@@ -38,9 +44,6 @@ domain (ip ip6) table filter {
         jump OUTPUT-pre;
     }
 }
-
-domain ip table filter chain INPUT proto icmp ACCEPT;
-domain ip6 table filter chain INPUT proto ipv6-icmp ACCEPT;
 
 {% if ferm__version is version('2.3', 'ge') %}
 @include @glob('ferm.d/*.conf')';
