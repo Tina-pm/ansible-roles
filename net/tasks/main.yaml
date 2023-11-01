@@ -18,5 +18,5 @@
     owner: root
     group: root
     mode: 0644
-  notify: net__restart_udev
+  notify: net__reconfigure_network
   when: net__interfaces
