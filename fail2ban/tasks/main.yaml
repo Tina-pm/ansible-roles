@@ -1,9 +1,12 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
-- name: install package
+- name: install fail2ban and dependencies
   package:
-    name: fail2ban
+    name:
+      - fail2ban
+      - python3-pyinotify
+      - python3-systemd
     state: latest
 
 - name: start and enable service
