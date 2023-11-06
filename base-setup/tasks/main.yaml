@@ -92,12 +92,6 @@
     src: bash.bashrc.j2
     dest: /etc/bash.bashrc
 
-- name: create users
-  include_role:
-    name: users
-  vars:
-    users__force_update_password: True
-
 - name: 'sshd: disable password authentication'
   lineinfile:
       dest: /etc/ssh/sshd_config
