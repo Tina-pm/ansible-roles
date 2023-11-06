@@ -5,6 +5,7 @@
     path: /etc/cloud/cloud.cfg
   register: _cloud_init_cfg
   when: base_setup__disable_cloud_init | bool
+  check_mode: false
 
 - name: disable cloud-init
   file:
@@ -46,7 +47,7 @@
     dest: /etc/postfix/main.cf
     line: 'relayhost = {{ base_setup__mail_relay }}'
     regexp: '^relayhost\s*='
-    insertafter: '^#relayhost'
+    insertafter: '^\s*#relayhost'
     state: present
   when: base_setup__mail_relay and base_setup__setup_postfix
   notify: base_setup__reload_postfix
