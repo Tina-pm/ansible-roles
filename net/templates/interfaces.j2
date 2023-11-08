@@ -4,7 +4,8 @@
     (net__lo_config | combine(net__interfaces)) %}
 {% for iface in interfaces %}
 {% set allow = interfaces[iface].get('allow') %}
-{% set iface_cfg = interfaces[iface].get('config', {}) %}
+{% set iface_cfg = interfaces[iface].get('config') or {} %}
+{% if iface_cfg %}
 {% if allow %}
 
 allow-{{ allow }} {{ iface }}
@@ -25,5 +26,6 @@ iface {{ iface }} {{ family }} {{ method }}
 {% endif %}
 {% endfor %}
 {% endfor %}
+{% endif %}
 {% endfor %}
 {% endwith %}

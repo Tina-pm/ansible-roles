@@ -43,3 +43,6 @@
     mode: 0644
   notify: net__reconfigure_network
   when: net__interfaces
+
+- name: apply configuration
+  meta: flush_handlers
