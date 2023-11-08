@@ -15,17 +15,6 @@
     access_time: preserve
   when: base_setup__disable_cloud_init | bool and _cloud_init_cfg.stat.exists
 
-- name: setup APT, upgrade installed packages, and install base packages
-  include_role:
-    name: apt
-  vars:
-    apt__run_upgrade: true
-    apt__run_autoremove: true
-    apt__purge_removed: true
-    apt__packages_to_install: '{{ _base_setup__pkg_install }}'
-    apt__services_to_enable: '{{ _base_setup__svc_enable_start }}'
-    apt__services_to_start: '{{ _base_setup__svc_enable_start }}'
-
 # Needs to be executed after `dbus` is installed and started.
 - name: set hostname
   hostname:
@@ -41,6 +30,17 @@
     insertafter: '^127\.0\.0\.1'
     state: present
   when: base_setup__set_hostname
+
+- name: setup APT, upgrade installed packages, and install base packages
+  include_role:
+    name: apt
+  vars:
+    apt__run_upgrade: true
+    apt__run_autoremove: true
+    apt__purge_removed: true
+    apt__packages_to_install: '{{ _base_setup__pkg_install }}'
+    apt__services_to_enable: '{{ _base_setup__svc_enable_start }}'
+    apt__services_to_start: '{{ _base_setup__svc_enable_start }}'
 
 - name: set mail relay
   lineinfile:
@@ -93,6 +93,20 @@
     src: bash.bashrc.j2
     dest: /etc/bash.bashrc
 
+- name: 'sshd: verify host keys presence'
+  find:
+    paths: /etc/ssh
+    patterns: 'ssh_host_*'
+  register: _ssh_host_keys
+
+- name: 'sshd: regenerate host keys'
+  command:
+    cmd: 'dpkg-reconfigure openssh-server'
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: not _ssh_host_keys.files
+  notify: base_setup__reload_sshd
+
 - name: 'sshd: disable password authentication'
   lineinfile:
       dest: /etc/ssh/sshd_config
@@ -118,3 +132,9 @@
         }}
   when: base_setup__sshd_root_login_allowed in (True, False)
   notify: base_setup__reload_sshd
+
+- name: 'sshd: enable and start service'
+  service:
+    name: sshd
+    state: started
+    enabled: true
