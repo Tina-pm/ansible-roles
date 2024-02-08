@@ -13,12 +13,12 @@ domain (ip ip6) table filter {
     chain INPUT {
         policy DROP;
 
-        mod state state INVALID DROP;
-        mod state state (ESTABLISHED RELATED) ACCEPT;
-
-        interface lo ACCEPT;
         jump INPUT-pre;
         jump blacklist;
+
+        mod state state INVALID DROP;
+        mod state state (ESTABLISHED RELATED) ACCEPT;
+        interface lo ACCEPT;
 
         # Network infrastructure: ICMP, ICMPv6, and DHCPv6.
         proto icmp daddr @ipfilter((0/0)) ACCEPT;
@@ -33,11 +33,11 @@ domain (ip ip6) table filter {
     chain FORWARD {
         policy DROP;
 
-        mod state state INVALID DROP;
-        mod state state (ESTABLISHED RELATED) ACCEPT;
-
         jump FORWARD-pre;
         jump blacklist;
+
+        mod state state INVALID DROP;
+        mod state state (ESTABLISHED RELATED) ACCEPT;
     }
     chain OUTPUT {
         policy ACCEPT;
