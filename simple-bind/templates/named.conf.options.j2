@@ -10,11 +10,11 @@
 {%- set listen6 = listen6lo + (opt.get('listen_on_v6') or listen6def) -%}
 
 options {
-	directory "/var/cache/bind";
-	dnssec-validation auto;
+        directory "/var/cache/bind";
+        dnssec-validation auto;
 
-{% if opt.get('forwarders') -%}
-        forward {{ opt.get(forward) or 'first' }};
+{% if opt.get('forwarders') %}
+        forward {{ opt.get('forward') or 'first' }};
         forwarders {
 {% for forwarder in opt.forwarders %}
             {{ forwarder }};
@@ -29,7 +29,7 @@ options {
 {%- set mlist = [mlist] if mlist is string else mlist -%}
 
 {%- if mlist %}
-	{{ cmd }} {{- port }} { {{ mlist | join('; ') }}; };
+        {{ cmd }} {{- port }} { {{ mlist | join('; ') }}; };
 {% endif -%}
 {%- endfor -%}
 {%- endfor %}
