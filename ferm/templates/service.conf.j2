@@ -2,6 +2,8 @@
 
 {% with %}
 {%- set chain = 'svc-' + item.key %}
+{%- set _ = ('ok' if chain | length < 30) |
+        mandatory('Chain name must be less than 30 chars: ' + chain) %}
 {%- set saddr = item.value.get('saddr', ('::/0', '0/0')) %}
 {%- set daddr = item.value.get('daddr', ('::/0', '0/0')) %}
 {%- set proto = item.value.get('proto', ('tcp', 'udp')) %}
