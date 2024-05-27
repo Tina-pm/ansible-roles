@@ -11,6 +11,7 @@ ferm__open_ssh: True
 #     sport: ':'
 #     dport: openvpn
 #     proto: [udp, tcp]
+#     chain: svc-openvpn
 ferm__services: {}
 
 # Custom configuration snippets.
