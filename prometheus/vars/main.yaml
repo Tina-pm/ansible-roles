@@ -22,6 +22,11 @@ __federated_scrape_config:
   static_configs:
   - targets: '{{ (prometheus__federated_prometheus or []) | list }}'
 
+__alertmanager_scrape_config:
+  job_name: 'alertmanager'
+  static_configs:
+  - targets: '{{ (prometheus__alertmanagers or [] | list }}'
+
 __all_scrape_configs: |
   {{
     ([__prom_scrape_config] if prometheus__monitored_prometheus else []) +
