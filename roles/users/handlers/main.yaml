@@ -1,5 +1,11 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: _tina_run_newaliases
-  ansible.builtin.command:  # noqa: no-changed-when
-    cmd: newaliases
+  ansible.builtin.shell:
+    cmd: |
+      if which newaliases; then
+        newaliases
+      else
+        echo 'No `newaliases` command found' >&2
+      fi
+  changed_when: true
