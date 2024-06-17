@@ -27,7 +27,7 @@
       insertafter: '^#\s*PasswordAuthentication\s'
       line: |-
         PasswordAuthentication {{
-          'yes' if sshd__sshd_password_auth_allowed else 'no'
+          'yes' if sshd__password_auth_allowed else 'no'
         }}
   when: sshd__password_auth_allowed not in (None, '')
   notify: sshd__reload_sshd
@@ -40,7 +40,7 @@
       insertafter: '^#\s*PermitRootLogin\s'
       line: |-
         PermitRootLogin {{
-          'prohibit-password' if sshd__sshd_root_login_allowed else 'no'
+          'prohibit-password' if sshd__root_login_allowed else 'no'
         }}
   when: sshd__root_login_allowed not in (None, '')
   notify: sshd__reload_sshd
