@@ -36,9 +36,15 @@
     apt__run_upgrade: true
     apt__run_autoremove: true
     apt__purge_removed: true
-    apt__packages_to_install: '{{ _base_setup__pkg_install }}'
-    apt__services_to_enable: '{{ _base_setup__svc_enable_start }}'
-    apt__services_to_start: '{{ _base_setup__svc_enable_start }}'
+    apt__packages_to_install: '{{ base_setup__pkg_install }}'
+    apt__services_to_enable: '{{ base_setup__svc_enable_start }}'
+    apt__services_to_start: '{{ base_setup__svc_enable_start }}'
+
+- name: Install postfix
+  ansible.builtin.package:
+    name: postfix
+    state: present
+  when: base_setup__setup_postfix
 
 - name: Set mail relay
   ansible.builtin.lineinfile:
@@ -76,7 +82,13 @@
     base_setup__setup_postfix | bool
   notify: _tina_reload_postfix
 
-- name: 'Set up sudoers: sudo group'
+- name: Install sudo
+  ansible.builtin.package:
+    name: sudo
+    state: present
+  when: base_setup__setup_sudo
+
+- name: Set up sudoers for sudo group
   ansible.builtin.lineinfile:
     dest: /etc/sudoers
     state: present
