@@ -9,7 +9,6 @@ _base_setup__hostname_short: |-
 
 _base_setup__pkg_install: |-
   {{
-    ['openssh-server'] +
     (['dbus'] if base_setup__set_hostname else []) +
     (['sudo'] if base_setup__setup_sudo else []) +
     (['postfix'] if base_setup__setup_postfix else []) +

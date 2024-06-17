@@ -1,0 +1,52 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+- name: 'install server package'
+  package:
+    name: openssh-server
+    state: present
+
+- name: 'verify host keys presence'
+  find:
+    paths: /etc/ssh
+    patterns: 'ssh_host_*'
+  register: _ssh_host_keys
+
+- name: 'regenerate host keys'
+  command:
+    cmd: 'dpkg-reconfigure openssh-server'
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: not _ssh_host_keys.files
+  notify: sshd__reload_sshd
+
+- name: 'configure password authentication'
+  lineinfile:
+      dest: /etc/ssh/sshd_config
+      state: present
+      regexp: '^PasswordAuthentication\s'
+      insertafter: '^#\s*PasswordAuthentication\s'
+      line: |-
+        PasswordAuthentication {{
+          'yes' if sshd__sshd_password_auth_allowed else 'no'
+        }}
+  when: sshd__password_auth_allowed not in (None, '')
+  notify: sshd__reload_sshd
+
+- name: 'configure root login'
+  lineinfile:
+      dest: /etc/ssh/sshd_config
+      state: present
+      regexp: '^PermitRootLogin\s'
+      insertafter: '^#\s*PermitRootLogin\s'
+      line: |-
+        PermitRootLogin {{
+          'prohibit-password' if sshd__sshd_root_login_allowed else 'no'
+        }}
+  when: sshd__root_login_allowed not in (None, '')
+  notify: sshd__reload_sshd
+
+- name: 'enable and start service'
+  service:
+    name: sshd
+    state: started
+    enabled: true

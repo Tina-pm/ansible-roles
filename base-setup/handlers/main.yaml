@@ -5,11 +5,6 @@
     name: postfix
     state: reloaded
 
-- name: base_setup__reload_sshd
-  service:
-    name: sshd
-    state: reloaded
-
 - name: base_setup__reconfigure_locales
   shell:
     cmd: >-

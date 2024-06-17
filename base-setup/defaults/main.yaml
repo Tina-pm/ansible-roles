@@ -15,7 +15,3 @@ base_setup__setup_locales: True
 base_setup__default_locale: en_US.UTF-8
 base_setup__locales_to_be_generated:
   - en_US.UTF-8 UTF-8
-
-# Set to null to disable managing the sshd configuration.
-base_setup__sshd_password_auth_allowed: False
-base_setup__sshd_root_login_allowed: False

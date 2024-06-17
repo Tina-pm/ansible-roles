@@ -1,0 +1,6 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+# Set to null to disable managing the sshd configuration.
+sshd__password_auth_allowed: ~
+sshd__root_login_allowed: ~
