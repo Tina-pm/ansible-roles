@@ -12,7 +12,6 @@ _base_setup__pkg_install: |-
     (['dbus'] if base_setup__set_hostname else []) +
     (['sudo'] if base_setup__setup_sudo else []) +
     (['postfix'] if base_setup__setup_postfix else []) +
-    (['locales'] if base_setup__setup_locales else []) +
     (base_setup__pkg_install or [])
   }}
 

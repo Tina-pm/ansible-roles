@@ -70,24 +70,6 @@
       validate: 'visudo -cf %s'
   when: base_setup__setup_sudo
 
-- name: set default locale
-  debconf:
-    name: locales
-    question: locales/default_environment_locale
-    value: '{{ base_setup__default_locale }}'
-    vtype: select
-  when: base_setup__setup_locales
-  notify: base_setup__reconfigure_locales
-
-- name: set list of locales to be generated
-  debconf:
-    name: locales
-    question: locales/locales_to_be_generated
-    value: '{{ base_setup__locales_to_be_generated | join(", ") }}'
-    vtype: multiselect
-  when: base_setup__setup_locales
-  notify: base_setup__reconfigure_locales
-
 - name: bash defaults
   template:
     src: bash.bashrc.j2

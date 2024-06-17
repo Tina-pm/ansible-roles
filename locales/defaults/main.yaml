@@ -1,0 +1,5 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+locales__default_locale: en_US.UTF-8
+locales__generate:
+  - en_US.UTF-8 UTF-8

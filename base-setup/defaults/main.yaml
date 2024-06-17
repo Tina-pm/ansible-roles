@@ -10,8 +10,3 @@ base_setup__setup_sudo: True
 
 base_setup__setup_postfix: True
 base_setup__mail_relay: ~
-
-base_setup__setup_locales: True
-base_setup__default_locale: en_US.UTF-8
-base_setup__locales_to_be_generated:
-  - en_US.UTF-8 UTF-8

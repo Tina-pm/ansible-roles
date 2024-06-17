@@ -4,9 +4,3 @@
   service:
     name: postfix
     state: reloaded
-
-- name: base_setup__reconfigure_locales
-  shell:
-    cmd: >-
-      rm -f /etc/default/locale /etc/locale.gen &&
-      dpkg-reconfigure -f noninteractive locales

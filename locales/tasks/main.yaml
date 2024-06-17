@@ -1,0 +1,18 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+- name: set default locale
+  debconf:
+    name: locales
+    question: locales/default_environment_locale
+    value: '{{ locales__default_locale }}'
+    vtype: select
+  notify: locales__reconfigure_locales
+
+- name: set list of locales to be generated
+  debconf:
+    name: locales
+    question: locales/locales_to_be_generated
+    value: '{{ locales__generate | join(", ") }}'
+    vtype: multiselect
+  notify: locales__reconfigure_locales
