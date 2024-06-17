@@ -1,5 +1,10 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: users__run_newaliases
-  command:
-    cmd: newaliases
+  shell:
+    cmd: |
+      if which newaliases; then
+        newaliases
+      else
+        echo 'No `newaliases` command found' >&2
+      fi
