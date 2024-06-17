@@ -4,14 +4,15 @@ base_setup__disable_cloud_init: false
 base_setup__disable_resolved: false
 base_setup__set_hostname: ~
 
-base_setup__pkg_install: []
-base_setup__svc_enable_start: []
-
 base_setup__setup_sudo: true
 base_setup__passwordless_sudo: false
 
 base_setup__setup_postfix: true
 base_setup__mail_relay: ~
+
+# Passed to apt role.
+base_setup__pkg_install: []
+base_setup__svc_enable_start: []
 
 # Compatibility with new locales role.
 base_setup__setup_locales: true
