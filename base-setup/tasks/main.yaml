@@ -32,16 +32,11 @@
     state: present
   when: base_setup__set_hostname
 
-- name: setup APT, upgrade installed packages, and install base packages
-  include_role:
-    name: apt
-  vars:
-    apt__run_upgrade: true
-    apt__run_autoremove: true
-    apt__purge_removed: true
-    apt__packages_to_install: '{{ _base_setup__pkg_install }}'
-    apt__services_to_enable: '{{ _base_setup__svc_enable_start }}'
-    apt__services_to_start: '{{ _base_setup__svc_enable_start }}'
+- name: install postfix
+  package:
+    name: postfix
+    state: present
+  when: base_setup__setup_postfix
 
 - name: set mail relay
   lineinfile:
@@ -52,6 +47,12 @@
     state: present
   when: base_setup__mail_relay and base_setup__setup_postfix
   notify: base_setup__reload_postfix
+
+- name: install sudo
+  package:
+    name: sudo
+    state: present
+  when: base_setup__setup_sudo
 
 - name: 'set-up sudoers: sudo group'
   lineinfile:

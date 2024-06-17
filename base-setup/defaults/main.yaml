@@ -3,9 +3,6 @@
 base_setup__disable_cloud_init: False
 base_setup__set_hostname: ~
 
-base_setup__pkg_install: []
-base_setup__svc_enable_start: []
-
 base_setup__setup_sudo: True
 
 base_setup__setup_postfix: True

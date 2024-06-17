@@ -6,16 +6,3 @@ _base_setup__hostname_short: |-
     if base_setup__set_hostname else
     base_setup__set_hostname
   }}
-
-_base_setup__pkg_install: |-
-  {{
-    (['sudo'] if base_setup__setup_sudo else []) +
-    (['postfix'] if base_setup__setup_postfix else []) +
-    (base_setup__pkg_install or [])
-  }}
-
-_base_setup__svc_enable_start: |-
-  {{
-    (['postfix'] if base_setup__setup_postfix else []) +
-    (base_setup__svc_enable_start or [])
-  }}
