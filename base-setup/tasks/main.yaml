@@ -55,23 +55,14 @@
 
 - name: 'set-up sudoers: sudo group'
   lineinfile:
-      dest: /etc/sudoers
-      state: present
-      regexp: '^%sudo\s'
-      line: '%sudo ALL=(ALL) ALL'
-      validate: 'visudo -cf %s'
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%sudo\s'
+    line: '%sudo ALL=(ALL) ALL'
+    validate: 'visudo -cf %s'
   when: base_setup__setup_sudo
 
-- name: 'set-up sudoers: sudo-nopw group'
-  lineinfile:
-      dest: /etc/sudoers
-      state: present
-      regexp: '^%sudo-nopw\s'
-      line: '%sudo-nopw ALL=(ALL) NOPASSWD: ALL'
-      validate: 'visudo -cf %s'
-  when: base_setup__setup_sudo
-
-- name: bash defaults
+- name: set defaults for bash
   template:
     src: bash.bashrc.j2
     dest: /etc/bash.bashrc
