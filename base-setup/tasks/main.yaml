@@ -15,10 +15,11 @@
     access_time: preserve
   when: base_setup__disable_cloud_init | bool and _cloud_init_cfg.stat.exists
 
-# Needs to be executed after `dbus` is installed and started.
+# Avoid `systemd` strategy as we might not have dbus yet.
 - name: set hostname
   hostname:
     name: '{{ _base_setup__hostname_short }}'
+    use: debian
   when: base_setup__set_hostname
 
 - name: set FDQN
