@@ -32,6 +32,6 @@ __all_scrape_configs: |
     ([__prom_scrape_config] if prometheus__monitored_prometheus else []) +
     ([__federated_scrape_config] if prometheus__federated_prometheus else []) +
     ([__node_scrape_config] if prometheus__monitored_nodes else []) +
-    ([__alertmanager_scrape_config] if prometheus__monitored_alertmanager else []) +
+    ([__alertmanager_scrape_config] if prometheus__alertmanagers else []) +
     (prometheus__scrape_configs or [])
   }}
