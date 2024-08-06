@@ -21,13 +21,23 @@
     name: '{{ _base_setup__hostname_short }}'
   when: base_setup__set_hostname
 
-- name: set FDQN
+- name: set FDQN with IPv4 localhost address
   lineinfile:
     dest: /etc/hosts
     line: |-
-      127.0.1.1 {{ base_setup__set_hostname }} {{ _base_setup__hostname_short }}
+      127.0.1.1	{{ base_setup__set_hostname }}	{{ _base_setup__hostname_short }}
     regexp: '^127\.0\.1\.1\s'
-    insertafter: '^127\.0\.0\.1'
+    insertafter: '^127\.0\.0\.1\s'
+    state: present
+  when: base_setup__set_hostname
+
+- name: set FDQN with IPv6 localhost address
+  lineinfile:
+    dest: /etc/hosts
+    line: |-
+      ::1	{{ base_setup__set_hostname }}	{{ _base_setup__hostname_short }}
+    regexp: '^::1\s+(?!(?:ip6-)?localhost)\S+'
+    insertafter: '^::1\s'
     state: present
   when: base_setup__set_hostname
 
