@@ -1,0 +1,149 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+# Pre-processing and validation of parameters.
+
+_a2_conffile_mode: |-
+  {{ "%o" % ((apache2__conffile_mode or 0o644) | int) }}
+_a2_conffile_owner: |-
+  {{ apache2__conffile_owner or 'root' }}
+_a2_conffile_group: |-
+  {{ apache2__conffile_group or 'root' }}
+
+_a2_listen_http: |-
+  {{
+    []
+    if not apache2__listen_http else
+    [apache2__listen_http]
+    if apache2__listen_http is not iterable or apache2__listen_http is string
+    else apache2__listen_http
+  }}
+_a2_listen_https: |-
+  {{
+    []
+    if not apache2__listen_https else
+    [apache2__listen_https]
+    if apache2__listen_https is not iterable or apache2__listen_https is string
+    else apache2__listen_https
+  }}
+
+_a2_fragments: |-
+  {% filter from_yaml %}
+  {% for kind, userconf in (
+      ('conf', apache2__conf or {}),
+      ('mod', apache2__mods or {}),
+      ('site', apache2__sites or {}),
+    )
+  %}
+  {% set adir = apache2__conf_available_dir if kind == 'conf' else
+      apache2__mods_available_dir if kind == 'mod' else
+      apache2__sites_available_dir
+  %}
+  {% set edir = apache2__conf_enabled_dir if kind == 'conf' else
+      apache2__mods_enabled_dir if kind == 'mod' else
+      apache2__sites_enabled_dir
+  %}
+  {% set notify = 'apache2__restart_apache2' if kind == 'mod' else
+      'apache2__reload_apache2'
+  %}
+
+  {% for name, conf in userconf.items() %}
+  {% set state = conf.get('state', 'present') %}
+  {% set src_type = conf.get('src_type') or 'string' %}
+  {% set src = conf.get('src') %}
+
+  {% set _ = ('ok' if state in ('absent', 'present', 'enabled')) |
+      mandatory('invalid state: ' + state)
+  %}
+  {% set _ = ('ok' if src_type in ('template', 'file', 'string')) |
+      mandatory('invalid source type: ' + src_type)
+  %}
+
+  {% set present = state in ('present', 'enabled') %}
+  {% set enabled = state == 'enabled' %}
+  {% set content = lookup('file', src) if src_type == 'file' else
+      lookup('template', src) if src_type == 'template' else
+      src %}
+  {% set ext = 'load' if kind == 'mod' else 'conf' %}
+  {% set afile = '%s/%s.%s' % (adir, name, ext) %}
+  {% set efile = '%s/%s.%s' % (edir, name, ext) %}
+  {% set ctlcmd = 'a2%s%s' % ('en' if enabled else 'dis', kind) %}
+  {% set item = dict(kind=kind, name=name, src_type=src_type, content=content,
+      afile=afile, present=present, efile=efile, enabled=enabled,
+      ctlcmd=ctlcmd, notify=notify)
+  %}
+
+  - {{ item | to_yaml }}
+  {% endfor %}
+  {% endfor %}
+  {% endfilter %}
+
+_a2_manage_sites: |-
+  {{ apache2__manage_sites | d(False) }}
+
+_a2_install_ferm_svc: |-
+  {{ apache2__install_ferm_svc | d(False) }}
+
+_a2_ferm_allow_from: |-
+  {{
+    None
+    if not apache2__ferm_allow_from else
+    [apache2__ferm_allow_from]
+    if apache2__ferm_allow_from is not iterable or
+    apache2__ferm_allow_from is string
+    else apache2__ferm_allow_from
+  }}
+# Extract port numbers from apache2__listen_http(s).
+__a2_ports: |-
+  {{
+    (_a2_listen_http + _a2_listen_https) or [http] |
+    map('regex_replace', '^(.+:)?(.*)$', '\2') | list
+  }}
+_a2_ferm_ports: |-
+  {{
+    __a2_ports
+    if not apache2__ferm_ports else
+    [apache2__ferm_ports]
+    if apache2__ferm_ports is not iterable or apache2__ferm_ports is string
+    else apache2__ferm_ports
+  }}
+
+_a2_logdirs: |-
+  {{ apache2__logdirs or [] }}
+_a2_logdirs_mode: |-
+  {{ "%o" % ((apache2__logdirs_mode or 0o750) | int) }}
+_a2_logdirs_filemode: |-
+  {{ "%o" % ((apache2__logdirs_mode or 0o750) | int).__and__(0o666) }}
+_a2_logdirs_owner: |-
+  {{ apache2__logdirs_owner or 'root' }}
+_a2_logdirs_group: |-
+  {{ apache2__logdirs_group or 'adm' }}
+
+_a2_install_logrotate_conf: |-
+  {{ apache2__install_logrotate_conf | d(False) }}
+
+__a2_logrotate_conf: |-
+  {{ apache2__logrotate_conf or {} }}
+__a2_logrotate_conf_globs: |-
+  {{
+    __a2_logrotate_conf.get('globs') or (
+      _a2_logdirs | map('regex_replace', '^(.*)$', '\1/*.log') | list
+    )
+  }}
+_a2_logrotate_conf:
+  globs: |-
+    {{
+      [__a2_logrotate_conf_globs]
+      if __a2_logrotate_conf_globs is not iterable or __a2_logrotate_conf_globs is string
+      else __a2_logrotate_conf_globs
+    }}
+  interval: |-
+    {{ __a2_logrotate_conf.get('interval') or 'daily' }}
+  rotate: |-
+    {{ __a2_logrotate_conf.get('rotate') or 14 }}
+  create: |-
+    {{
+      __a2_logrotate_conf.get('create') or '%s %s %s' % (
+        _a2_logdirs_filemode, _a2_logdirs_owner, _a2_logdirs_group,
+      )
+    }}
