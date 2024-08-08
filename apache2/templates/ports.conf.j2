@@ -1,0 +1,19 @@
+# {{ ansible_managed }}
+
+{% for port in _a2_listen_http %}
+Listen {{ port }}
+{% endfor %}
+{% if _a2_listen_https %}
+
+<IfModule ssl_module>
+{% for port in _a2_listen_https %}
+    Listen {{ port }}
+{% endfor %}
+</IfModule>
+
+<IfModule mod_gnutls.c>
+{% for port in _a2_listen_https %}
+    Listen {{ port }}
+{% endfor %}
+</IfModule>
+{% endif %}

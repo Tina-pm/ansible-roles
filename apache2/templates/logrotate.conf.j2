@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+
+{{ ' '.join(_a2_logrotate_conf.globs) }} {
+    {{ _a2_logrotate_conf.interval }}
+    missingok
+    rotate {{ _a2_logrotate_conf.rotate }}
+    compress
+    delaycompress
+    notifempty
+    create {{ _a2_logrotate_conf.create }}
+    sharedscripts
+    prerotate
+        if [ -d /etc/logrotate.d/httpd-prerotate ]; then
+            run-parts /etc/logrotate.d/httpd-prerotate
+        fi
+    endscript
+    postrotate
+        if pgrep -f ^/usr/sbin/apache2 > /dev/null; then
+            invoke-rc.d apache2 reload 2>&1 | logger -t apache2.logrotate
+        fi
+    endscript
+}

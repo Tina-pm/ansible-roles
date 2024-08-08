@@ -1,0 +1,75 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+# Configuration directories.
+apache2__serverroot: /etc/apache2
+apache2__ports_conf: '{{ apache2__serverroot }}/ports.conf'
+apache2__conf_available_dir: '{{ apache2__serverroot }}/conf-available'
+apache2__conf_enabled_dir: '{{ apache2__serverroot }}/conf-enabled'
+apache2__mods_available_dir: '{{ apache2__serverroot }}/mods-available'
+apache2__mods_enabled_dir: '{{ apache2__serverroot }}/mods-enabled'
+apache2__sites_available_dir: '{{ apache2__serverroot }}/sites-available'
+apache2__sites_enabled_dir: '{{ apache2__serverroot }}/sites-enabled'
+
+# Permissions for configuration files.
+apache2__conffile_mode: 0644
+apache2__conffile_owner: root
+apache2__conffile_group: root
+
+# Binding to addresses and ports.
+apache2__listen_http:
+  - 80
+apache2__listen_https:
+  - 443
+
+# Modular configuration definitions.
+#
+# Manages files in {mods,conf,sites}-available as well as
+# enabling and disabling them.
+#
+# Common format:
+#
+# apache2__<kind>:
+#   <name>:
+#     state: absent | present | [enabled]
+#     src_type: template | file | [string]
+#     src: <string>
+#
+# If `state` is not `absent`, and `src` is empty or undefined, validates that
+# the file already exists.
+
+# Module configuration.
+apache2__mods: {}
+
+# Configuration fragments.
+apache2__conf: {}
+
+# Sites configuration.
+apache2__sites: {}
+
+# FIXME(Tina): Not yet implemented.
+# If true, remove available sites not listed in `apache2__sites`.
+#apache2__manage_sites: false
+
+# If true, install ferm configuration file.
+apache2__install_ferm_svc: false
+# Optionally limit access to a list of IP addresses.
+apache2__ferm_allow_from: ~
+# Ports to allow in ferm, default constructed from apache2__listen_*.
+apache2__ferm_ports: ~
+
+# Log directories to create.
+apache2__logdirs:
+  - /var/log/apache2
+# Permissions for log directories.
+apache2__logdirs_mode: 0750
+apache2__logdirs_owner: root
+apache2__logdirs_group: adm
+
+# If true, install a logrotate configuration file.
+apache2__install_logrotate_conf: false
+apache2__logrotate_conf:
+  globs: # Default constructed from apache2__logdirs.
+  interval: daily
+  rotate: 14
+  create: # Default constructed from apache2__logdirs_*.
