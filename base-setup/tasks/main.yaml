@@ -15,6 +15,12 @@
     access_time: preserve
   when: base_setup__disable_cloud_init | bool and _cloud_init_cfg.stat.exists
 
+- name: disable systemd-resolved (removing libnss-resolve)
+  package:
+    name: libnss-resolve
+    state: absent
+  when: base_setup__disable_resolved
+
 # Needs to be executed after `dbus` is installed and started.
 - name: set hostname
   hostname:
