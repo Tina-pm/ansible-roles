@@ -43,7 +43,8 @@
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
     state: directory
-  with_filetree: '{{ users__home_dir_templates }}/{{ user.name }}'
+  with_community.general.filetree: '{{
+    users__home_dir_templates }}/{{ user.name }}'
   when: item.state == 'directory'
 
 - name: '[{{ user.name }}] set-up user home: normal files'
@@ -53,7 +54,8 @@
     mode: '{{ item.mode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
-  with_filetree: '{{ users__home_dir_templates }}/{{ user.name }}'
+  with_community.general.filetree: '{{
+    users__home_dir_templates }}/{{ user.name }}'
   when: item.state == 'file' and not item.src.endswith('.j2')
 
 - name: '[{{ user.name }}] set-up user home: templates'
@@ -63,7 +65,8 @@
     mode: '{{ item.mode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
-  with_filetree: '{{ users__home_dir_templates }}/{{ user.name }}'
+  with_community.general.filetree: '{{
+    users__home_dir_templates }}/{{ user.name }}'
   when: item.state == 'file' and item.src.endswith('.j2')
 
 - name: '[{{ user.name }}] set-up user home: symlinks'
@@ -76,5 +79,6 @@
     state: link
     force: true
     follow: false
-  with_filetree: '{{ users__home_dir_templates }}/{{ user.name }}'
+  with_community.general.filetree: '{{
+    users__home_dir_templates }}/{{ user.name }}'
   when: item.state == 'link'
