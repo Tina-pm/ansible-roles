@@ -11,13 +11,13 @@
     - service:
         name: bind9
         state: started
-        enabled: yes
+        enabled: true
   rescue:
     # systemd unit name changed in Debian bullseye.
     - service:
         name: named
         state: started
-        enabled: yes
+        enabled: true
 
 - name: install configuration files
   template:

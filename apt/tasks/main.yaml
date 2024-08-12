@@ -76,7 +76,7 @@
 
 - name: update package lists
   apt:
-    update_cache: yes
+    update_cache: true
     cache_valid_time: '{{
       0 if (
         apt__force_run_update or _apt_sources.changed or
@@ -96,7 +96,7 @@
 
 - name: remove unneeded packages
   apt:
-    autoremove: yes
+    autoremove: true
     purge: '{{ apt__purge_removed }}'
   when: apt__run_autoremove
 
@@ -108,7 +108,7 @@
 - name: enable services
   service:
     name: '{{ item }}'
-    enabled: yes
+    enabled: true
   loop: '{{ apt__services_to_enable or [] }}'
 
 - name: start services

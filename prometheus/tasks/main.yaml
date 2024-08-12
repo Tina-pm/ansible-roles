@@ -64,7 +64,7 @@
   service:
     name: prometheus
     state: started
-    enabled: yes
+    enabled: true
 
 - name: install ferm configuration
   template:

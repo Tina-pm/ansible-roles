@@ -1,22 +1,22 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-base_setup__disable_cloud_init: False
-base_setup__disable_resolved: False
+base_setup__disable_cloud_init: false
+base_setup__disable_resolved: false
 base_setup__set_hostname: ~
 
 base_setup__pkg_install: []
 base_setup__svc_enable_start: []
 
-base_setup__setup_sudo: True
+base_setup__setup_sudo: true
 
-base_setup__setup_postfix: True
+base_setup__setup_postfix: true
 base_setup__mail_relay: ~
 
-base_setup__setup_locales: True
+base_setup__setup_locales: true
 base_setup__default_locale: en_US.UTF-8
 base_setup__locales_to_be_generated:
   - en_US.UTF-8 UTF-8
 
 # Set to null to disable managing the sshd configuration.
-base_setup__sshd_password_auth_allowed: False
-base_setup__sshd_root_login_allowed: False
+base_setup__sshd_password_auth_allowed: false
+base_setup__sshd_root_login_allowed: false
