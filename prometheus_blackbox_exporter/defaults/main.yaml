@@ -1,0 +1,10 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+blackbox_exporter__listen_addr: ''
+blackbox_exporter__listen_port: 9115
+blackbox_exporter__modules: {}
+blackbox_exporter__extra_args:
+blackbox_exporter__config_file: /etc/prometheus/blackbox.yml
+blackbox_exporter__install_ferm_svc: false
+blackbox_exporter__allow_from:

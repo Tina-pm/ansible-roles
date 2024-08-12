@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+
+ARGS=" \
+      --config.file={{ blackbox_exporter__config_file }} \
+      --web.listen-address={{
+          blackbox_exporter__listen_addr ~ ':' ~ blackbox_exporter__listen_port
+          }} \
+      {{ blackbox_exporter__extra_args }}"

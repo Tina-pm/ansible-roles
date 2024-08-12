@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+---
+{% if blackbox_exporter__modules %}
+{{ dict(modules=blackbox_exporter__modules) | to_yaml(sort_keys=false) }}
+{% endif %}
