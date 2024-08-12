@@ -13,7 +13,7 @@
     append: '{{ user.append }}'
     home: '{{ user.home }}'
     create_home: '{{ user.create_home }}'
-    move_home:  '{{ user.move_home }}'
+    move_home: '{{ user.move_home }}'
     shell: '{{ user.shell }}'
     generate_ssh_key: '{{ user.generate_ssh_key }}'
     update_password: '{{ user.update_password }}'

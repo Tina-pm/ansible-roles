@@ -6,12 +6,12 @@ __prom_scrape_config:
   scrape_interval: 5s
   scrape_timeout: 5s
   static_configs:
-  - targets: '{{ (prometheus__monitored_prometheus or []) | list }}'
+    - targets: '{{ (prometheus__monitored_prometheus or []) | list }}'
 
 __node_scrape_config:
   job_name: 'node'
   static_configs:
-  - targets: '{{ (prometheus__monitored_nodes or []) | list }}'
+    - targets: '{{ (prometheus__monitored_nodes or []) | list }}'
 
 __federated_scrape_config:
   job_name: 'federate'
@@ -20,12 +20,12 @@ __federated_scrape_config:
   params:
     'match[]': '{{ prometheus__federate_filter }}'
   static_configs:
-  - targets: '{{ (prometheus__federated_prometheus or []) | list }}'
+    - targets: '{{ (prometheus__federated_prometheus or []) | list }}'
 
 __alertmanager_scrape_config:
   job_name: 'alertmanager'
   static_configs:
-  - targets: '{{ (prometheus__alertmanagers or []) | list }}'
+    - targets: '{{ (prometheus__alertmanagers or []) | list }}'
 
 __all_scrape_configs: |
   {{

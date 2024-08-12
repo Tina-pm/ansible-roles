@@ -70,20 +70,20 @@
 
 - name: 'set-up sudoers: sudo group'
   lineinfile:
-      dest: /etc/sudoers
-      state: present
-      regexp: '^%sudo\s'
-      line: '%sudo ALL=(ALL) ALL'
-      validate: 'visudo -cf %s'
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%sudo\s'
+    line: '%sudo ALL=(ALL) ALL'
+    validate: 'visudo -cf %s'
   when: base_setup__setup_sudo
 
 - name: 'set-up sudoers: sudo-nopw group'
   lineinfile:
-      dest: /etc/sudoers
-      state: present
-      regexp: '^%sudo-nopw\s'
-      line: '%sudo-nopw ALL=(ALL) NOPASSWD: ALL'
-      validate: 'visudo -cf %s'
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%sudo-nopw\s'
+    line: '%sudo-nopw ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
   when: base_setup__setup_sudo
 
 - name: set default locale
@@ -125,27 +125,27 @@
 
 - name: 'sshd: disable password authentication'
   lineinfile:
-      dest: /etc/ssh/sshd_config
-      state: present
-      regexp: '^PasswordAuthentication\s'
-      insertafter: '^#\s*PasswordAuthentication\s'
-      line: |-
-        PasswordAuthentication {{
-          'yes' if base_setup__sshd_password_auth_allowed else 'no'
-        }}
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PasswordAuthentication\s'
+    insertafter: '^#\s*PasswordAuthentication\s'
+    line: |-
+      PasswordAuthentication {{
+        'yes' if base_setup__sshd_password_auth_allowed else 'no'
+      }}
   when: base_setup__sshd_password_auth_allowed in (True, False)
   notify: base_setup__reload_sshd
 
 - name: 'sshd: disable root login'
   lineinfile:
-      dest: /etc/ssh/sshd_config
-      state: present
-      regexp: '^PermitRootLogin\s'
-      insertafter: '^#\s*PermitRootLogin\s'
-      line: |-
-        PermitRootLogin {{
-          'prohibit-password' if base_setup__sshd_root_login_allowed else 'no'
-        }}
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PermitRootLogin\s'
+    insertafter: '^#\s*PermitRootLogin\s'
+    line: |-
+      PermitRootLogin {{
+        'prohibit-password' if base_setup__sshd_root_login_allowed else 'no'
+      }}
   when: base_setup__sshd_root_login_allowed in (True, False)
   notify: base_setup__reload_sshd
 

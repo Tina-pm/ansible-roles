@@ -49,7 +49,7 @@ apache2__sites: {}
 
 # FIXME(Tina): Not yet implemented.
 # If true, remove available sites not listed in `apache2__sites`.
-#apache2__manage_sites: false
+# apache2__manage_sites: false
 
 # If true, install ferm configuration file.
 apache2__install_ferm_svc: false
