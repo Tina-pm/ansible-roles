@@ -9,7 +9,8 @@
     name: '{{ user.name }}'
     comment: '{{ user.gecos }}'
     password: '{{ user.password }}'
-    groups: '{{ user.groups if user.groups is string else ",".join(user.groups) }}'
+    groups: '{{
+      user.groups if user.groups is string else ",".join(user.groups) }}'
     append: '{{ user.append }}'
     home: '{{ user.home }}'
     create_home: '{{ user.create_home }}'
