@@ -25,7 +25,7 @@
     dest: '/etc/bind/{{ item }}'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   loop:
     - named.conf
     - named.conf.options
@@ -38,6 +38,6 @@
     dest: /etc/ferm/ferm.d/bind.conf
     owner: root
     group: adm
-    mode: 0644
+    mode: '0644'
   notify: simple_bind__reload_ferm
   when: simple_bind__install_ferm_svc | bool

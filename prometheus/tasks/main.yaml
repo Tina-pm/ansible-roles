@@ -11,7 +11,7 @@
     dest: /etc/default/prometheus
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: prometheus__restart_prometheus
 
 - name: create rules directory
@@ -20,7 +20,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
 
 - name: install rules files
   copy:
@@ -28,7 +28,7 @@
     dest: '/etc/prometheus/rules/{{ item | basename }}'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
     validate: /usr/bin/promtool check rules %s
   notify: prometheus__reload_prometheus
   with_items: '{{ prometheus__rules }}'
@@ -44,7 +44,7 @@
     variable_end_string: '=}'
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
     validate: /usr/bin/promtool check rules %s
   notify: prometheus__reload_prometheus
   with_items: '{{ prometheus__rules }}'
@@ -56,7 +56,7 @@
     dest: /etc/prometheus/prometheus.yml
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
     validate: /usr/bin/promtool check config %s
   notify: prometheus__reload_prometheus
 
@@ -72,6 +72,6 @@
     dest: /etc/ferm/ferm.d/prometheus.conf
     owner: root
     group: adm
-    mode: 0644
+    mode: '0644'
   notify: prometheus__reload_ferm
   when: prometheus__install_ferm_svc | bool

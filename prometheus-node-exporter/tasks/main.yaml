@@ -26,7 +26,7 @@
     dest: /etc/default/prometheus-node-exporter
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: node_exporter__restart_node_exporter
 
 - name: start and enable service
@@ -41,6 +41,6 @@
     dest: /etc/ferm/ferm.d/prometheus-node-exporter.conf
     owner: root
     group: adm
-    mode: 0644
+    mode: '0644'
   notify: node_exporter__reload_ferm
   when: node_exporter__install_ferm_svc | bool

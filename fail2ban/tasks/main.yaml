@@ -21,7 +21,7 @@
     dest: /etc/fail2ban/jail.local
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: fail2ban__restart_fail2ban
 
 - name: place path overrides configuration file
@@ -30,7 +30,7 @@
     dest: /etc/fail2ban/paths-overrides.local
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: fail2ban__restart_fail2ban
 
 - name: place iptables action configuration file
@@ -39,7 +39,7 @@
     dest: /etc/fail2ban/action.d/iptables.local
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: fail2ban__restart_fail2ban
 
 - name: place ferm config file
@@ -48,6 +48,6 @@
     dest: /etc/ferm/ferm.d/fail2ban.conf
     owner: root
     group: adm
-    mode: 0644
+    mode: '0644'
   notify: fail2ban__reload_ferm
   when: fail2ban__install_ferm_svc | bool

@@ -20,7 +20,7 @@
     dest: /etc/apache2/ports.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: apache2__restart_apache2
 
 - name: start and enable service
@@ -35,7 +35,7 @@
     dest: /etc/ferm/ferm.d/apache2.conf
     owner: root
     group: adm
-    mode: 0644
+    mode: '0644'
   notify: apache2__reload_ferm
   when: _a2_install_ferm_svc | bool
 
@@ -45,7 +45,7 @@
     dest: /etc/logrotate.d/apache2
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: apache2__reload_ferm
   when: _a2_install_ferm_svc | bool
 

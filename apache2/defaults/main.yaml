@@ -12,7 +12,7 @@ apache2__sites_available_dir: '{{ apache2__serverroot }}/sites-available'
 apache2__sites_enabled_dir: '{{ apache2__serverroot }}/sites-enabled'
 
 # Permissions for configuration files.
-apache2__conffile_mode: 0644
+apache2__conffile_mode: '0644'
 apache2__conffile_owner: root
 apache2__conffile_group: root
 
@@ -62,7 +62,7 @@ apache2__ferm_ports: ~
 apache2__logdirs:
   - /var/log/apache2
 # Permissions for log directories.
-apache2__logdirs_mode: 0750
+apache2__logdirs_mode: '0750'
 apache2__logdirs_owner: root
 apache2__logdirs_group: adm
 

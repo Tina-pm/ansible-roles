@@ -30,7 +30,7 @@
     dest: /etc/udev/rules.d/70-persistent-net.rules
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: net__restart_all
   when: net__use_udev_persistent_rules | bool
 
@@ -40,7 +40,7 @@
     dest: /etc/network/interfaces
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: net__reconfigure_network
   when: net__interfaces
 
