@@ -18,7 +18,7 @@
 - name: install mtail programs
   copy:
     src: '{{ item }}'
-    dest: '/etc/mtail/{{ item | basename }}'
+    dest: /etc/mtail/{{ item | basename }}
     owner: root
     group: root
     mode: '0644'

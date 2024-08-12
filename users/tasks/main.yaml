@@ -2,7 +2,7 @@
 ---
 - name: sanity check
   fail:
-    msg: 'Cannot remove the user running ansible ({{ ansible_user }})!'
+    msg: Cannot remove the user running ansible ({{ ansible_user }})!
   when: >-
     ansible_user is defined and ansible_user in (users__remove_users | d([]))
 

@@ -6,10 +6,10 @@ simple_bind__options:
   forwarders: []
   listen_on:
     - port: 53
-      match_list: ['any']
+      match_list: [any]
   listen_on_v6:
     - port: 53
-      match_list: ['any']
+      match_list: [any]
   extra_conf:
 #    - 'foo: bar'
 

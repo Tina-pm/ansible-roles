@@ -30,9 +30,9 @@
 - name: disable caching
   lineinfile:
     dest: /etc/default/ferm
-    line: 'CACHE=no'
+    line: CACHE=no
     regexp: '^CACHE[ =]'
-    state: 'present'
+    state: present
   notify: ferm__reload_ferm
 
 - name: create ferm.d directory

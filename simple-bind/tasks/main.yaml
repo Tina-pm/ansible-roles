@@ -22,7 +22,7 @@
 - name: install configuration files
   template:
     src: '{{ item }}.j2'
-    dest: '/etc/bind/{{ item }}'
+    dest: /etc/bind/{{ item }}
     owner: root
     group: root
     mode: '0644'

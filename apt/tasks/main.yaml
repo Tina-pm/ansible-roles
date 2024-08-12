@@ -18,14 +18,14 @@
 - name: configure custom APT sources
   template:
     src: sources.list.d.j2
-    dest: '/etc/apt/sources.list.d/{{ item.key }}.list'
+    dest: /etc/apt/sources.list.d/{{ item.key }}.list
   loop: '{{ apt__custom_sources | d({}) | dict2items }}'
   when: item.value
   register: _apt_custom_sources
 
 - name: delete custom APT sources
   file:
-    path: '/etc/apt/sources.list.d/{{ item.key }}.list'
+    path: /etc/apt/sources.list.d/{{ item.key }}.list
     state: absent
   loop: '{{ apt__custom_sources | d({}) | dict2items }}'
   when: not item.value
@@ -33,7 +33,7 @@
 
 - name: configure custom APT trusted keys
   copy:
-    dest: '/etc/apt/trusted.gpg.d/{{ item.key }}.gpg'
+    dest: /etc/apt/trusted.gpg.d/{{ item.key }}.gpg
     content: '{{ item.value | b64decode }}'
     owner: root
     group: root
@@ -44,7 +44,7 @@
 
 - name: delete custom APT trusted keys
   file:
-    path: '/etc/apt/trusted.gpg.d/{{ item.key }}.gpg'
+    path: /etc/apt/trusted.gpg.d/{{ item.key }}.gpg
     state: absent
   loop: '{{ apt__trusted_keys | d({}) | dict2items }}'
   when: not item.value
@@ -52,7 +52,7 @@
 
 - name: configure custom APT preferences
   copy:
-    dest: '/etc/apt/preferences.d/{{ item.key }}'
+    dest: /etc/apt/preferences.d/{{ item.key }}
     content: '{{ item.value }}'
     owner: root
     group: root
@@ -63,7 +63,7 @@
 
 - name: delete custom APT preferences
   file:
-    path: '/etc/apt/preferences.d/{{ item.key }}'
+    path: /etc/apt/preferences.d/{{ item.key }}
     state: absent
   loop: '{{ apt__custom_preferences | d({}) | dict2items }}'
   when: not item.value
