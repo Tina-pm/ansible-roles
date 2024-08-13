@@ -1,5 +1,5 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: users__run_newaliases
-  command:
+  ansible.builtin.command:
     cmd: newaliases

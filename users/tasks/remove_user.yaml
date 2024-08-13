@@ -1,13 +1,13 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: '[{{ user_name }}] remove user'
-  user:
+  ansible.builtin.user:
     name: '{{ user_name }}'
     state: absent
     remove: '{{ users__remove_users_files | d() | bool }}'
 
 - name: '[{{ user_name }}] remove mail forwarding'
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/aliases
     state: absent
     regexp: '^{{ user_name }}:.*'

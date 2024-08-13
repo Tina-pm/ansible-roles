@@ -1,17 +1,17 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: base_setup__reload_postfix
-  service:
+  ansible.builtin.service:
     name: postfix
     state: reloaded
 
 - name: base_setup__reload_sshd
-  service:
+  ansible.builtin.service:
     name: sshd
     state: reloaded
 
 - name: base_setup__reconfigure_locales
-  shell:
+  ansible.builtin.shell:
     cmd: >-
       rm -f /etc/default/locale /etc/locale.gen &&
       dpkg-reconfigure -f noninteractive locales

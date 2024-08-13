@@ -2,18 +2,18 @@
 ---
 
 - name: ensure ifupdown is present
-  apt:
+  ansible.builtin.apt:
     name: ifupdown
     state: latest
 
 - name: gather facts about services
-  service_facts:
+  ansible.builtin.service_facts:
   # Run normally even in check mode.
   check_mode: false
   when: ansible_service_mgr == 'systemd'
 
 - name: stop and disable conflicting services
-  service:
+  ansible.builtin.service:
     name: '{{ item }}'
     state: stopped
     enabled: false
@@ -25,7 +25,7 @@
   notify: net__reconfigure_network
 
 - name: create udev persistent rules
-  template:
+  ansible.builtin.template:
     src: 70-persistent-net.rules.j2
     dest: /etc/udev/rules.d/70-persistent-net.rules
     owner: root
@@ -35,7 +35,7 @@
   when: net__use_udev_persistent_rules | bool
 
 - name: configure interfaces
-  template:
+  ansible.builtin.template:
     src: interfaces.j2
     dest: /etc/network/interfaces
     owner: root
@@ -45,4 +45,4 @@
   when: net__interfaces
 
 - name: apply configuration
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers

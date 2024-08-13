@@ -1,13 +1,13 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: install mtail
-  package:
+  ansible.builtin.package:
     name: mtail
     state: latest
   notify: mtail__restart_mtail
 
 - name: configure mtail
-  template:
+  ansible.builtin.template:
     src: default.j2
     dest: /etc/default/mtail
     owner: root
@@ -16,7 +16,7 @@
   notify: mtail__restart_mtail
 
 - name: install mtail programs
-  copy:
+  ansible.builtin.copy:
     src: '{{ item }}'
     dest: /etc/mtail/{{ item | basename }}
     owner: root
@@ -26,13 +26,13 @@
   with_items: '{{ mtail__programs or [] }}'
 
 - name: start and enable service
-  service:
+  ansible.builtin.service:
     name: mtail
     state: started
     enabled: true
 
 - name: install ferm configuration
-  template:
+  ansible.builtin.template:
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.d/mtail.conf
     owner: root

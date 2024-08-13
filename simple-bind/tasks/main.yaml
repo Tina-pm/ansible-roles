@@ -2,7 +2,7 @@
 ---
 
 - name: install package
-  package:
+  ansible.builtin.package:
     name: bind9
     state: latest
 
@@ -22,7 +22,7 @@
         enabled: true
 
 - name: install configuration files
-  template:
+  ansible.builtin.template:
     src: '{{ item }}.j2'
     dest: /etc/bind/{{ item }}
     owner: root
@@ -35,7 +35,7 @@
   notify: simple_bind__reload_bind
 
 - name: place ferm config file
-  template:
+  ansible.builtin.template:
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.d/bind.conf
     owner: root

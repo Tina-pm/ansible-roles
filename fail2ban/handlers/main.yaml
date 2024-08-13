@@ -1,11 +1,11 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: fail2ban__restart_fail2ban
-  service:
+  ansible.builtin.service:
     name: fail2ban
     state: restarted
 
 - name: fail2ban__reload_ferm
-  service:
+  ansible.builtin.service:
     name: ferm
     state: reloaded

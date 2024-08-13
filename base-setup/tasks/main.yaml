@@ -1,14 +1,14 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: check cloud-init presence
-  stat:
+  ansible.builtin.stat:
     path: /etc/cloud/cloud.cfg
   register: _cloud_init_cfg
   when: base_setup__disable_cloud_init | bool
   check_mode: false
 
 - name: disable cloud-init
-  file:
+  ansible.builtin.file:
     path: /etc/cloud/cloud-init.disabled
     state: touch
     modification_time: preserve
@@ -16,19 +16,19 @@
   when: base_setup__disable_cloud_init | bool and _cloud_init_cfg.stat.exists
 
 - name: disable systemd-resolved (removing libnss-resolve)
-  package:
+  ansible.builtin.package:
     name: libnss-resolve
     state: absent
   when: base_setup__disable_resolved
 
 # Needs to be executed after `dbus` is installed and started.
 - name: set hostname
-  hostname:
+  ansible.builtin.hostname:
     name: '{{ _base_setup__hostname_short }}'
   when: base_setup__set_hostname
 
 - name: set FDQN with IPv4 localhost address
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/hosts
     line: |-
       127.0.1.1	{{ base_setup__set_hostname }}	{{ _base_setup__hostname_short }}
@@ -38,7 +38,7 @@
   when: base_setup__set_hostname
 
 - name: set FDQN with IPv6 localhost address
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/hosts
     line: |-
       ::1	{{ base_setup__set_hostname }}	{{ _base_setup__hostname_short }}
@@ -48,7 +48,7 @@
   when: base_setup__set_hostname
 
 - name: setup APT, upgrade installed packages, and install base packages
-  include_role:
+  ansible.builtin.include_role:
     name: apt
   vars:
     apt__run_upgrade: true
@@ -59,7 +59,7 @@
     apt__services_to_start: '{{ _base_setup__svc_enable_start }}'
 
 - name: set mail relay
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/postfix/main.cf
     line: relayhost = {{ base_setup__mail_relay }}
     regexp: '^relayhost\s*='
@@ -69,7 +69,7 @@
   notify: base_setup__reload_postfix
 
 - name: 'set-up sudoers: sudo group'
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/sudoers
     state: present
     regexp: '^%sudo\s'
@@ -78,7 +78,7 @@
   when: base_setup__setup_sudo
 
 - name: 'set-up sudoers: sudo-nopw group'
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/sudoers
     state: present
     regexp: '^%sudo-nopw\s'
@@ -87,7 +87,7 @@
   when: base_setup__setup_sudo
 
 - name: set default locale
-  debconf:
+  ansible.builtin.debconf:
     name: locales
     question: locales/default_environment_locale
     value: '{{ base_setup__default_locale }}'
@@ -96,7 +96,7 @@
   notify: base_setup__reconfigure_locales
 
 - name: set list of locales to be generated
-  debconf:
+  ansible.builtin.debconf:
     name: locales
     question: locales/locales_to_be_generated
     value: '{{ base_setup__locales_to_be_generated | join(", ") }}'
@@ -105,18 +105,18 @@
   notify: base_setup__reconfigure_locales
 
 - name: bash defaults
-  template:
+  ansible.builtin.template:
     src: bash.bashrc.j2
     dest: /etc/bash.bashrc
 
 - name: 'sshd: verify host keys presence'
-  find:
+  ansible.builtin.find:
     paths: /etc/ssh
     patterns: ssh_host_*
   register: _ssh_host_keys
 
 - name: 'sshd: regenerate host keys'
-  command:
+  ansible.builtin.command:
     cmd: dpkg-reconfigure openssh-server
   environment:
     DEBIAN_FRONTEND: noninteractive
@@ -124,7 +124,7 @@
   notify: base_setup__reload_sshd
 
 - name: 'sshd: disable password authentication'
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/ssh/sshd_config
     state: present
     regexp: '^PasswordAuthentication\s'
@@ -137,7 +137,7 @@
   notify: base_setup__reload_sshd
 
 - name: 'sshd: disable root login'
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/ssh/sshd_config
     state: present
     regexp: '^PermitRootLogin\s'
@@ -150,7 +150,7 @@
   notify: base_setup__reload_sshd
 
 - name: 'sshd: enable and start service'
-  service:
+  ansible.builtin.service:
     name: sshd
     state: started
     enabled: true

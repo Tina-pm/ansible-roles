@@ -3,7 +3,7 @@
 # This task file is executed in a loop over users__create_users.
 
 - name: '[{{ user.name }}] create user'
-  user:
+  ansible.builtin.user:
     state: present
     system: '{{ user.system }}'
     name: '{{ user.name }}'
@@ -20,7 +20,7 @@
     update_password: '{{ user.update_password }}'
 
 - name: '[{{ user.name }}] set mail forwarding'
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/aliases
     line: '{{ user.name }}: {{ user.forward }}'
     regexp: '^{{ user.name }}:.*'
@@ -28,7 +28,7 @@
   notify: users__run_newaliases
 
 - name: '[{{ user.name }}] set SSH authorized keys'
-  authorized_key:
+  ansible.posix.authorized_key:
     user: '{{ user.name }}'
     key: '{{
       user.authorized
@@ -38,7 +38,7 @@
     exclusive: true
 
 - name: '[{{ user.name }}] set-up user home: directories'
-  file:
+  ansible.builtin.file:
     path: '{{ user.home }}/{{ item.path }}'
     mode: '{{ item.mode }}'
     owner: '{{ user.name }}'
@@ -49,7 +49,7 @@
   when: item.state == 'directory'
 
 - name: '[{{ user.name }}] set-up user home: normal files'
-  copy:
+  ansible.builtin.copy:
     src: '{{ item.src }}'
     dest: '{{ user.home }}/{{ item.path }}'
     mode: '{{ item.mode }}'
@@ -60,7 +60,7 @@
   when: item.state == 'file' and not item.src.endswith('.j2')
 
 - name: '[{{ user.name }}] set-up user home: templates'
-  template:
+  ansible.builtin.template:
     src: '{{ item.src }}'
     dest: '{{ user.home }}/{{ item.path | regex_replace("\.j2$", "") }}'
     mode: '{{ item.mode }}'
@@ -71,7 +71,7 @@
   when: item.state == 'file' and item.src.endswith('.j2')
 
 - name: '[{{ user.name }}] set-up user home: symlinks'
-  file:
+  ansible.builtin.file:
     src: '{{ item.src }}'
     path: '{{ user.home }}/{{ item.path }}'
     mode: '{{ item.mode }}'

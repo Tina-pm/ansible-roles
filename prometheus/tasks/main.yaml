@@ -1,12 +1,12 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: install prometheus
-  package:
+  ansible.builtin.package:
     name: prometheus
     state: latest
 
 - name: configure prometheus cmdline
-  template:
+  ansible.builtin.template:
     src: default.j2
     dest: /etc/default/prometheus
     owner: root
@@ -15,7 +15,7 @@
   notify: prometheus__restart_prometheus
 
 - name: create rules directory
-  file:
+  ansible.builtin.file:
     path: /etc/prometheus/rules
     state: directory
     owner: root
@@ -23,7 +23,7 @@
     mode: '0755'
 
 - name: install rules files
-  copy:
+  ansible.builtin.copy:
     src: '{{ item }}'
     dest: /etc/prometheus/rules/{{ item | basename }}
     owner: root
@@ -35,7 +35,7 @@
   when: not item.endswith('.j2')
 
 - name: install rules templates
-  template:
+  ansible.builtin.template:
     src: '{{ item }}'
     dest: /etc/prometheus/rules/{{
       item | basename | regex_replace("\.j2$", "") }}
@@ -51,7 +51,7 @@
   when: item.endswith('.j2')
 
 - name: configure prometheus
-  template:
+  ansible.builtin.template:
     src: prometheus.yml.j2
     dest: /etc/prometheus/prometheus.yml
     owner: root
@@ -61,13 +61,13 @@
   notify: prometheus__reload_prometheus
 
 - name: start and enable service
-  service:
+  ansible.builtin.service:
     name: prometheus
     state: started
     enabled: true
 
 - name: install ferm configuration
-  template:
+  ansible.builtin.template:
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.d/prometheus.conf
     owner: root

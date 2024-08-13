@@ -2,7 +2,7 @@
 ---
 
 - name: install fail2ban and dependencies
-  package:
+  ansible.builtin.package:
     name:
       - fail2ban
       - python3-pyinotify
@@ -10,13 +10,13 @@
     state: latest
 
 - name: start and enable service
-  service:
+  ansible.builtin.service:
     name: fail2ban
     state: started
     enabled: true
 
 - name: place jail configuration file
-  template:
+  ansible.builtin.template:
     src: jail.local.j2
     dest: /etc/fail2ban/jail.local
     owner: root
@@ -25,7 +25,7 @@
   notify: fail2ban__restart_fail2ban
 
 - name: place path overrides configuration file
-  template:
+  ansible.builtin.template:
     src: paths-overrides.local.j2
     dest: /etc/fail2ban/paths-overrides.local
     owner: root
@@ -34,7 +34,7 @@
   notify: fail2ban__restart_fail2ban
 
 - name: place iptables action configuration file
-  template:
+  ansible.builtin.template:
     src: iptables.local.j2
     dest: /etc/fail2ban/action.d/iptables.local
     owner: root
@@ -43,7 +43,7 @@
   notify: fail2ban__restart_fail2ban
 
 - name: place ferm config file
-  template:
+  ansible.builtin.template:
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.d/fail2ban.conf
     owner: root
