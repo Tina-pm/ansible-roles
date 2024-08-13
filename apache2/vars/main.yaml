@@ -134,8 +134,8 @@ _a2_logrotate_conf:
   globs: |-
     {{
       [__a2_logrotate_conf_globs]
-      if (__a2_logrotate_conf_globs is not iterable
-          or __a2_logrotate_conf_globs is string)
+      if (__a2_logrotate_conf_globs is not iterable or
+          __a2_logrotate_conf_globs is string)
       else __a2_logrotate_conf_globs
     }}
   interval: |-

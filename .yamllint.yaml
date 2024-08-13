@@ -21,4 +21,3 @@ rules:
       - ^[0-9:]+$  # IPv6 addresses containing only numbers 0-9 are misparsed
     extra-allowed:
       - ^\^   # regular expressions
-      - ^=}$  # variable_end_string

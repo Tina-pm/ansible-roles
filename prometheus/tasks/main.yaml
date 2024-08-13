@@ -38,9 +38,10 @@
   template:
     src: '{{ item }}'
     dest: /etc/prometheus/rules/{{
-      item | basename | regex_replace("\.j2$", "") }}
+      item | basename | regex_replace('\.j2$', '') }}
     # Avoid clashes with prometheus template language.
     variable_start_string: '{='
+    # yamllint disable-line rule:quoted-strings
     variable_end_string: '=}'
     owner: root
     group: root

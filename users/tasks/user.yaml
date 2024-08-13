@@ -30,9 +30,11 @@
 - name: '[{{ user.name }}] set SSH authorized keys'
   authorized_key:
     user: '{{ user.name }}'
-    key: '{{
-      user.authorized
-      if user.authorized is string else
+    key: |
+      {{
+        user.authorized if user.authorized is string else
+        '\n'.join(user.authorized)
+      }}
       "\n".join(user.authorized)
       }}'
     exclusive: true
