@@ -8,13 +8,15 @@
 
 - name: start and enable service
   block:
-    - service:
+    - name: start bind9
+      ansible.builtin.service:
         name: bind9
         state: started
         enabled: true
   rescue:
     # systemd unit name changed in Debian bullseye.
-    - service:
+    - name: start named
+      ansible.builtin.service:
         name: named
         state: started
         enabled: true
