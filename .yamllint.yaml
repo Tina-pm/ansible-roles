@@ -20,4 +20,4 @@ rules:
     extra-required:
       - ^[0-9:]+$  # IPv6 addresses containing only numbers 0-9 are misparsed
     extra-allowed:
-      - ^\^   # regular expressions
+      - ^\^   # regular expression
