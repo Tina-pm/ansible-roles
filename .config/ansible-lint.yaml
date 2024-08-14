@@ -1,0 +1,7 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+profile: moderate
+skip_list:
+  - jinja[spacing]  # Noise in multi-line template expr.
+  - name[casing]    # Grandfathered (for now).
+  - name[template]  # "Jinja templates should only be at the end of 'name'"

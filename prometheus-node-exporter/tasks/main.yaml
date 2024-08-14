@@ -10,15 +10,15 @@
     (prometheus-node-exporter --version 2>&1 || echo "unknown version 0.0") |
     sed -n 's/.* version \([0-9.]\+[0-9]\).*/\1/p'
   register: node_exporter__version_check
-  changed_when: False
+  changed_when: false
   # Run normally even in check mode.
-  check_mode: no
+  check_mode: false
 
 - name: find installed version
   set_fact:
     node_exporter__version: '{{ node_exporter__version_check.stdout | d("0") }}'
   # Run normally even in check mode.
-  check_mode: no
+  check_mode: false
 
 - name: configure node_exporter
   template:
@@ -26,14 +26,14 @@
     dest: /etc/default/prometheus-node-exporter
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: node_exporter__restart_node_exporter
 
 - name: start and enable service
   service:
     name: prometheus-node-exporter
     state: started
-    enabled: yes
+    enabled: true
 
 - name: install ferm configuration
   template:
@@ -41,6 +41,6 @@
     dest: /etc/ferm/ferm.d/prometheus-node-exporter.conf
     owner: root
     group: adm
-    mode: 0644
+    mode: '0644'
   notify: node_exporter__reload_ferm
   when: node_exporter__install_ferm_svc | bool

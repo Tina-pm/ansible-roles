@@ -9,7 +9,7 @@
 - name: gather facts about services
   service_facts:
   # Run normally even in check mode.
-  check_mode: no
+  check_mode: false
   when: ansible_service_mgr == 'systemd'
 
 - name: stop and disable conflicting services
@@ -30,7 +30,7 @@
     dest: /etc/udev/rules.d/70-persistent-net.rules
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: net__restart_all
   when: net__use_udev_persistent_rules | bool
 
@@ -40,7 +40,7 @@
     dest: /etc/network/interfaces
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: net__reconfigure_network
   when: net__interfaces
 

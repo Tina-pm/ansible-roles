@@ -12,16 +12,16 @@
     dest: /etc/default/mtail
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: mtail__restart_mtail
 
 - name: install mtail programs
   copy:
     src: '{{ item }}'
-    dest: '/etc/mtail/{{ item | basename }}'
+    dest: /etc/mtail/{{ item | basename }}
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: mtail__restart_mtail
   with_items: '{{ mtail__programs or [] }}'
 
@@ -29,7 +29,7 @@
   service:
     name: mtail
     state: started
-    enabled: yes
+    enabled: true
 
 - name: install ferm configuration
   template:
@@ -37,6 +37,6 @@
     dest: /etc/ferm/ferm.d/mtail.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: mtail__reload_ferm
   when: mtail__install_ferm_svc | bool

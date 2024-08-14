@@ -6,7 +6,7 @@
     question: ferm/enable
     value: 'yes'
     vtype: boolean
-  changed_when: False
+  changed_when: false
 
 - name: install package
   apt:
@@ -17,22 +17,22 @@
   shell: >-
     /usr/sbin/ferm --version | sed -n 's/^ferm \([0-9].*\)/\1/p'
   register: ferm__version_check
-  changed_when: False
+  changed_when: false
   # Run normally even in check mode.
-  check_mode: no
+  check_mode: false
 
 - name: find installed version
   set_fact:
     ferm__version: '{{ ferm__version_check.stdout | d("0") }}'
   # Run normally even in check mode.
-  check_mode: no
+  check_mode: false
 
 - name: disable caching
   lineinfile:
     dest: /etc/default/ferm
-    line: 'CACHE=no'
+    line: CACHE=no
     regexp: '^CACHE[ =]'
-    state: 'present'
+    state: present
   notify: ferm__reload_ferm
 
 - name: create ferm.d directory
@@ -41,7 +41,7 @@
     state: directory
     owner: root
     group: adm
-    mode: 02750
+    mode: '02750'
 
 - name: place main config file
   template:
@@ -49,7 +49,7 @@
     dest: /etc/ferm/ferm.conf
     owner: root
     group: adm
-    mode: 0644
+    mode: '0644'
   notify: ferm__reload_ferm
 
 - name: place service config files
@@ -58,7 +58,7 @@
     dest: /etc/ferm/ferm.d/svc-{{ item.key }}.conf
     owner: root
     group: adm
-    mode: 0644
+    mode: '0644'
   notify: ferm__reload_ferm
   with_dict: '{{ ferm__services }}'
 
@@ -67,8 +67,8 @@
     ls /etc/ferm/ferm.d/ |
     sed -n 's/^svc-\(.*\)\.conf$/\1/p'
   register: ferm__config_files
-  changed_when: False
-  check_mode: no
+  changed_when: false
+  check_mode: false
 
 - name: remove obsolete service config files
   file:
@@ -84,7 +84,7 @@
     dest: /etc/ferm/ferm.d/custom-{{ item.key }}.conf
     owner: root
     group: adm
-    mode: 0644
+    mode: '0644'
   notify: ferm__reload_ferm
   with_dict: '{{ ferm__custom_configs }}'
 
@@ -93,8 +93,8 @@
     ls /etc/ferm/ferm.d/ |
     sed -n 's/^custom-\(.*\)\.conf$/\1/p'
   register: ferm__config_files
-  changed_when: False
-  check_mode: no
+  changed_when: false
+  check_mode: false
 
 - name: remove obsolete custom config files
   file:
@@ -109,7 +109,7 @@
     dest: /etc/ferm/ferm.d/00-blacklist.conf
     owner: root
     group: adm
-    mode: 0644
+    mode: '0644'
     content: |
       domain (ip ip6) table filter chain blacklist
           saddr @ipfilter(({{ saddr }}))
@@ -125,4 +125,4 @@
   service:
     name: ferm
     state: started
-    enabled: yes
+    enabled: true

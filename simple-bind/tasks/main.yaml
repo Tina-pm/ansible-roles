@@ -8,24 +8,26 @@
 
 - name: start and enable service
   block:
-    - service:
+    - name: start bind9
+      ansible.builtin.service:
         name: bind9
         state: started
-        enabled: yes
+        enabled: true
   rescue:
     # systemd unit name changed in Debian bullseye.
-    - service:
+    - name: start named
+      ansible.builtin.service:
         name: named
         state: started
-        enabled: yes
+        enabled: true
 
 - name: install configuration files
   template:
     src: '{{ item }}.j2'
-    dest: '/etc/bind/{{ item }}'
+    dest: /etc/bind/{{ item }}
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   loop:
     - named.conf
     - named.conf.options
@@ -38,6 +40,6 @@
     dest: /etc/ferm/ferm.d/bind.conf
     owner: root
     group: adm
-    mode: 0644
+    mode: '0644'
   notify: simple_bind__reload_ferm
   when: simple_bind__install_ferm_svc | bool

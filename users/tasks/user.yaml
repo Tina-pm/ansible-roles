@@ -9,11 +9,12 @@
     name: '{{ user.name }}'
     comment: '{{ user.gecos }}'
     password: '{{ user.password }}'
-    groups: '{{ user.groups if user.groups is string else ",".join(user.groups) }}'
+    groups: '{{
+      user.groups if user.groups is string else ",".join(user.groups) }}'
     append: '{{ user.append }}'
     home: '{{ user.home }}'
     create_home: '{{ user.create_home }}'
-    move_home:  '{{ user.move_home }}'
+    move_home: '{{ user.move_home }}'
     shell: '{{ user.shell }}'
     generate_ssh_key: '{{ user.generate_ssh_key }}'
     update_password: '{{ user.update_password }}'
@@ -29,11 +30,13 @@
 - name: '[{{ user.name }}] set SSH authorized keys'
   authorized_key:
     user: '{{ user.name }}'
-    key: "{{
-      user.authorized
-      if user.authorized is string else
-      '\n'.join(user.authorized)
-      }}"
+    key: |
+      {{
+        user.authorized if user.authorized is string else
+        '\n'.join(user.authorized)
+      }}
+      "\n".join(user.authorized)
+      }}'
     exclusive: true
 
 - name: '[{{ user.name }}] set-up user home: directories'
@@ -43,7 +46,8 @@
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
     state: directory
-  with_filetree: '{{ users__home_dir_templates }}/{{ user.name }}'
+  with_community.general.filetree: '{{
+    users__home_dir_templates }}/{{ user.name }}'
   when: item.state == 'directory'
 
 - name: '[{{ user.name }}] set-up user home: normal files'
@@ -53,7 +57,8 @@
     mode: '{{ item.mode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
-  with_filetree: '{{ users__home_dir_templates }}/{{ user.name }}'
+  with_community.general.filetree: '{{
+    users__home_dir_templates }}/{{ user.name }}'
   when: item.state == 'file' and not item.src.endswith('.j2')
 
 - name: '[{{ user.name }}] set-up user home: templates'
@@ -63,7 +68,8 @@
     mode: '{{ item.mode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
-  with_filetree: '{{ users__home_dir_templates }}/{{ user.name }}'
+  with_community.general.filetree: '{{
+    users__home_dir_templates }}/{{ user.name }}'
   when: item.state == 'file' and item.src.endswith('.j2')
 
 - name: '[{{ user.name }}] set-up user home: symlinks'
@@ -76,5 +82,6 @@
     state: link
     force: true
     follow: false
-  with_filetree: '{{ users__home_dir_templates }}/{{ user.name }}'
+  with_community.general.filetree: '{{
+    users__home_dir_templates }}/{{ user.name }}'
   when: item.state == 'link'
