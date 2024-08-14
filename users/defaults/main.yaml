@@ -27,7 +27,8 @@
 #    generate_ssh_key: <bool> [false]
 #      Generate an SSH key for the user if none present.
 #    update_password: 'always' | ['oncreate']
-#      Update existing password.
+#      Update existing password. The default is 'oncreate' unless
+#      `users__force_update_password` is true.
 #    forward: <string>        []
 #      Forward email to this address.
 #    authorized: <list>       []
