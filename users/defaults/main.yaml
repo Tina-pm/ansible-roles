@@ -1,12 +1,65 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
+# users__create_users: List of user definitions.
+#
+# Parameters:
+#    name: <string>           (mandatory)
+#      UNIX user name.
+#    system: <bool>           [false]
+#      Create a system user instead of a normal user.
+#    gecos: <string>          ['<name>']
+#      User full name or comment.
+#    password: <string>       ['*']
+#      Encrypted password in crypt(3) format.
+#    groups: <list>           [[]]
+#      Extra groups membership.
+#    append: <bool>           [false]
+#      Append to groups list instead of replacing.
+#    home: <string>           ['/home/<name>']
+#      User home directory.
+#    create_home: <bool>      [true]
+#      Create home directory.
+#    move_home: <bool>        [<!system>]
+#      Move existing home directory.
+#    shell: <string>          [<system ? '/bin/false' : '/bin/bash']
+#      User command interpreter.
+#    generate_ssh_key: <bool> [false]
+#      Generate an SSH key for the user if none present.
+#    update_password: 'always' | ['oncreate']
+#      Update existing password. The default is 'oncreate' unless
+#      `users__force_update_password` is true.
+#    forward: <string>        []
+#      Forward email to this address.
+#    authorized: <list>       []
+#      Add SSH fingerprints to `.ssh/authorized_keys`.
 users__create_users: []
+
+# users__create_groups: List of group definitions.
+#
+# Parameters:
+#    name: <string>           (mandatory)
+#      Group name.
+#    system: <bool>           [false]
+#      Create a system group instead of a normal group.
 users__create_groups: []
+
+# users__home_dir_templates: Files, directories, and Jinja2 templates to copy
+# to each users' home directory.
 users__home_dir_templates: home_templates/
+
+# users__root_mail_forward: Forward root email to this address.
 users__root_mail_forward: ~
+
+# users__force_update_password: Override user definitions' `update_password`
+# parameter.
 users__force_update_password: false
 
+# users__remove_users_files: Remove all user files when removing users.
 users__remove_users_files: true
+
+# users__remove_users: List of users to remove.
 users__remove_users: []
+
+# users__remove_groups: List of groups to remove.
 users__remove_groups: []
