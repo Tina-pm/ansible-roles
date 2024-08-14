@@ -1,0 +1,42 @@
+# Running role with test_glauth/vars/main.yml should yield this config.
+
+debug: true
+syslog: false
+structuredlog: true
+
+ldaps:
+  enabled: false
+
+api:
+  enabled: false
+
+tracing:
+  enabled: false
+
+ldap:
+  enabled: true
+  listen: 127.0.0.1:1389
+  tls: false
+
+behaviors:
+  LimitFailedBinds: false
+  IgnoreCapabilities: false
+
+backends:
+  - datastore: config
+    baseDN: dc=test,dc=glauth,dc=com
+
+groups:
+  - name: testgrp
+    gidnumber: 501
+
+users:
+  - name: testuser
+    uidnumber: 1001
+    primaryGroup: 501  # TODO: lowercase?
+    # yamllint disable-line rule:quoted-strings
+    passbcrypt: "243262243035242e4e6c53586d49344d5148666741576e4a6d57376e6539\
+                 66652e55664d7a4c58637459783966695979694e4e5755325359395a736d"
+    capabilities:
+      - action: search
+        object: '*'

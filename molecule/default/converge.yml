@@ -7,3 +7,7 @@
     - name: Apply users role fixtures
       ansible.builtin.include_role:
         name: test_users
+
+    - name: Apply glauth role fixtures
+      ansible.builtin.include_role:
+        name: test_glauth

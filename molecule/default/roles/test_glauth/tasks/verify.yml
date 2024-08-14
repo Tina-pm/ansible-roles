@@ -1,0 +1,53 @@
+---
+- name: Detect glauth.toml file
+  ansible.builtin.stat:
+    path: /etc/glauth/glauth.toml
+  register: glauth_toml
+
+- name: Assert ownership and permissions are correct
+  ansible.builtin.assert:
+    that:
+      - glauth_toml.stat.exists
+      - glauth_toml.stat.mode == '0640'
+      - glauth_toml.stat.pw_name == 'root'
+      - glauth_toml.stat.gr_name == 'glauth'
+
+- name: Check syntax of glauth config
+  ansible.builtin.command:
+    cmd: /usr/bin/glauth -c {{ glauth_toml.stat.path }} --check-config
+  changed_when: false
+
+- name: Load expected conf from file
+  ansible.builtin.include_vars:
+    file: files/glauth-expected.yaml
+    name: expected_conf
+
+- name: Load actual conf from instance
+  ansible.builtin.slurp:
+    src: '{{ glauth_toml.stat.path }}'
+  register: actual_conf_b64
+
+- name: Parse TOML conf from instance
+  ansible.builtin.set_fact:
+    actual_conf: '{{ actual_conf_b64.content | b64decode | from_toml }}'
+
+- name: Assert configuration is correct
+  ansible.utils.fact_diff:
+    before: '{{ expected_conf }}'
+    after: '{{ actual_conf }}'
+
+- name: Run ldapsearch
+  ansible.builtin.command:
+    cmd: >-
+      ldapsearch -H ldap://127.0.0.1:1389 -w abcpass
+      -D cn=testuser,dc=test,dc=glauth,dc=com
+      -b dc=test,dc=glauth,dc=com -LLL 1.1
+  register: ldapsearch
+  changed_when: false
+
+- name: Assert service works
+  ansible.builtin.assert:
+    that:
+      - >-
+        'dn: cn=testuser,ou=testgrp,ou=users,dc=test,dc=glauth,dc=com'
+        in ldapsearch.stdout
