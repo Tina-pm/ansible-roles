@@ -1,0 +1,28 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+- name: Install package
+  ansible.builtin.package:
+    name: glauth
+    state: present
+
+- name: Create user
+  ansible.builtin.user:
+    name: glauth
+    state: present
+    system: true
+
+- name: Configure service
+  ansible.builtin.template:
+    src: glauth.toml.j2
+    dest: '{{ glauth__config_file }}'
+    owner: root
+    group: glauth
+    mode: '0640'
+    validate: /usr/bin/glauth -c %s --check-config
+  notify: _tina_restart_glauth
+
+- name: Start and enable service
+  ansible.builtin.service:
+    name: glauth
+    state: started
+    enabled: true
