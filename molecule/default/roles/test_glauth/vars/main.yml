@@ -1,0 +1,25 @@
+---
+glauth__enable_debug: true
+glauth__structured_log: true
+
+glauth__service_ldap:
+  enabled: true
+  listen: 127.0.0.1:1389
+  tls: false
+
+glauth__config_backends:
+  - datastore: config
+    baseDN: dc=test,dc=glauth,dc=com
+
+glauth__config_datastore_groups:
+  - name: testgrp
+    gidnumber: 501
+
+glauth__config_datastore_users:
+  - name: testuser
+    uidnumber: 1001
+    primaryGroup: 501  # will be lowercased
+    passbcrypt: $2b$05$.NlSXmI4MQHfgAWnJmW7ne9fe.UfMzLXctYx9fiYyiNNWU2SY9Zsm
+    capabilities:
+      - action: search
+        object: '*'

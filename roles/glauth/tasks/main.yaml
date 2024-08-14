@@ -11,6 +11,13 @@
     state: present
     system: true
 
+- name: Create /etc/glauth
+  ansible.builtin.file:
+    dest: /etc/glauth
+    state: directory
+    owner: root
+    mode: '0755'
+
 - name: Configure service
   ansible.builtin.template:
     src: glauth.toml.j2

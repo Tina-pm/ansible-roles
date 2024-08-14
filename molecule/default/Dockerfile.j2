@@ -1,0 +1,20 @@
+FROM debian:bookworm-slim
+
+ENV container docker
+ENV DEBIAN_FRONTEND noninteractive
+STOPSIGNAL SIGRTMIN+3
+
+RUN apt-get update -q=2                        \
+ && apt-get install -y --no-install-recommends \
+        python3-apt     \
+        systemd-sysv    \
+        ca-certificates \
+  && apt-get clean      \
+  && rm -f /usr/sbin/policy-rc.d \
+  && rm -f /lib/systemd/system/multi-user.target.wants/getty.target
+
+WORKDIR /
+
+VOLUME ["/tmp", "/run", "/run/lock"]
+
+CMD [ "/lib/systemd/systemd", "log-level=info", "unit=sysinit.target" ]

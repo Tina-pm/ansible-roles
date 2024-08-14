@@ -1,0 +1,16 @@
+---
+- name: Pre-install Debian package
+  ansible.builtin.apt:
+    # yamllint disable-line rule:line-length
+    deb: https://github.com/ASSEKURANSA/glauth/releases/download/debian%2F2.3.2-0_exp5/glauth-binary-dist_2.3.2-0.exp5_amd64.deb
+    state: present
+    update_cache: false
+
+- name: Install ldap-utils
+  ansible.builtin.apt:
+    name: ldap-utils
+    state: present
+
+- name: Run glauth role
+  ansible.builtin.include_role:
+    name: glauth

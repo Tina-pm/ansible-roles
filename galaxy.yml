@@ -18,5 +18,6 @@ repository: http://github.com/Tina-pm/ansible-roles.git
 
 dependencies:
   ansible.posix: '>=1.5.1'
+  ansible.utils: '>=2.9.0'
   community.docker: '>=3.10.2'
   community.general: '>=6.4.0'
