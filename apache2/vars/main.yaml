@@ -4,7 +4,7 @@
 # Pre-processing and validation of parameters.
 
 _a2_conffile_mode: |-
-  {{ "%o" % ((apache2__conffile_mode or 0o644) | int) }}
+  {{ '%o' % ((apache2__conffile_mode or '0644') | int(base=8)) }}
 _a2_conffile_owner: |-
   {{ apache2__conffile_owner or 'root' }}
 _a2_conffile_group: |-
@@ -111,9 +111,9 @@ _a2_ferm_ports: |-
 _a2_logdirs: |-
   {{ apache2__logdirs or [] }}
 _a2_logdirs_mode: |-
-  {{ "%o" % ((apache2__logdirs_mode or 0o750) | int) }}
+  {{ '%o' % ((apache2__logdirs_mode or '0750') | int(base=8)) }}
 _a2_logdirs_filemode: |-
-  {{ "%o" % ((apache2__logdirs_mode or 0o750) | int).__and__(0o666) }}
+  {{ '%o' % ((apache2__logdirs_mode or '0750') | int(base=8)).__and__(0o666) }}
 _a2_logdirs_owner: |-
   {{ apache2__logdirs_owner or 'root' }}
 _a2_logdirs_group: |-
