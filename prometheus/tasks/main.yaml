@@ -3,7 +3,7 @@
 - name: install prometheus
   ansible.builtin.package:
     name: prometheus
-    state: latest
+    state: present
 
 - name: configure prometheus cmdline
   ansible.builtin.template:

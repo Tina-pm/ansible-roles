@@ -103,7 +103,7 @@
 - name: install packages
   ansible.builtin.apt:
     name: '{{ apt__packages_to_install }}'
-    state: latest
+    state: present
 
 - name: enable services
   ansible.builtin.service:

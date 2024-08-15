@@ -7,7 +7,7 @@
       - fail2ban
       - python3-pyinotify
       - python3-systemd
-    state: latest
+    state: present
 
 - name: start and enable service
   ansible.builtin.service:

@@ -3,7 +3,7 @@
 - name: install apache2
   ansible.builtin.package:
     name: apache2
-    state: latest
+    state: present
 
 - name: create log directories
   ansible.builtin.file:

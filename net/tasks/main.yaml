@@ -4,7 +4,7 @@
 - name: ensure ifupdown is present
   ansible.builtin.apt:
     name: ifupdown
-    state: latest
+    state: present
 
 - name: gather facts about services
   ansible.builtin.service_facts:

@@ -3,7 +3,7 @@
 - name: install node_exporter
   ansible.builtin.package:
     name: prometheus-node-exporter
-    state: latest
+    state: present
 
 - name: find installed version
   ansible.builtin.shell: >-

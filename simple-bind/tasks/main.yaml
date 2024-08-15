@@ -4,7 +4,7 @@
 - name: install package
   ansible.builtin.package:
     name: bind9
-    state: latest
+    state: present
 
 - name: start and enable service
   block:

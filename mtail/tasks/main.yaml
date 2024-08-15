@@ -3,7 +3,7 @@
 - name: install mtail
   ansible.builtin.package:
     name: mtail
-    state: latest
+    state: present
   notify: mtail__restart_mtail
 
 - name: configure mtail
