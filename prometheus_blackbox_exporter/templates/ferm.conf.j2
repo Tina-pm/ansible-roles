@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+domain (ip ip6) table filter chain INPUT {
+    proto tcp
+{% if blackbox_exporter__allow_from %}
+{% set saddr = blackbox_exporter__allow_from %}
+{% set saddr = saddr if saddr is string else saddr | join(' ') %}
+    saddr @ipfilter(({{ saddr}}))
+{% endif %}
+    dport {{ blackbox_exporter__listen_port }} ACCEPT;
+}

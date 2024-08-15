@@ -1,0 +1,40 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+- name: Install package
+  ansible.builtin.package:
+    name: prometheus-blackbox-exporter
+    state: present
+
+- name: Configure probes
+  ansible.builtin.template:
+    src: blackbox.yml.j2
+    dest: '{{ blackbox_exporter__config_file }}'
+    owner: root
+    group: root
+    mode: '0644'
+  notify: _tina_reload_blackbox_exporter
+
+- name: Configure service
+  ansible.builtin.template:
+    src: default.j2
+    dest: /etc/default/prometheus-blackbox-exporter
+    owner: root
+    group: root
+    mode: '0644'
+  notify: _tina_restart_blackbox_exporter
+
+- name: Start and enable service
+  ansible.builtin.service:
+    name: prometheus-blackbox-exporter
+    state: started
+    enabled: true
+
+- name: Install ferm configuration
+  ansible.builtin.template:
+    src: ferm.conf.j2
+    dest: /etc/ferm/ferm.d/prometheus-blackbox-exporter.conf
+    owner: root
+    group: adm
+    mode: '0644'
+  notify: _tina_reload_ferm
+  when: blackbox_exporter__install_ferm_svc | bool
