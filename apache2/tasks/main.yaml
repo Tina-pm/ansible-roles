@@ -1,12 +1,12 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: install apache2
-  package:
+  ansible.builtin.package:
     name: apache2
-    state: latest
+    state: present
 
 - name: create log directories
-  file:
+  ansible.builtin.file:
     path: '{{ item }}'
     state: directory
     mode: '{{ _a2_logdirs_mode }}'
@@ -15,7 +15,7 @@
   with_items: '{{ _a2_logdirs }}'
 
 - name: install ports.conf
-  template:
+  ansible.builtin.template:
     src: ports.conf.j2
     dest: /etc/apache2/ports.conf
     owner: root
@@ -24,13 +24,13 @@
   notify: apache2__restart_apache2
 
 - name: start and enable service
-  service:
+  ansible.builtin.service:
     name: apache2
     state: started
     enabled: true
 
 - name: install ferm configuration
-  template:
+  ansible.builtin.template:
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.d/apache2.conf
     owner: root
@@ -40,7 +40,7 @@
   when: _a2_install_ferm_svc | bool
 
 - name: install logrotate configuration
-  template:
+  ansible.builtin.template:
     src: logrotate.conf.j2
     dest: /etc/logrotate.d/apache2
     owner: root
@@ -50,5 +50,5 @@
   when: _a2_install_ferm_svc | bool
 
 - name: install configuration fragments
-  include_tasks: conf_fragment.yaml
+  ansible.builtin.include_tasks: conf_fragment.yaml
   loop: '{{ _a2_fragments }}'

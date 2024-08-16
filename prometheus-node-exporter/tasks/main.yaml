@@ -1,12 +1,12 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: install node_exporter
-  package:
+  ansible.builtin.package:
     name: prometheus-node-exporter
-    state: latest
+    state: present
 
-- name: find installed version
-  shell: >-
+- name: find installed version  # noqa: risky-shell-pipe
+  ansible.builtin.shell: >-
     (prometheus-node-exporter --version 2>&1 || echo "unknown version 0.0") |
     sed -n 's/.* version \([0-9.]\+[0-9]\).*/\1/p'
   register: node_exporter__version_check
@@ -15,13 +15,13 @@
   check_mode: false
 
 - name: find installed version
-  set_fact:
+  ansible.builtin.set_fact:
     node_exporter__version: '{{ node_exporter__version_check.stdout | d("0") }}'
   # Run normally even in check mode.
   check_mode: false
 
 - name: configure node_exporter
-  template:
+  ansible.builtin.template:
     src: default.j2
     dest: /etc/default/prometheus-node-exporter
     owner: root
@@ -30,13 +30,13 @@
   notify: node_exporter__restart_node_exporter
 
 - name: start and enable service
-  service:
+  ansible.builtin.service:
     name: prometheus-node-exporter
     state: started
     enabled: true
 
 - name: install ferm configuration
-  template:
+  ansible.builtin.template:
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.d/prometheus-node-exporter.conf
     owner: root

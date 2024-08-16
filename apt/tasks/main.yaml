@@ -1,7 +1,7 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: abort if distribution mismatch
-  fail:
+  ansible.builtin.fail:
     msg: |
       distribution mismatch: {{ ansible_distribution_release }} !=
       {{ apt__distro }}. Set FORCE_APT_DIST_UPGRADE=1 to override.
@@ -10,21 +10,23 @@
     not lookup('env','FORCE_APT_DIST_UPGRADE')
 
 - name: configure APT sources
-  template:
+  ansible.builtin.template:
     src: sources.list.j2
     dest: /etc/apt/sources.list
+    mode: '0644'
   register: _apt_sources
 
 - name: configure custom APT sources
-  template:
+  ansible.builtin.template:
     src: sources.list.d.j2
     dest: /etc/apt/sources.list.d/{{ item.key }}.list
+    mode: '0644'
   loop: '{{ apt__custom_sources | d({}) | dict2items }}'
   when: item.value
   register: _apt_custom_sources
 
 - name: delete custom APT sources
-  file:
+  ansible.builtin.file:
     path: /etc/apt/sources.list.d/{{ item.key }}.list
     state: absent
   loop: '{{ apt__custom_sources | d({}) | dict2items }}'
@@ -32,7 +34,7 @@
   register: _apt_custom_sources_rm
 
 - name: configure custom APT trusted keys
-  copy:
+  ansible.builtin.copy:
     dest: /etc/apt/trusted.gpg.d/{{ item.key }}.gpg
     content: '{{ item.value | b64decode }}'
     owner: root
@@ -43,7 +45,7 @@
   register: _apt_trusted_keys
 
 - name: delete custom APT trusted keys
-  file:
+  ansible.builtin.file:
     path: /etc/apt/trusted.gpg.d/{{ item.key }}.gpg
     state: absent
   loop: '{{ apt__trusted_keys | d({}) | dict2items }}'
@@ -51,7 +53,7 @@
   register: _apt_trusted_keys_rm
 
 - name: configure custom APT preferences
-  copy:
+  ansible.builtin.copy:
     dest: /etc/apt/preferences.d/{{ item.key }}
     content: '{{ item.value }}'
     owner: root
@@ -62,7 +64,7 @@
   register: _apt_custom_preferences
 
 - name: delete custom APT preferences
-  file:
+  ansible.builtin.file:
     path: /etc/apt/preferences.d/{{ item.key }}
     state: absent
   loop: '{{ apt__custom_preferences | d({}) | dict2items }}'
@@ -70,12 +72,13 @@
   register: _apt_custom_preferences_rm
 
 - name: configure installation of recommended packages
-  template:
+  ansible.builtin.template:
     src: 02recommends.j2
     dest: /etc/apt/apt.conf.d/02recommends
+    mode: '0644'
 
 - name: update package lists
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     cache_valid_time: '{{
       0 if (
@@ -89,30 +92,30 @@
       ) else 3600 }}'
 
 - name: update packages
-  apt:
+  ansible.builtin.apt:
     upgrade: dist
     purge: '{{ apt__purge_removed }}'
   when: apt__run_upgrade
 
 - name: remove unneeded packages
-  apt:
+  ansible.builtin.apt:
     autoremove: true
     purge: '{{ apt__purge_removed }}'
   when: apt__run_autoremove
 
 - name: install packages
-  apt:
+  ansible.builtin.apt:
     name: '{{ apt__packages_to_install }}'
-    state: latest
+    state: present
 
 - name: enable services
-  service:
+  ansible.builtin.service:
     name: '{{ item }}'
     enabled: true
   loop: '{{ apt__services_to_enable or [] }}'
 
 - name: start services
-  service:
+  ansible.builtin.service:
     name: '{{ item }}'
     state: started
   loop: '{{ apt__services_to_start or [] }}'

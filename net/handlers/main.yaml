@@ -1,13 +1,13 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: net__restart_udev
-  service:
+  ansible.builtin.service:
     name: udev
     state: restarted
   listen: net__restart_all
 
 - name: net__reconfigure_network
-  shell:
+  ansible.builtin.shell:  # noqa: risky-shell-pipe
     cmd: >-
       ifdown --all --force;
       for dev in `ip -o link show | sed -n 's/[0-9]*: \(\S\+\):.*/\1/p'`; do
@@ -17,3 +17,4 @@
       ip addr flush scope global;
       ifup --all --force;
   listen: net__restart_all
+  changed_when: true

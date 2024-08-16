@@ -1,7 +1,7 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 - name: create {{ item.afile }}
-  copy:
+  ansible.builtin.copy:
     dest: '{{ item.afile }}'
     content: '{{ item.content }}'
     mode: '{{ _a2_conffile_mode }}'
@@ -11,7 +11,7 @@
   notify: '{{ item.notify }}'
 
 - name: assert {{ item.afile }} state
-  file:
+  ansible.builtin.file:
     dest: '{{ item.afile }}'
     state: |-
       {{ 'file' if item.present else 'absent' }}
@@ -21,7 +21,7 @@
   notify: '{{ item.notify }}'
 
 - name: run {{ item.ctlcmd }} {{ item.name }}
-  command:
+  ansible.builtin.command:
     argv: '{{ [item.ctlcmd, item.name] }}'
     creates: '{{ item.efile if item.enabled else omit }}'
     removes: '{{ item.efile if not item.enabled else omit }}'
