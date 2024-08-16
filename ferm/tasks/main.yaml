@@ -13,7 +13,7 @@
     name: [ferm, libnet-dns-perl]
     state: present
 
-- name: find installed version
+- name: find installed version  # noqa: risky-shell-pipe
   ansible.builtin.shell: >-
     /usr/sbin/ferm --version | sed -n 's/^ferm \([0-9].*\)/\1/p'
   register: ferm__version_check
@@ -62,7 +62,7 @@
   notify: ferm__reload_ferm
   with_dict: '{{ ferm__services }}'
 
-- name: find obsolete service config files
+- name: find obsolete service config files  # noqa: risky-shell-pipe
   ansible.builtin.shell: >-
     ls /etc/ferm/ferm.d/ |
     sed -n 's/^svc-\(.*\)\.conf$/\1/p'
@@ -88,7 +88,7 @@
   notify: ferm__reload_ferm
   with_dict: '{{ ferm__custom_configs }}'
 
-- name: find obsolete custom config files
+- name: find obsolete custom config files  # noqa: risky-shell-pipe
   ansible.builtin.shell: >-
     ls /etc/ferm/ferm.d/ |
     sed -n 's/^custom-\(.*\)\.conf$/\1/p'

@@ -7,7 +7,7 @@
   listen: net__restart_all
 
 - name: net__reconfigure_network
-  ansible.builtin.shell:
+  ansible.builtin.shell:  # noqa: risky-shell-pipe
     cmd: >-
       ifdown --all --force;
       for dev in `ip -o link show | sed -n 's/[0-9]*: \(\S\+\):.*/\1/p'`; do
