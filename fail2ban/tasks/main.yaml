@@ -22,7 +22,7 @@
     owner: root
     group: root
     mode: '0644'
-  notify: fail2ban__restart_fail2ban
+  notify: _tina_restart_fail2ban
 
 - name: place path overrides configuration file
   ansible.builtin.template:
@@ -31,7 +31,7 @@
     owner: root
     group: root
     mode: '0644'
-  notify: fail2ban__restart_fail2ban
+  notify: _tina_restart_fail2ban
 
 - name: place iptables action configuration file
   ansible.builtin.template:
@@ -40,7 +40,7 @@
     owner: root
     group: root
     mode: '0644'
-  notify: fail2ban__restart_fail2ban
+  notify: _tina_restart_fail2ban
 
 - name: place ferm config file
   ansible.builtin.template:
@@ -49,5 +49,5 @@
     owner: root
     group: adm
     mode: '0644'
-  notify: fail2ban__reload_ferm
+  notify: _tina_reload_ferm
   when: fail2ban__install_ferm_svc | bool

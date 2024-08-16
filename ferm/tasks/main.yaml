@@ -33,7 +33,7 @@
     line: CACHE=no
     regexp: '^CACHE[ =]'
     state: present
-  notify: ferm__reload_ferm
+  notify: _tina_reload_ferm
 
 - name: create ferm.d directory
   ansible.builtin.file:
@@ -50,7 +50,7 @@
     owner: root
     group: adm
     mode: '0644'
-  notify: ferm__reload_ferm
+  notify: _tina_reload_ferm
 
 - name: place service config files
   ansible.builtin.template:
@@ -59,7 +59,7 @@
     owner: root
     group: adm
     mode: '0644'
-  notify: ferm__reload_ferm
+  notify: _tina_reload_ferm
   with_dict: '{{ ferm__services }}'
 
 - name: find obsolete service config files  # noqa: risky-shell-pipe
@@ -76,7 +76,7 @@
     state: absent
   with_items: '{{ ferm__config_files.stdout_lines }}'
   when: item not in ferm__services
-  notify: ferm__reload_ferm
+  notify: _tina_reload_ferm
 
 - name: place custom config files
   ansible.builtin.copy:
@@ -85,7 +85,7 @@
     owner: root
     group: adm
     mode: '0644'
-  notify: ferm__reload_ferm
+  notify: _tina_reload_ferm
   with_dict: '{{ ferm__custom_configs }}'
 
 - name: find obsolete custom config files  # noqa: risky-shell-pipe
@@ -102,7 +102,7 @@
     state: absent
   with_items: '{{ ferm__config_files.stdout_lines }}'
   when: item not in ferm__custom_configs
-  notify: ferm__reload_ferm
+  notify: _tina_reload_ferm
 
 - name: place blacklist config file
   ansible.builtin.copy:
@@ -114,7 +114,7 @@
       domain (ip ip6) table filter chain blacklist
           saddr @ipfilter(({{ saddr }}))
           REJECT;
-  notify: ferm__reload_ferm
+  notify: _tina_reload_ferm
   when: ferm__blacklist is defined and ferm__blacklist
   vars:
     saddr: >-

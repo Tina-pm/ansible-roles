@@ -1,5 +1,5 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: users__run_newaliases
+- name: _tina_run_newaliases
   ansible.builtin.command:  # noqa: no-changed-when
     cmd: newaliases

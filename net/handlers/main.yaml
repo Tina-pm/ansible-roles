@@ -1,12 +1,12 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: net__restart_udev
+- name: _tina_restart_udev
   ansible.builtin.service:
     name: udev
     state: restarted
   listen: net__restart_all
 
-- name: net__reconfigure_network
+- name: _tina_reconfigure_network
   ansible.builtin.shell:  # noqa: risky-shell-pipe
     cmd: >-
       ifdown --all --force;

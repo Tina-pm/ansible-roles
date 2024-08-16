@@ -4,7 +4,7 @@
   ansible.builtin.package:
     name: mtail
     state: present
-  notify: mtail__restart_mtail
+  notify: _tina_restart_mtail
 
 - name: configure mtail
   ansible.builtin.template:
@@ -13,7 +13,7 @@
     owner: root
     group: root
     mode: '0644'
-  notify: mtail__restart_mtail
+  notify: _tina_restart_mtail
 
 - name: install mtail programs
   ansible.builtin.copy:
@@ -22,7 +22,7 @@
     owner: root
     group: root
     mode: '0644'
-  notify: mtail__restart_mtail
+  notify: _tina_restart_mtail
   with_items: '{{ mtail__programs or [] }}'
 
 - name: start and enable service
@@ -38,5 +38,5 @@
     owner: root
     group: root
     mode: '0644'
-  notify: mtail__reload_ferm
+  notify: _tina_reload_ferm
   when: mtail__install_ferm_svc | bool

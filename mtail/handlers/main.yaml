@@ -1,11 +1,11 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: mtail__restart_mtail
+- name: _tina_restart_mtail
   ansible.builtin.service:
     name: mtail
     state: restarted
 
-- name: mtail__reload_ferm
+- name: _tina_reload_ferm
   ansible.builtin.service:
     name: ferm
     state: reloaded

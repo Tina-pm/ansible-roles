@@ -1,11 +1,11 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: node_exporter__restart_node_exporter
+- name: _tina_restart_node_exporter
   ansible.builtin.service:
     name: prometheus-node-exporter
     state: restarted
 
-- name: node_exporter__reload_ferm
+- name: _tina_reload_ferm
   ansible.builtin.service:
     name: ferm
     state: reloaded

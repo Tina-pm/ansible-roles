@@ -12,7 +12,7 @@
     owner: root
     group: root
     mode: '0644'
-  notify: prometheus__restart_prometheus
+  notify: _tina_restart_prometheus
 
 - name: create rules directory
   ansible.builtin.file:
@@ -30,7 +30,7 @@
     group: root
     mode: '0644'
     validate: /usr/bin/promtool check rules %s
-  notify: prometheus__reload_prometheus
+  notify: _tina_reload_prometheus
   with_items: '{{ prometheus__rules }}'
   when: not item.endswith('.j2')
 
@@ -47,7 +47,7 @@
     group: root
     mode: '0644'
     validate: /usr/bin/promtool check rules %s
-  notify: prometheus__reload_prometheus
+  notify: _tina_reload_prometheus
   with_items: '{{ prometheus__rules }}'
   when: item.endswith('.j2')
 
@@ -59,7 +59,7 @@
     group: root
     mode: '0644'
     validate: /usr/bin/promtool check config %s
-  notify: prometheus__reload_prometheus
+  notify: _tina_reload_prometheus
 
 - name: start and enable service
   ansible.builtin.service:
@@ -74,5 +74,5 @@
     owner: root
     group: adm
     mode: '0644'
-  notify: prometheus__reload_ferm
+  notify: _tina_reload_ferm
   when: prometheus__install_ferm_svc | bool

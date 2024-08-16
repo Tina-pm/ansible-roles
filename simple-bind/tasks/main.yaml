@@ -32,7 +32,7 @@
     - named.conf
     - named.conf.options
     - named.conf.local
-  notify: simple_bind__reload_bind
+  notify: _tina_reload_bind
 
 - name: place ferm config file
   ansible.builtin.template:
@@ -41,5 +41,5 @@
     owner: root
     group: adm
     mode: '0644'
-  notify: simple_bind__reload_ferm
+  notify: _tina_reload_ferm
   when: simple_bind__install_ferm_svc | bool

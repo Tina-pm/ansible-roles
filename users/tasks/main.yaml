@@ -61,4 +61,4 @@
     state: present
   when: >
     users__root_mail_forward is defined and users__root_mail_forward
-  notify: users__run_newaliases
+  notify: _tina_run_newaliases

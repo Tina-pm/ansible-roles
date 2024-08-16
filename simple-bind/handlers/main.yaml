@@ -1,11 +1,11 @@
 # vim: sw=2:sts=2
 ---
-- name: simple_bind__reload_bind
+- name: _tina_reload_bind
   ansible.builtin.service:
     name: bind9
     state: reloaded
 
-- name: simple_bind__reload_ferm
+- name: _tina_reload_ferm
   ansible.builtin.service:
     name: ferm
     state: reloaded
