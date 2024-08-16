@@ -15,3 +15,4 @@
     cmd: >-
       rm -f /etc/default/locale /etc/locale.gen &&
       dpkg-reconfigure -f noninteractive locales
+  changed_when: true

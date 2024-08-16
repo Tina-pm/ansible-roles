@@ -124,6 +124,7 @@
     DEBIAN_FRONTEND: noninteractive
   when: not _ssh_host_keys.files
   notify: base_setup__reload_sshd
+  changed_when: true
 
 - name: 'sshd: disable password authentication'
   ansible.builtin.lineinfile:
