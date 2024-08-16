@@ -13,6 +13,7 @@
     state: touch
     modification_time: preserve
     access_time: preserve
+    mode: '0644'
   when: base_setup__disable_cloud_init | bool and _cloud_init_cfg.stat.exists
 
 - name: disable systemd-resolved (removing libnss-resolve)
@@ -108,6 +109,7 @@
   ansible.builtin.template:
     src: bash.bashrc.j2
     dest: /etc/bash.bashrc
+    mode: '0644'
 
 - name: 'sshd: verify host keys presence'
   ansible.builtin.find:

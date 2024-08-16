@@ -13,12 +13,14 @@
   ansible.builtin.template:
     src: sources.list.j2
     dest: /etc/apt/sources.list
+    mode: '0644'
   register: _apt_sources
 
 - name: configure custom APT sources
   ansible.builtin.template:
     src: sources.list.d.j2
     dest: /etc/apt/sources.list.d/{{ item.key }}.list
+    mode: '0644'
   loop: '{{ apt__custom_sources | d({}) | dict2items }}'
   when: item.value
   register: _apt_custom_sources
@@ -73,6 +75,7 @@
   ansible.builtin.template:
     src: 02recommends.j2
     dest: /etc/apt/apt.conf.d/02recommends
+    mode: '0644'
 
 - name: update package lists
   ansible.builtin.apt:
