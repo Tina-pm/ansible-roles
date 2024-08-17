@@ -1,27 +1,27 @@
 # vim: sw=2:sts=2
 ---
 
-- name: install package
+- name: Install package
   ansible.builtin.package:
     name: bind9
     state: present
 
-- name: start and enable service
+- name: Start and enable service
   block:
-    - name: start bind9
+    - name: Start bind9
       ansible.builtin.service:
         name: bind9
         state: started
         enabled: true
   rescue:
     # systemd unit name changed in Debian bullseye.
-    - name: start named
+    - name: Start named
       ansible.builtin.service:
         name: named
         state: started
         enabled: true
 
-- name: install configuration files
+- name: Install configuration files
   ansible.builtin.template:
     src: '{{ item }}.j2'
     dest: /etc/bind/{{ item }}
@@ -34,7 +34,7 @@
     - named.conf.local
   notify: _tina_reload_bind
 
-- name: place ferm config file
+- name: Place ferm config file
   ansible.builtin.template:
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.d/bind.conf

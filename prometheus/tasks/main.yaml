@@ -1,11 +1,11 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: install prometheus
+- name: Install prometheus
   ansible.builtin.package:
     name: prometheus
     state: present
 
-- name: configure prometheus cmdline
+- name: Configure prometheus cmdline
   ansible.builtin.template:
     src: default.j2
     dest: /etc/default/prometheus
@@ -14,7 +14,7 @@
     mode: '0644'
   notify: _tina_restart_prometheus
 
-- name: create rules directory
+- name: Create rules directory
   ansible.builtin.file:
     path: /etc/prometheus/rules
     state: directory
@@ -22,7 +22,7 @@
     group: root
     mode: '0755'
 
-- name: install rules files
+- name: Install rules files
   ansible.builtin.copy:
     src: '{{ item }}'
     dest: /etc/prometheus/rules/{{ item | basename }}
@@ -34,7 +34,7 @@
   with_items: '{{ prometheus__rules }}'
   when: not item.endswith('.j2')
 
-- name: install rules templates
+- name: Install rules templates
   ansible.builtin.template:
     src: '{{ item }}'
     dest: /etc/prometheus/rules/{{
@@ -51,7 +51,7 @@
   with_items: '{{ prometheus__rules }}'
   when: item.endswith('.j2')
 
-- name: configure prometheus
+- name: Configure prometheus
   ansible.builtin.template:
     src: prometheus.yml.j2
     dest: /etc/prometheus/prometheus.yml
@@ -61,13 +61,13 @@
     validate: /usr/bin/promtool check config %s
   notify: _tina_reload_prometheus
 
-- name: start and enable service
+- name: Start and enable service
   ansible.builtin.service:
     name: prometheus
     state: started
     enabled: true
 
-- name: install ferm configuration
+- name: Install ferm configuration
   ansible.builtin.template:
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.d/prometheus.conf

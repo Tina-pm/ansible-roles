@@ -1,13 +1,13 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: check cloud-init presence
+- name: Check cloud-init presence
   ansible.builtin.stat:
     path: /etc/cloud/cloud.cfg
   register: _cloud_init_cfg
   when: base_setup__disable_cloud_init | bool
   check_mode: false
 
-- name: disable cloud-init
+- name: Disable cloud-init
   ansible.builtin.file:
     path: /etc/cloud/cloud-init.disabled
     state: touch
@@ -16,19 +16,19 @@
     mode: '0644'
   when: base_setup__disable_cloud_init | bool and _cloud_init_cfg.stat.exists
 
-- name: disable systemd-resolved (removing libnss-resolve)
+- name: Disable systemd-resolved (removing libnss-resolve)
   ansible.builtin.package:
     name: libnss-resolve
     state: absent
   when: base_setup__disable_resolved
 
 # Needs to be executed after `dbus` is installed and started.
-- name: set hostname
+- name: Set hostname
   ansible.builtin.hostname:
     name: '{{ _base_setup__hostname_short }}'
   when: base_setup__set_hostname
 
-- name: set FDQN with IPv4 localhost address
+- name: Set FDQN with IPv4 localhost address
   ansible.builtin.lineinfile:
     dest: /etc/hosts
     line: |-
@@ -38,7 +38,7 @@
     state: present
   when: base_setup__set_hostname
 
-- name: set FDQN with IPv6 localhost address
+- name: Set FDQN with IPv6 localhost address
   ansible.builtin.lineinfile:
     dest: /etc/hosts
     line: |-
@@ -48,7 +48,7 @@
     state: present
   when: base_setup__set_hostname
 
-- name: setup APT, upgrade installed packages, and install base packages
+- name: Setup APT, upgrade installed packages, and install base packages
   ansible.builtin.include_role:
     name: apt
   vars:
@@ -59,7 +59,7 @@
     apt__services_to_enable: '{{ _base_setup__svc_enable_start }}'
     apt__services_to_start: '{{ _base_setup__svc_enable_start }}'
 
-- name: set mail relay
+- name: Set mail relay
   ansible.builtin.lineinfile:
     dest: /etc/postfix/main.cf
     line: relayhost = {{ base_setup__mail_relay }}
@@ -69,7 +69,7 @@
   when: base_setup__mail_relay and base_setup__setup_postfix
   notify: _tina_reload_postfix
 
-- name: 'set-up sudoers: sudo group'
+- name: 'Set up sudoers: sudo group'
   ansible.builtin.lineinfile:
     dest: /etc/sudoers
     state: present
@@ -78,7 +78,7 @@
     validate: visudo -cf %s
   when: base_setup__setup_sudo
 
-- name: 'set-up sudoers: sudo-nopw group'
+- name: 'Set up sudoers: sudo-nopw group'
   ansible.builtin.lineinfile:
     dest: /etc/sudoers
     state: present
@@ -87,7 +87,7 @@
     validate: visudo -cf %s
   when: base_setup__setup_sudo
 
-- name: set default locale
+- name: Set default locale
   ansible.builtin.debconf:
     name: locales
     question: locales/default_environment_locale
@@ -96,7 +96,7 @@
   when: base_setup__setup_locales
   notify: _tina_reconfigure_locales
 
-- name: set list of locales to be generated
+- name: Set list of locales to be generated
   ansible.builtin.debconf:
     name: locales
     question: locales/locales_to_be_generated
@@ -105,19 +105,19 @@
   when: base_setup__setup_locales
   notify: _tina_reconfigure_locales
 
-- name: bash defaults
+- name: Bash defaults
   ansible.builtin.template:
     src: bash.bashrc.j2
     dest: /etc/bash.bashrc
     mode: '0644'
 
-- name: 'sshd: verify host keys presence'
+- name: Verify sshd host keys presence
   ansible.builtin.find:
     paths: /etc/ssh
     patterns: ssh_host_*
   register: _ssh_host_keys
 
-- name: 'sshd: regenerate host keys'
+- name: Regenerate sshd regenerate host keys
   ansible.builtin.command:
     cmd: dpkg-reconfigure openssh-server
   environment:
@@ -126,7 +126,7 @@
   notify: _tina_reload_sshd
   changed_when: true
 
-- name: 'sshd: disable password authentication'
+- name: Disable sshd password authentication
   ansible.builtin.lineinfile:
     dest: /etc/ssh/sshd_config
     state: present
@@ -139,7 +139,7 @@
   when: base_setup__sshd_password_auth_allowed in (True, False)
   notify: _tina_reload_sshd
 
-- name: 'sshd: disable root login'
+- name: Disable sshd root login
   ansible.builtin.lineinfile:
     dest: /etc/ssh/sshd_config
     state: present
@@ -152,7 +152,7 @@
   when: base_setup__sshd_root_login_allowed in (True, False)
   notify: _tina_reload_sshd
 
-- name: 'sshd: enable and start service'
+- name: Enable and start sshd service
   ansible.builtin.service:
     name: sshd
     state: started

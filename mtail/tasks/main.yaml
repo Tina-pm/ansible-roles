@@ -1,12 +1,12 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: install mtail
+- name: Install mtail
   ansible.builtin.package:
     name: mtail
     state: present
   notify: _tina_restart_mtail
 
-- name: configure mtail
+- name: Configure mtail
   ansible.builtin.template:
     src: default.j2
     dest: /etc/default/mtail
@@ -15,7 +15,7 @@
     mode: '0644'
   notify: _tina_restart_mtail
 
-- name: install mtail programs
+- name: Install mtail programs
   ansible.builtin.copy:
     src: '{{ item }}'
     dest: /etc/mtail/{{ item | basename }}
@@ -25,13 +25,13 @@
   notify: _tina_restart_mtail
   with_items: '{{ mtail__programs or [] }}'
 
-- name: start and enable service
+- name: Start and enable service
   ansible.builtin.service:
     name: mtail
     state: started
     enabled: true
 
-- name: install ferm configuration
+- name: Install ferm configuration
   ansible.builtin.template:
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.d/mtail.conf

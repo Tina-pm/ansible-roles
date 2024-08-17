@@ -1,6 +1,6 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: preseed debconf
+- name: Preseed debconf
   ansible.builtin.debconf:
     name: ferm
     question: ferm/enable
@@ -8,12 +8,12 @@
     vtype: boolean
   changed_when: false
 
-- name: install package
+- name: Install package
   ansible.builtin.apt:
     name: [ferm, libnet-dns-perl]
     state: present
 
-- name: find installed version  # noqa: risky-shell-pipe
+- name: Find installed version  # noqa: risky-shell-pipe
   ansible.builtin.shell: >-
     /usr/sbin/ferm --version | sed -n 's/^ferm \([0-9].*\)/\1/p'
   register: ferm__version_check
@@ -21,13 +21,13 @@
   # Run normally even in check mode.
   check_mode: false
 
-- name: find installed version
+- name: Find installed version
   ansible.builtin.set_fact:
     ferm__version: '{{ ferm__version_check.stdout | d("0") }}'
   # Run normally even in check mode.
   check_mode: false
 
-- name: disable caching
+- name: Disable caching
   ansible.builtin.lineinfile:
     dest: /etc/default/ferm
     line: CACHE=no
@@ -35,7 +35,7 @@
     state: present
   notify: _tina_reload_ferm
 
-- name: create ferm.d directory
+- name: Create ferm.d directory
   ansible.builtin.file:
     path: /etc/ferm/ferm.d
     state: directory
@@ -43,7 +43,7 @@
     group: adm
     mode: '02750'
 
-- name: place main config file
+- name: Place main config file
   ansible.builtin.template:
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.conf
@@ -52,7 +52,7 @@
     mode: '0644'
   notify: _tina_reload_ferm
 
-- name: place service config files
+- name: Place service config files
   ansible.builtin.template:
     src: service.conf.j2
     dest: /etc/ferm/ferm.d/svc-{{ item.key }}.conf
@@ -62,7 +62,7 @@
   notify: _tina_reload_ferm
   with_dict: '{{ ferm__services }}'
 
-- name: find obsolete service config files  # noqa: risky-shell-pipe
+- name: Find obsolete service config files  # noqa: risky-shell-pipe
   ansible.builtin.shell: >-
     ls /etc/ferm/ferm.d/ |
     sed -n 's/^svc-\(.*\)\.conf$/\1/p'
@@ -70,7 +70,7 @@
   changed_when: false
   check_mode: false
 
-- name: remove obsolete service config files
+- name: Remove obsolete service config files
   ansible.builtin.file:
     path: /etc/ferm/ferm.d/svc-{{ item }}.conf
     state: absent
@@ -78,7 +78,7 @@
   when: item not in ferm__services
   notify: _tina_reload_ferm
 
-- name: place custom config files
+- name: Place custom config files
   ansible.builtin.copy:
     content: '{{ item.value }}'
     dest: /etc/ferm/ferm.d/custom-{{ item.key }}.conf
@@ -88,7 +88,7 @@
   notify: _tina_reload_ferm
   with_dict: '{{ ferm__custom_configs }}'
 
-- name: find obsolete custom config files  # noqa: risky-shell-pipe
+- name: Find obsolete custom config files  # noqa: risky-shell-pipe
   ansible.builtin.shell: >-
     ls /etc/ferm/ferm.d/ |
     sed -n 's/^custom-\(.*\)\.conf$/\1/p'
@@ -96,7 +96,7 @@
   changed_when: false
   check_mode: false
 
-- name: remove obsolete custom config files
+- name: Remove obsolete custom config files
   ansible.builtin.file:
     path: /etc/ferm/ferm.d/custom-{{ item }}.conf
     state: absent
@@ -104,7 +104,7 @@
   when: item not in ferm__custom_configs
   notify: _tina_reload_ferm
 
-- name: place blacklist config file
+- name: Place blacklist config file
   ansible.builtin.copy:
     dest: /etc/ferm/ferm.d/00-blacklist.conf
     owner: root
@@ -121,7 +121,7 @@
       {{ ferm__blacklist if ferm__blacklist is string else
         ferm__blacklist | join(' ') }}
 
-- name: start and enable service
+- name: Start and enable service
   ansible.builtin.service:
     name: ferm
     state: started

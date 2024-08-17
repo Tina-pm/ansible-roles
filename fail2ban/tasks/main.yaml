@@ -1,7 +1,7 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
-- name: install fail2ban and dependencies
+- name: Install fail2ban and dependencies
   ansible.builtin.package:
     name:
       - fail2ban
@@ -9,13 +9,13 @@
       - python3-systemd
     state: present
 
-- name: start and enable service
+- name: Start and enable service
   ansible.builtin.service:
     name: fail2ban
     state: started
     enabled: true
 
-- name: place jail configuration file
+- name: Place jail configuration file
   ansible.builtin.template:
     src: jail.local.j2
     dest: /etc/fail2ban/jail.local
@@ -24,7 +24,7 @@
     mode: '0644'
   notify: _tina_restart_fail2ban
 
-- name: place path overrides configuration file
+- name: Place path overrides configuration file
   ansible.builtin.template:
     src: paths-overrides.local.j2
     dest: /etc/fail2ban/paths-overrides.local
@@ -33,7 +33,7 @@
     mode: '0644'
   notify: _tina_restart_fail2ban
 
-- name: place iptables action configuration file
+- name: Place iptables action configuration file
   ansible.builtin.template:
     src: iptables.local.j2
     dest: /etc/fail2ban/action.d/iptables.local
@@ -42,7 +42,7 @@
     mode: '0644'
   notify: _tina_restart_fail2ban
 
-- name: place ferm config file
+- name: Place ferm config file
   ansible.builtin.template:
     src: ferm.conf.j2
     dest: /etc/ferm/ferm.d/fail2ban.conf

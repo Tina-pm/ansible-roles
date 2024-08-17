@@ -1,31 +1,31 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: sanity check
+- name: Sanity check
   ansible.builtin.fail:
     msg: Cannot remove the user running ansible ({{ ansible_user }})!
   when: >-
     ansible_user is defined and ansible_user in (users__remove_users | d([]))
 
-- name: remove users
+- name: Remove users
   ansible.builtin.include_tasks: remove_user.yaml
   loop: '{{ users__remove_users | d([]) }}'
   loop_control:
     loop_var: user_name
 
-- name: remove groups
+- name: Remove groups
   ansible.builtin.group:
     state: absent
     name: '{{ item }}'
   loop: '{{ users__remove_groups | d([]) }}'
 
-- name: create groups
+- name: Create groups
   ansible.builtin.group:
     state: present
     name: '{{ item.name }}'
     system: '{{ item.system | d() | bool }}'
   loop: '{{ users__create_groups | d([]) }}'
 
-- name: create users
+- name: Create users
   ansible.builtin.include_tasks: user.yaml
   vars:
     user:
@@ -53,7 +53,7 @@
     loop_var: _user
   no_log: true
 
-- name: set mail forwarding for root
+- name: Set mail forwarding for root
   ansible.builtin.lineinfile:
     dest: /etc/aliases
     line: 'root: {{ users__root_mail_forward }}'
