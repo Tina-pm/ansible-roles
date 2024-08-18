@@ -25,7 +25,7 @@
     line: '{{ user.name }}: {{ user.forward }}'
     regexp: '^{{ user.name }}:.*'
     state: '{{ "present" if user.forward else "absent" }}'
-  notify: users__run_newaliases
+  notify: _tina_run_newaliases
 
 - name: '[{{ user.name }}] set SSH authorized keys'
   ansible.posix.authorized_key:

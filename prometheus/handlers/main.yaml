@@ -1,16 +1,16 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: prometheus__restart_prometheus
+- name: _tina_restart_prometheus
   ansible.builtin.service:
     name: prometheus
     state: restarted
 
-- name: prometheus__reload_prometheus
+- name: _tina_reload_prometheus
   ansible.builtin.service:
     name: prometheus
     state: reloaded
 
-- name: prometheus__reload_ferm
+- name: _tina_reload_ferm
   ansible.builtin.service:
     name: ferm
     state: reloaded

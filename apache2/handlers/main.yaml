@@ -1,16 +1,16 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: apache2__restart_apache2
+- name: _tina_restart_apache2
   ansible.builtin.service:
     name: apache2
     state: restarted
 
-- name: apache2__reload_apache2
+- name: _tina_reload_apache2
   ansible.builtin.service:
     name: apache2
     state: reloaded
 
-- name: apache2__reload_ferm
+- name: _tina_reload_ferm
   ansible.builtin.service:
     name: ferm
     state: reloaded

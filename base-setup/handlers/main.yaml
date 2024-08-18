@@ -1,16 +1,16 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: base_setup__reload_postfix
+- name: _tina_reload_postfix
   ansible.builtin.service:
     name: postfix
     state: reloaded
 
-- name: base_setup__reload_sshd
+- name: _tina_reload_sshd
   ansible.builtin.service:
     name: sshd
     state: reloaded
 
-- name: base_setup__reconfigure_locales
+- name: _tina_reconfigure_locales
   ansible.builtin.shell:
     cmd: >-
       rm -f /etc/default/locale /etc/locale.gen &&

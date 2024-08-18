@@ -11,4 +11,4 @@
     dest: /etc/aliases
     state: absent
     regexp: '^{{ user_name }}:.*'
-  notify: users__run_newaliases
+  notify: _tina_run_newaliases

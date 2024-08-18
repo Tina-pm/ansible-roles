@@ -27,7 +27,7 @@
     owner: root
     group: root
     mode: '0644'
-  notify: node_exporter__restart_node_exporter
+  notify: _tina_restart_node_exporter
 
 - name: start and enable service
   ansible.builtin.service:
@@ -42,5 +42,5 @@
     owner: root
     group: adm
     mode: '0644'
-  notify: node_exporter__reload_ferm
+  notify: _tina_reload_ferm
   when: node_exporter__install_ferm_svc | bool
