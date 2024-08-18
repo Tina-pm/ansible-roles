@@ -1,18 +1,18 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
-- name: ensure ifupdown is present
+- name: Ensure ifupdown is present
   ansible.builtin.apt:
     name: ifupdown
     state: present
 
-- name: gather facts about services
+- name: Gather facts about services
   ansible.builtin.service_facts:
   # Run normally even in check mode.
   check_mode: false
   when: ansible_service_mgr == 'systemd'
 
-- name: stop and disable conflicting services
+- name: Stop and disable conflicting services
   ansible.builtin.service:
     name: '{{ item }}'
     state: stopped
@@ -24,7 +24,7 @@
     - systemd-networkd.service
   notify: _tina_reconfigure_network
 
-- name: create udev persistent rules
+- name: Create udev persistent rules
   ansible.builtin.template:
     src: 70-persistent-net.rules.j2
     dest: /etc/udev/rules.d/70-persistent-net.rules
@@ -34,7 +34,7 @@
   notify: _tina_restart_all
   when: net__use_udev_persistent_rules | bool
 
-- name: configure interfaces
+- name: Configure interfaces
   ansible.builtin.template:
     src: interfaces.j2
     dest: /etc/network/interfaces
@@ -44,5 +44,5 @@
   notify: _tina_reconfigure_network
   when: net__interfaces
 
-- name: apply configuration
+- name: Apply configuration
   ansible.builtin.meta: flush_handlers

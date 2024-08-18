@@ -3,5 +3,4 @@
 profile: production
 skip_list:
   - jinja[spacing]  # Noise in multi-line template expr.
-  - name[casing]    # Grandfathered (for now).
   - name[template]  # "Jinja templates should only be at the end of 'name'"
