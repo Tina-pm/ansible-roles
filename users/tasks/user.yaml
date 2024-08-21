@@ -35,8 +35,6 @@
         user.authorized if user.authorized is string else
         '\n'.join(user.authorized)
       }}
-      "\n".join(user.authorized)
-      }}'
     exclusive: true
 
 - name: '[{{ user.name }}] set-up user home: directories'
