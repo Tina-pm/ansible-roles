@@ -1,0 +1,7 @@
+---
+- name: Molecule converge
+  hosts: all
+  tasks:
+    - name: Apply users role fixtures
+      ansible.builtin.include_role:
+        name: test_users

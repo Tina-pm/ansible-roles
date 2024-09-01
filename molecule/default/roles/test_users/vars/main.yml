@@ -1,0 +1,9 @@
+---
+users__create_users:  # noqa: var-naming[no-role-prefix]
+  - name: sshtest
+    authorized:
+      - ssh-ed25519 XXX 1
+      - ssh-ed25519 YYY 2
+
+_authorized_keys: >-  # noqa: var-naming[no-role-prefix]
+  /home/sshtest/.ssh/authorized_keys

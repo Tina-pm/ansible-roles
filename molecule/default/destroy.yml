@@ -1,0 +1,11 @@
+---
+- name: Destroy molecule containers
+  hosts: all  # FIXME: create and use molecule group
+  gather_facts: false
+  tasks:
+    - name: Stop and remove container
+      delegate_to: localhost
+      community.docker.docker_container:
+        name: '{{ inventory_hostname }}'
+        state: absent
+        auto_remove: true

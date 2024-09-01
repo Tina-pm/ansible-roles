@@ -1,0 +1,13 @@
+---
+platforms:
+  - name: bookworm-tinapm
+    image: geerlingguy/docker-debian12-ansible
+
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: ../..
+  inventory:
+    group_vars:
+      all:
+        ansible_connection: community.docker.docker

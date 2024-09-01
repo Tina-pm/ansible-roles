@@ -1,0 +1,32 @@
+---
+- name: Detect .ssh dir
+  ansible.builtin.stat:
+    path: '{{ _authorized_keys | dirname }}'
+  register: ssh_dir
+
+- name: Detect authorized_keys file
+  ansible.builtin.stat:
+    path: '{{ _authorized_keys }}'
+  register: authorized_file
+
+- name: Detect authorized SSH keys
+  ansible.builtin.lineinfile:
+    path: '{{ _authorized_keys }}'
+    line: '{{ item }}'
+    state: absent  # Allows asserting on `found`, below.
+  check_mode: true
+  changed_when: false
+  loop:
+    - ssh-ed25519 XXX 1
+    - ssh-ed25519 YYY 2
+  register: ssh_keys
+
+- name: Assert SSH authorization is correct
+  ansible.builtin.assert:
+    that:
+      - ssh_dir.stat.mode == '0700'
+      - ssh_dir.stat.pw_name == 'sshtest'
+      - authorized_file.stat.exists
+      - authorized_file.stat.isreg
+      - ssh_keys.results[0].found
+      - ssh_keys.results[1].found
