@@ -7,6 +7,10 @@ provisioner:
   name: ansible
   env:
     ANSIBLE_ROLES_PATH: ../..
+  config_options:
+    defaults:
+      stdout_callback: debug
+      stderr_callback: debug
   inventory:
     group_vars:
       all:
