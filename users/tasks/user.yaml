@@ -30,11 +30,14 @@
 - name: '[{{ user.name }}] set SSH authorized keys'
   ansible.posix.authorized_key:
     user: '{{ user.name }}'
-    key: |
-      {{
-        user.authorized if user.authorized is string else
-        '\n'.join(user.authorized)
-      }}
+    # Important: double quotes scalar is needed here so that '\n'.join() uses
+    # actual newlines, and not literal r'\n'.
+    # yamllint disable-line rule:quoted-strings
+    key: "{{
+      user.authorized
+      if user.authorized is string else
+      '\n'.join(user.authorized)
+      }}"
     exclusive: true
 
 - name: '[{{ user.name }}] set-up user home: directories'
