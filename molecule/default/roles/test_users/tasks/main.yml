@@ -1,0 +1,4 @@
+---
+- name: Run users role
+  ansible.builtin.include_role:
+    name: users

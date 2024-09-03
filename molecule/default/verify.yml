@@ -1,0 +1,8 @@
+---
+- name: Molecule verify
+  hosts: all
+  tasks:
+    - name: Verify users role
+      ansible.builtin.include_role:
+        name: test_users
+        tasks_from: verify.yml
