@@ -43,8 +43,8 @@ _a2_fragments: |-
       apache2__mods_enabled_dir if kind == 'mod' else
       apache2__sites_enabled_dir
   %}
-  {% set notify = 'apache2__restart_apache2' if kind == 'mod' else
-      'apache2__reload_apache2'
+  {% set notify = '_tina_restart_apache2' if kind == 'mod' else
+      '_tina_reload_apache2'
   %}
 
   {% for name, conf in userconf.items() %}
