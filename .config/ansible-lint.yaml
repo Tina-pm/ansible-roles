@@ -1,6 +1,8 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 profile: production
+exclude_paths:
+  - roles/external
 skip_list:
   - jinja[spacing]  # Noise in multi-line template expr.
   - name[template]  # "Jinja templates should only be at the end of 'name'"
