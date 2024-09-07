@@ -8,11 +8,11 @@ platforms:
 provisioner:
   name: ansible
   env:
-    ANSIBLE_ROLES_PATH: ../..
+    ANSIBLE_ROLES_PATH: ../../roles
   config_options:
     defaults:
-      stdout_callback: debug
-      stderr_callback: debug
+      stdout_callback: ansible.posix.debug
+      stderr_callback: ansible.posix.debug
   inventory:
     group_vars:
       all:

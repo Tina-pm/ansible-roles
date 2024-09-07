@@ -1,0 +1,22 @@
+namespace: tina_pm
+name: common
+version: 2.0.0
+
+authors:
+  - Martina Ferrari <tina@tina.pm>
+  - Adeodato Simó <dato@net.com.org.es>
+
+description: Ansible collection for Tina-pm deployments
+tags:
+  - infrastructure
+
+readme: README.md
+license:
+  - GPL-2.0-or-later
+
+repository: http://github.com/Tina-pm/ansible-roles.git
+
+dependencies:
+  ansible.posix: '>=1.5.1'
+  community.docker: '>=3.10.2'
+  community.general: '>=6.4.0'

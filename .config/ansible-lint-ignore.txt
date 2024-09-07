@@ -1,4 +1,4 @@
-# These are raised when running `ansible-lint *`.
-base-setup 			role-name
-simple-bind			role-name
-prometheus-node-exporter	role-name
+# These are raised when running `ansible-lint roles/*`.
+roles/base-setup 		role-name
+roles/simple-bind		role-name
+roles/prometheus-node-exporter	role-name

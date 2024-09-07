@@ -4,3 +4,5 @@ profile: production
 skip_list:
   - jinja[spacing]  # Noise in multi-line template expr.
   - name[template]  # "Jinja templates should only be at the end of 'name'"
+  - var-naming[no-role-prefix]
+  - meta-runtime[unsupported-version]  # 2.14 deemed too old by ansible-lint
