@@ -20,3 +20,4 @@ dependencies:
   ansible.posix: '>=1.5.1'
   community.docker: '>=3.10.2'
   community.general: '>=6.4.0'
+  tina_pm.third_party: '>=1.0.0'

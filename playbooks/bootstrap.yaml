@@ -20,3 +20,30 @@
       ansible.builtin.apt:
         name: '{{ bootstrap_packages }}'
         state: present
+
+- name: Run bootstrapping roles
+  hosts: all
+  vars:
+    play_net_enable: '{{ net__enable | d(false) }}'
+    play_resolv_enable: '{{ resolv__enable | d(false) }}'
+    simple_bind__enable: false  # Do not expect a local name server yet.
+  roles:
+    - role: net
+      when: play_net_enable
+      tags: net
+
+    - role: tina_pm.third_party.resolv
+      when: play_resolv_enable
+      tags: resolv
+
+    - role: base_setup
+      tags: base_setup
+      vars:
+        # Do not disable this until users are fully set-up.
+        base_setup__sshd_password_auth_allowed:
+        base_setup__sshd_root_login_allowed:
+
+    - role: users
+      tags: users
+      vars:
+        users__force_update_password: true
