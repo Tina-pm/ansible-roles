@@ -1,4 +1,3 @@
 # These are raised when running `ansible-lint roles/*`.
-roles/base-setup 		role-name
 roles/simple-bind		role-name
 roles/prometheus-node-exporter	role-name
