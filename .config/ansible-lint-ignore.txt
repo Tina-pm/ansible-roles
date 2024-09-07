@@ -1,2 +1,0 @@
-# These are raised when running `ansible-lint roles/*`.
-roles/prometheus-node-exporter	role-name
