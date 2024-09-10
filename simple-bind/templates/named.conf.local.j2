@@ -10,7 +10,7 @@ view internals {
         match-clients { internals; };
         allow-transfer { internals; };
         allow-recursion { internals; };
-        
+
 {% for zone in simple_bind__forward_zones or [] -%}
         zone "{{ zone.zone }}" {
                 type forward;
@@ -20,9 +20,10 @@ view internals {
                     {{ forwarder }};
 {% endfor -%}
                 };
-                file "db.internal{{ zone.zone }}";
+                file "db.internal.{{ zone.zone }}";
 {% for extra in zone.get('extra_conf') or [] %}
-                    {{ extra }};
+                {{ extra }};
+        };
 {% endfor %}
 };
 
@@ -30,12 +31,12 @@ view internals {
 
 {% for zone in simple_bind__secondary_zones or [] -%}
         zone "{{ zone.zone }}" {
-            type slave;
-            masters {
+                type slave;
+                masters {
 {% for primary in zone.get('primaries') or [] %}
-                    {{ primary }};
+                        {{ primary }};
 {% endfor %}
-            };
+        };
         file "db.internal.{{ zone.zone }}";
 {% for extra in zone.get('extra_conf') or [] %}
         {{ extra }};
@@ -58,7 +59,7 @@ view externals {
                     {{ primary }};
 {% endfor %}
             };
-        file "db.{{ zone.zone }}";
+        file "db.external.{{ zone.zone }}";
 {% for extra in zone.get('extra_conf') or [] %}
         {{ extra }};
 {% endfor %}
