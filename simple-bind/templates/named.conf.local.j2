@@ -1,34 +1,66 @@
 // {{ ansible_managed }}
 
+acl internals {
+        localhost;
+        {{ internal_networks | ansible.utils.ipv4 }}
+        {{ internal_networks | ansible.utils.ipv6 }}
+};
+
+view internals {
+        match-clients { internals; };
+        allow-transfer { internals; };
+        allow-recursion { internals; };
+        
 {% for zone in simple_bind__forward_zones or [] -%}
-zone "{{ zone.zone }}" {
-        type forward;
-        forward {{ zone.forward | default('first') }};
-        forwarders {
+        zone "{{ zone.zone }}" {
+                type forward;
+                forward {{ zone.forward | default('first') }};
+                forwarders {
 {% for forwarder in zone.get('forwarders') or [] %}
-            {{ forwarder }};
+                    {{ forwarder }};
 {% endfor -%}
-        };
-        file "db.{{ zone.zone }}";
+                };
+                file "db.internal{{ zone.zone }}";
 {% for extra in zone.get('extra_conf') or [] %}
-            {{ extra }};
+                    {{ extra }};
 {% endfor %}
 };
 
 {% endfor -%}
 
 {% for zone in simple_bind__secondary_zones or [] -%}
-zone "{{ zone.zone }}" {
-        type slave;
-        masters {
+        zone "{{ zone.zone }}" {
+            type slave;
+            masters {
 {% for primary in zone.get('primaries') or [] %}
-            {{ primary }};
+                    {{ primary }};
+{% endfor %}
+            };
+        file "db.internal.{{ zone.zone }}";
+{% for extra in zone.get('extra_conf') or [] %}
+        {{ extra }};
 {% endfor %}
         };
-        file "db.{{ zone.zone }}";
-{% for extra in zone.get('extra_conf') or [] %}
-            {{ extra }};
+
 {% endfor %}
 };
 
+view externals {
+        match-clients { any; };
+        allow-transfer {"none"; };
+        recursion no;
+
+{% for zone in simple_bind__external_secondary_zones or [] -%}
+        zone "{{ zone.zone }}" {
+            type slave;
+            masters {
+{% for primary in zone.get('primaries') or [] %}
+                    {{ primary }};
 {% endfor %}
+            };
+        file "db.{{ zone.zone }}";
+{% for extra in zone.get('extra_conf') or [] %}
+        {{ extra }};
+{% endfor %}
+        };
+};
