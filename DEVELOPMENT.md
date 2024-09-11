@@ -5,13 +5,39 @@
 The test suite uses [molecule], Ansible's solution for unit testing roles
 using virtual machines or containers. We use Docker containers by default.
 
-Since molecule is not packaged for Debian (see ITP at [#986204]), it must be
-installed with `pip` or `pipx` (molecule provides no importable modules, so
-`pipx` is probably best). On macOS, it can also be installed with `brew
-install`.
+### Installing molecule
+
+Since molecule is not packaged for Debian (see ITP at [#986204]), installing
+with `pipx` is recommended. Additional dependencies should be installed with
+apt, or specified with `--preinstall`, as shown below (see [requirements.txt]
+for an up-to-date list of dependencies):
+
+On Debian:
+
+```sh
+$ sudo apt install python3-toml
+$ sudo apt install -t trixie pipx
+$ pipx install --preinstall molecule-plugins[docker] molecule
+```
+
+On macOS:
+
+```sh
+$ brew install pipx
+$ pipx install --preinstall toml --preinstall molecule-plugins[docker] molecule
+```
+
+Please note:
+
+  - installing with `pip` in a virtualenv is not recommended, because it'll use
+    a bundled version of `ansible-core`, instead of the system-wide installation
+
+  - installing molecule with `brew` is also not recommended, because additional
+    dependencies can't be specified
 
 [molecule]: https://ansible.readthedocs.io/projects/molecule/
 [#986204]: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=986204
+[requirements.txt]: requirements.txt
 
 
 ### Running tests
