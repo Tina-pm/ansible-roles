@@ -34,7 +34,6 @@ users:
   - name: testuser
     uidnumber: 1001
     primaryGroup: 501  # TODO: lowercase?
-    # yamllint disable-line rule:quoted-strings
     passbcrypt: "243262243035242e4e6c53586d49344d5148666741576e4a6d57376e6539\
                  66652e55664d7a4c58637459783966695979694e4e5755325359395a736d"
     capabilities:
