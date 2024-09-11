@@ -1,0 +1,64 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+glauth__config_file: /etc/glauth/glauth.toml
+glauth__install_ferm_svc: false  # Not implemented yet.
+
+# General options
+glauth__enable_debug: false
+glauth__log_to_syslog: false
+glauth__structured_log: false
+
+# Services that can be enabled
+glauth__service_ldap:
+  enabled: false
+
+glauth__service_ldaps:
+  enabled: false
+
+glauth__service_api:
+  enabled: false
+
+# Other options
+glauth__config_tracing:
+  enabled: false
+
+glauth__config_behaviors:
+  LimitFailedBinds: false
+  IgnoreCapabilities: false
+
+# glauth__config_backends: List of enabled backends. Each of them should
+# have, at least, `datastore` and `baseDN`.
+glauth__config_backends: []
+
+# glauth__config_datastore_groups: List of groups, passed to the config backend
+# as-is. Elements should have, at least, `name` and `gidnumber`. Example:
+#
+# glauth__config_datastore_groups:
+#   - name: people
+#     gidnumber: 1000001
+#   - name: svcaccts
+#     gidnumber: 1000002
+glauth__config_datastore_groups: []
+
+# glauth__config_datastore_users: List of users. Most fields are supported,
+# except `passsha256` and `passappsha256` (see [1] and [2] for the list of
+# fields).
+#
+# Also, for convenience, `passbcrypt` need not be hex-encoded.
+# yamllint disable rule:line-length
+#
+#   [1] https://github.com/glauth/glauth/blob/a5ecc26e/v2/sample-simple.cfg#L84-L114
+#   [2] https://github.com/glauth/glauth/blob/a5ecc26e/v2/pkg/config/config.go#L86-L108
+#
+# yamllint enable rule:line-length
+# Example:
+#
+# glauth__config_datastore_users:
+#   - name: grafana
+#     uidnumber: 1200001
+#     primarygroup: 1000002
+#     passbcrypt: '$2b$...'
+#     capabilities:
+#       - action: search
+#         object: '*'
+glauth__config_datastore_users: []

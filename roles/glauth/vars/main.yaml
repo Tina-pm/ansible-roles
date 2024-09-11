@@ -1,0 +1,41 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+# TODO: validation.
+_glauth_toplevel:
+  debug: '{{ glauth__enable_debug | bool }}'
+  syslog: '{{ glauth__log_to_syslog | bool }}'
+  structuredlog: '{{ glauth__structured_log | bool }}'
+
+_glauth_services:
+  api: '{{ glauth__service_api }}'
+  ldap: '{{ glauth__service_ldap }}'
+  ldaps: '{{ glauth__service_ldaps }}'
+
+_glauth_configs:
+  tracing: '{{ glauth__config_tracing }}'
+  backends: '{{ glauth__config_backends }}'
+  behaviors: '{{ glauth__config_behaviors }}'
+
+_glauth_datastore:
+  groups: '{{ glauth__config_datastore_groups }}'
+  # users filter:
+  #   - drop passsha256/passappsha256
+  #   - optionally hexlify passbcrypt
+  users: |
+      {% filter ansible.builtin.from_yaml %}
+      {% if glauth__config_datastore_users %}
+      {% set users = glauth__config_datastore_users | ansible.utils.remove_keys(
+             matching_parameter='regex', target='(?i)pass(app)?sha256$') %}
+      {% for user in users %}
+      {% set pass = user.get('passbcrypt') or '' %}
+      {% set pass = (pass.encode('ascii').hex() if pass.startswith('$')
+                     else pass) %}
+      - {{ user |
+           combine(dict(passbcrypt=pass)) |
+           ansible.builtin.to_yaml(default_flow_style=True)
+      }}
+      {% endfor %}
+      {% else %}
+      []
+      {% endif %}
+      {% endfilter %}
