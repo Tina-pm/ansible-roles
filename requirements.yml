@@ -1,0 +1,4 @@
+collections:
+  - name: tina_pm.third_party
+    source: https://github.com/Tina-pm/tina_pm.third_party.git
+    type: git
