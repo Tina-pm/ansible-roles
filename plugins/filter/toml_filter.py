@@ -3,8 +3,6 @@
 import json
 import toml
 
-# FIXME: should move this to a top-level collection plugin.
-
 
 class FilterModule:
 
