@@ -8,3 +8,8 @@
       ansible.builtin.include_role:
         name: test_users
         tasks_from: verify.yml
+
+    - name: Verify glauth role
+      ansible.builtin.include_role:
+        name: test_glauth
+        tasks_from: verify.yml

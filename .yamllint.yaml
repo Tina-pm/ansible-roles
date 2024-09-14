@@ -21,3 +21,4 @@ rules:
       - ^[0-9:]+$  # IPv6 addresses containing only numbers 0-9 are misparsed
     extra-allowed:
       - ^\^   # regular expression
+      - \S{81,}  # Allow using quotes to escape newlines in long strings

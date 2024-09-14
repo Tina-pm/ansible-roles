@@ -1,9 +1,17 @@
 # yamllint disable-line rule:line-length
 # yaml-language-server: $schema=https://raw.githubusercontent.com/ansible/molecule/main/src/molecule/data/molecule.json
 ---
+dependency:
+  name: shell
+  command: pip install toml
+driver:
+  name: docker
 platforms:
-  - name: bookworm-tinapm
-    image: geerlingguy/docker-debian12-ansible
+  - name: tinapm-bookworm
+    image: tinapm:bookworm
+    pre_build_image: false
+    override_command: false
+    privileged: true  # FIXME: :'-(
 
 provisioner:
   name: ansible
