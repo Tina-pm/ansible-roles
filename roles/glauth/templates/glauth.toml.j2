@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 
-{{ _glauth_toplevel | to_toml }}
-{{ _glauth_services | to_toml }}
-{{ _glauth_configs | to_toml }}
-{{ _glauth_datastore | to_toml }}
+{{ _glauth_toplevel | tina_pm.common.to_toml }}
+{{ _glauth_services | tina_pm.common.to_toml }}
+{{ _glauth_configs | tina_pm.common.to_toml }}
+{{ _glauth_datastore | tina_pm.common.to_toml }}
