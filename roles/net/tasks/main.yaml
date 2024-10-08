@@ -31,7 +31,7 @@
     owner: root
     group: root
     mode: '0644'
-  notify: _tina_restart_all
+  notify: _tina_restart_net_all
   when: net__use_udev_persistent_rules | bool
 
 - name: Configure interfaces
