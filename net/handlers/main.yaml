@@ -4,7 +4,7 @@
   ansible.builtin.service:
     name: udev
     state: restarted
-  listen: net__restart_all
+  listen: _tina_restart_net_all
 
 - name: _tina_reconfigure_network
   ansible.builtin.shell:  # noqa: risky-shell-pipe
@@ -16,5 +16,5 @@
       udevadm trigger -c add -s net;
       ip addr flush scope global;
       ifup --all --force;
-  listen: net__restart_all
+  listen: _tina_restart_net_all
   changed_when: true
