@@ -21,4 +21,3 @@ dependencies:
   ansible.utils: '>=2.9.0'
   community.docker: '>=3.10.2'
   community.general: '>=6.4.0'
-  tina_pm.third_party: '>=1.0.0'
