@@ -29,7 +29,8 @@
 
 - name: Parse TOML conf from instance
   ansible.builtin.set_fact:
-    actual_conf: '{{ actual_conf_b64.content | b64decode | from_toml }}'
+    actual_conf: '
+      {{ actual_conf_b64.content | b64decode | tina_pm.common.from_toml }}'
 
 - name: Assert configuration is correct
   ansible.utils.fact_diff:
