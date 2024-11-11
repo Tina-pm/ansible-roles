@@ -1,0 +1,26 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+DOCUMENTATION:
+  name: to_toml
+  author: Dato Simó
+  version_added: 2.0.0
+  short_description: Convert variable to TOML string
+  description:
+    - Converts an Ansible variable into a TOML string representation.
+  notes:
+    - This filter functions as a wrapper to the L(Python TOML library,
+      https://pypi.org/project/toml/)'s C(toml.dumps) function.
+  options:
+    _input:
+      description: A variable or expression that returns a data structure.
+      type: raw
+      required: true
+
+EXAMPLES: |
+  # dump variable in a template to create a TOML document
+  {{ my_complex_var | to_toml }}
+
+RETURN:
+  _value:
+    description: The TOML serialized string representing the input.
+    type: string
