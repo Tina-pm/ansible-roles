@@ -43,7 +43,7 @@
 - name: '[{{ user.name }}] set-up user home: directories'
   ansible.builtin.file:
     path: '{{ user.home }}/{{ item.path }}'
-    mode: '{{ item.mode }}'
+    mode: '{{ _usr_home_dmode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
     state: directory
@@ -55,7 +55,9 @@
   ansible.builtin.copy:
     src: '{{ item.src }}'
     dest: '{{ user.home }}/{{ item.path }}'
-    mode: '{{ item.mode }}'
+    # Force mode if requested; then add *all* executable bits if *any* is set
+    # in the source, and requested.
+    mode: '{{ _usr_home_fmode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
   with_community.general.filetree: '{{
@@ -66,7 +68,9 @@
   ansible.builtin.template:
     src: '{{ item.src }}'
     dest: '{{ user.home }}/{{ item.path | regex_replace("\.j2$", "") }}'
-    mode: '{{ item.mode }}'
+    # Force mode if requested; then add *all* executable bits if *any* is set
+    # in the source, and requested.
+    mode: '{{ _usr_home_fmode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
   with_community.general.filetree: '{{
@@ -77,7 +81,7 @@
   ansible.builtin.file:
     src: '{{ item.src }}'
     path: '{{ user.home }}/{{ item.path }}'
-    mode: '{{ item.mode }}'
+    # Always use default mode.
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
     state: link
