@@ -4,11 +4,11 @@
   ansible.builtin.fail:
     msg: Cannot remove the user running ansible ({{ ansible_user }})!
   when: >-
-    ansible_user is defined and ansible_user in (users__remove_users | d([]))
+    ansible_user is defined and ansible_user in (users__remove_users or [])
 
 - name: Remove users
   ansible.builtin.include_tasks: remove_user.yaml
-  loop: '{{ users__remove_users | d([]) }}'
+  loop: '{{ users__remove_users or [] }}'
   loop_control:
     loop_var: user_name
 
@@ -16,14 +16,14 @@
   ansible.builtin.group:
     state: absent
     name: '{{ item }}'
-  loop: '{{ users__remove_groups | d([]) }}'
+  loop: '{{ users__remove_groups or [] }}'
 
 - name: Create groups
   ansible.builtin.group:
     state: present
     name: '{{ item.name }}'
     system: '{{ item.system | d() | bool }}'
-  loop: '{{ users__create_groups | d([]) }}'
+  loop: '{{ users__create_groups or [] }}'
 
 - name: Create users
   ansible.builtin.include_tasks: user.yaml
@@ -33,7 +33,7 @@
       name: '{{ _user.name }}'
       gecos: '{{ _user.gecos | d(_user.name) }}'
       password: '{{ _user.password | d("*") }}'
-      groups: '{{ _user.groups | default([]) | join(",") }}'
+      groups: '{{ _user.groups | d([]) | join(",") }}'
       append: '{{ _user.append | d() | bool }}'
       home: '{{ _user.home |
         d("/" if _user.get("system") else "/home/" ~ _user.name) }}'
@@ -48,7 +48,7 @@
         ) }}'
       forward: '{{ _user.forward | d("") }}'
       authorized: '{{ _user.authorized | d([]) }}'
-  loop: '{{ users__create_users | d([]) }}'
+  loop: '{{ users__create_users or [] }}'
   loop_control:
     loop_var: _user
   no_log: true
