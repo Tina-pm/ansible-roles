@@ -26,6 +26,8 @@
     regexp: '^{{ user.name }}:.*'
     state: '{{ "present" if user.forward else "absent" }}'
   notify: _tina_run_newaliases
+  when: >
+    users__manage_aliases
 
 - name: '[{{ user.name }}] set SSH authorized keys'
   ansible.posix.authorized_key:
