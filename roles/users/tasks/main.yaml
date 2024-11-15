@@ -60,5 +60,5 @@
     regexp: '^root:.*'
     state: present
   when: >
-    users__root_mail_forward is defined and users__root_mail_forward
+    users__root_mail_forward and users__manage_aliases
   notify: _tina_run_newaliases

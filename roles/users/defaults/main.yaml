@@ -63,3 +63,6 @@ users__remove_users: []
 
 # users__remove_groups: List of groups to remove.
 users__remove_groups: []
+
+# users__manage_aliases: If False, no mail forwarding is configured.
+users__manage_aliases: true
