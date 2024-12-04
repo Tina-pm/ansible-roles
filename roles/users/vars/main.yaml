@@ -1,0 +1,32 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+# Pre-processing and validation of parameters.
+
+# Note 1: these can only be used inside a filetree loop, as they use the
+# `item.mode` variable.
+# Note 2: Ansible converts all numeric values to strings when templating and
+# parsing variable values (but keeps booleans, lists, and dicts as native
+# objects), so avoid using temporary variables for passing numeric values.
+
+# True if item is executable, an *and* the user requested copying the
+# executable bit.
+_usr_home_xfile: |-
+  {{
+    (item.mode | int(base=8)).__and__(0o111) != 0 and
+    users__home_dir_templates_copy_xbit
+  }}
+_usr_home_fmode: |-
+  {{
+    '0%o' % (
+      (users__home_dir_templates_force_file_mode or item.mode) | int(base=8)
+    ).__or__(
+      0o111 if _usr_home_xfile else 0
+    )
+  }}
+_usr_home_dmode: |-
+  {{
+    '0%o' % (
+      (users__home_dir_templates_force_dir_mode or item.mode) | int(base=8)
+    )
+  }}

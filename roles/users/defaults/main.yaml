@@ -48,6 +48,19 @@ users__create_groups: []
 # to each users' home directory.
 users__home_dir_templates: home_templates/
 
+# users__home_dir_templates_copy_xbit: Preserve executable bit in files
+# copied.
+users__home_dir_templates_copy_xbit: true
+
+# users__home_dir_templates_force_file_mode: Force mode bits for regular files
+# copied. Note: this might be altered if `users__home_dir_templates_copy_xbit`
+# is true.
+users__home_dir_templates_force_file_mode: '0644'
+
+# users__home_dir_templates_force_dir_mode: Force mode bits for directories
+# created.
+users__home_dir_templates_force_dir_mode: '0755'
+
 # users__root_mail_forward: Forward root email to this address.
 users__root_mail_forward: ~
 
