@@ -1,8 +1,14 @@
 ---
+- name: Set Debian architecture
+  ansible.builtin.command:
+    cmd: dpkg --print-architecture
+  register: deb_arch
+  changed_when: false
+
 - name: Pre-install Debian package
   ansible.builtin.apt:
     # yamllint disable-line rule:line-length
-    deb: https://github.com/ASSEKURANSA/glauth/releases/download/debian%2F2.3.2-0_exp5/glauth-binary-dist_2.3.2-0.exp5_amd64.deb
+    deb: https://github.com/ASSEKURANSA/glauth/releases/download/debian%2F2.3.2-0_exp5/glauth-binary-dist_2.3.2-0.exp5_{{ deb_arch.stdout }}.deb
     state: present
     update_cache: false
 
