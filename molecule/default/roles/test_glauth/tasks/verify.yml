@@ -32,7 +32,7 @@
     actual_conf: '
       {{ actual_conf_b64.content | b64decode | tina_pm.common.from_toml }}'
 
-- name: Assert configuration is correct
+- name: Show configuration changes
   ansible.utils.fact_diff:
     before: '{{ expected_conf }}'
     after: '{{ actual_conf }}'
@@ -46,9 +46,10 @@
   register: ldapsearch
   changed_when: false
 
-- name: Assert service works
+- name: Assert service works and is configured correctly
   ansible.builtin.assert:
     that:
       - >-
         'dn: cn=testuser,ou=testgrp,ou=users,dc=test,dc=glauth,dc=com'
         in ldapsearch.stdout
+      - expected_conf == actual_conf
