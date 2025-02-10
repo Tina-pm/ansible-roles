@@ -78,6 +78,18 @@
   when: base_setup__set_hostname and base_setup__setup_postfix
   notify: _tina_reload_postfix
 
+- name: Set mailname
+  ansible.builtin.copy:
+    content: |
+      {{ base_setup__set_hostname }}
+    dest: /etc/mailname
+    owner: root
+    group: root
+    mode: '0644'
+    state: present
+  when: base_setup__set_hostname and base_setup__setup_postfix
+  notify: _tina_reload_postfix
+
 - name: 'Set up sudoers: sudo group'
   ansible.builtin.lineinfile:
     dest: /etc/sudoers
