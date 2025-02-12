@@ -1,0 +1,9 @@
+- name: _tina_pm_restart_thelounge
+  ansible.builtin.systemd:
+    name: thelounge
+    state: restarted
+
+- name: _tina_reload_ferm
+  ansible.builtin.service:
+    name: ferm
+    state: reloaded
