@@ -25,6 +25,9 @@ prometheus__federate_filter:
 # Scrape configuration: prometheus metrics.
 prometheus__monitored_prometheus: []
 
+# Scrape configuration: alertmanager metrics.
+prometheus__monitored_alermanagers: '{{ prometheus__alertmanagers }}'
+
 # Scrape configuration: node_exporter metrics.
 prometheus__monitored_nodes: []
 
