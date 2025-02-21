@@ -10,12 +10,10 @@ prometheus__extra_args:
 prometheus__install_ferm_svc: false
 prometheus__allow_from:
 
-prometheus__monitored_nodes: []
-prometheus__scrape_configs: []
-
 prometheus__rules: []
 prometheus__alertmanagers: []
-prometheus__monitored_prometheus: []
+
+# Scrape configuration: federated prometheus.
 prometheus__federated_prometheus: []
 # Only import metrics that have a ':' in their name (derived from explicit
 # rules), or the special up metric.
@@ -23,3 +21,12 @@ prometheus__federate_filter:
   - '{__name__=~".+:.+"}'
   - '{job="prometheus"}'
   - up
+
+# Scrape configuration: prometheus metrics.
+prometheus__monitored_prometheus: []
+
+# Scrape configuration: node_exporter metrics.
+prometheus__monitored_nodes: []
+
+# Free-form scrape configurations.
+prometheus__scrape_configs: []
