@@ -15,6 +15,7 @@ prometheus__alertmanagers: []
 
 # Scrape configuration: federated prometheus.
 prometheus__federated_prometheus: []
+prometheus__federated_prometheus_config: {}
 # Only import metrics that have a ':' in their name (derived from explicit
 # rules), or the special up metric.
 prometheus__federate_filter:
@@ -24,12 +25,15 @@ prometheus__federate_filter:
 
 # Scrape configuration: prometheus metrics.
 prometheus__monitored_prometheus: []
+prometheus__monitored_prometheus_config: {}
 
 # Scrape configuration: alertmanager metrics.
 prometheus__monitored_alermanagers: '{{ prometheus__alertmanagers }}'
+prometheus__monitored_alermanagers_config: {}
 
 # Scrape configuration: node_exporter metrics.
 prometheus__monitored_nodes: []
+prometheus__monitored_nodes_config: {}
 
 # Free-form scrape configurations.
 prometheus__scrape_configs: []
