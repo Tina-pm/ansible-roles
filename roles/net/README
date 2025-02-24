@@ -1,0 +1,28 @@
+# Net role
+
+(Re-)configures host networking using ifupdown, uptionally renaming interfaces
+based on MAC address.
+
+Note: this role disables cloud-init handling of network configuration.
+
+See /usr/share/doc/udev/README.Debian.gz for details on how interface renaming
+is handled.
+
+## Troubleshooting
+
+As distributions adopt "modern" automatic configuration tools things might
+break, in particular udev rules tend to get clobbered.
+
+These commands can help debug why the changes are not being applied:
+
+```
+SYSTEMD_LOG_LEVEL=debug \
+  udevadm test-builtin net_setup_link /sys/class/net/<iface>
+```
+
+```
+SYSTEMD_LOG_LEVEL=debug \
+  udevadm test -a add /sys/class/net/<iface>
+```
+
+Note: the `udevadm test` command seems to apply changes and not just test.

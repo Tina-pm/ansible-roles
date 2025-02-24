@@ -1,28 +1,52 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
+- name: Check cloud-init presence
+  ansible.builtin.stat:
+    path: /etc/cloud/cloud.cfg
+  register: _cloud_init_cfg
+  check_mode: false
+
+- name: Disable cloud-init network configuration
+  ansible.builtin.copy:
+    dest: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+    mode: '0644'
+    content: |
+      network: {config: disabled}
+  when: _cloud_init_cfg.stat.exists
+
+- name: Find cloud-init generated netplan configuration files
+  ansible.builtin.find:
+    paths:
+      - /etc/netplan
+    patterns:
+      - ??-cloud-init.yaml
+  register: _netplan_cfg
+  when: _cloud_init_cfg.stat.exists
+
+- name: Find netplan generated configuration files
+  ansible.builtin.find:
+    paths:
+      - /run/systemd/network
+      - /run/udev/rules.d
+    patterns:
+      - ??-netplan-*.link
+      - ??-netplan-*.network
+      - ??-netplan-*.rules
+  register: _networkd_cfg
+  when: _cloud_init_cfg.stat.exists
+
+- name: Remove generated configuration files
+  ansible.builtin.file:
+    path: '{{ item.path }}'
+    state: absent
+  loop: '{{ _networkd_cfg.files + _netplan_cfg.files }}'
+  when: _cloud_init_cfg.stat.exists
+
 - name: Ensure ifupdown is present
-  ansible.builtin.apt:
+  ansible.builtin.package:
     name: ifupdown
     state: present
-
-- name: Gather facts about services
-  ansible.builtin.service_facts:
-  # Run normally even in check mode.
-  check_mode: false
-  when: ansible_service_mgr == 'systemd'
-
-- name: Stop and disable conflicting services
-  ansible.builtin.service:
-    name: '{{ item }}'
-    state: stopped
-    enabled: false
-    masked: true
-  when: ansible_service_mgr == 'systemd' and item in services
-  with_items:
-    - systemd-network-generator.service
-    - systemd-networkd.service
-  notify: _tina_reconfigure_network
 
 - name: Create udev persistent rules
   ansible.builtin.template:
@@ -31,7 +55,9 @@
     owner: root
     group: root
     mode: '0644'
-  notify: _tina_restart_net_all
+  notify:
+    - _tina_reconfigure_network
+    - _tina_update_initramfs
   when: net__use_udev_persistent_rules | bool
 
 - name: Configure interfaces
@@ -41,7 +67,8 @@
     owner: root
     group: root
     mode: '0644'
-  notify: _tina_reconfigure_network
+  notify:
+    - _tina_reconfigure_network
   when: net__interfaces
 
 - name: Apply configuration
