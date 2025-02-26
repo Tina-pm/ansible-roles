@@ -30,11 +30,11 @@ __prom_scrape_config2: |-
 __alertmanager_scrape_config:
   job_name: alertmanager
   static_configs:
-    - targets: '{{ (prometheus__monitored_alermanagers or []) | list }}'
+    - targets: '{{ (prometheus__monitored_alertmanagers or []) | list }}'
 __alertmanager_scrape_config2: |-
   {{
     __alertmanager_scrape_config |
-    combine(prometheus__monitored_alermanagers_config or {})
+    combine(prometheus__monitored_alertmanagers_config or {})
   }}
 
 __node_scrape_config:

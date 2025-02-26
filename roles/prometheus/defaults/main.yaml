@@ -28,8 +28,8 @@ prometheus__monitored_prometheus: []
 prometheus__monitored_prometheus_config: {}
 
 # Scrape configuration: alertmanager metrics.
-prometheus__monitored_alermanagers: '{{ prometheus__alertmanagers }}'
-prometheus__monitored_alermanagers_config: {}
+prometheus__monitored_alertmanagers: '{{ prometheus__alertmanagers }}'
+prometheus__monitored_alertmanagers_config: {}
 
 # Scrape configuration: node_exporter metrics.
 prometheus__monitored_nodes: []
