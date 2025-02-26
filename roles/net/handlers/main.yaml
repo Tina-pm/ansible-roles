@@ -1,20 +1,20 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-- name: _tina_restart_udev
-  ansible.builtin.service:
-    name: udev
-    state: restarted
-  listen: _tina_restart_net_all
-
 - name: _tina_reconfigure_network
   ansible.builtin.shell:  # noqa: risky-shell-pipe
     cmd: >-
-      ifdown --all --force;
-      for dev in `ip -o link show | sed -n 's/[0-9]*: \(\S\+\):.*/\1/p'`; do
+      networkctl reload;
+      ifdown --verbose --all --force;
+      for dev in `ls /sys/class/net`; do
         ip link set dev $dev down;
       done;
-      udevadm trigger -c add -s net;
+      udevadm control --reload;
+      udevadm trigger --action add --subsystem-match net;
       ip addr flush scope global;
-      ifup --all --force;
-  listen: _tina_restart_net_all
+      ifup --verbose --all --force;
+  changed_when: true
+
+- name: _tina_update_initramfs
+  ansible.builtin.command:
+    cmd: update-initramfs -u -k all
   changed_when: true
