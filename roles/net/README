@@ -1,6 +1,6 @@
 # Net role
 
-(Re-)configures host networking using ifupdown, uptionally renaming interfaces
+(Re-)configures host networking using ifupdown, optionally renaming interfaces
 based on MAC address.
 
 Note: this role disables cloud-init handling of network configuration.
