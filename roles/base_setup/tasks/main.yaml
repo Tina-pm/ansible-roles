@@ -86,7 +86,6 @@
     owner: root
     group: root
     mode: '0644'
-    state: present
   when: base_setup__set_hostname and base_setup__setup_postfix
   notify: _tina_reload_postfix
 
