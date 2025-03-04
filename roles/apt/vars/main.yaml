@@ -80,7 +80,7 @@ apt__default_security_distro: |-
 apt__default_mirror: |-
   {{
     'http://deb.debian.org/debian/'
-    if apt__distro_is_current else
+    if apt__distro_ver is version('11', 'ge') else
     'http://archive.debian.org/debian/'
   }}
 
