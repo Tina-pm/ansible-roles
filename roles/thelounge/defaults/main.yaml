@@ -1,0 +1,13 @@
+thelounge__port: 9000
+thelounge__reverse_proxy: false
+thelounge__https_enable: false
+thelounge__https_key: ''
+thelounge__https_certificate: ''
+thelounge__prefetch: false
+thelounge__prefetch_storage: false
+thelounge__file_upload_enable: false
+thelounge__defaults_join: '#thelounge'
+
+thelounge__ldap_enable: false
+thelounge__ldap_url: ldaps://example.com
+thelounge__ldap_primary_key: uid

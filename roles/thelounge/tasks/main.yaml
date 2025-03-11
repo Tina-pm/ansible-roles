@@ -1,0 +1,45 @@
+- name: Install required packages
+  ansible.builtin.package:
+    name:
+      - thelounge
+      - acl
+    state: present
+
+- name: Set up SSL certificate ACL
+  ansible.builtin.acl:
+    path: '{{ item }}'
+    entity: thelounge
+    etype: user
+    permissions: r
+    state: present
+  loop:
+    - '{{ thelounge__https_key }}'
+    - '{{ thelounge__https_certificate }}'
+  when:
+    - thelounge__https_key != ''
+    - thelounge__https_certificate != ''
+
+- name: Configure TheLounge
+  ansible.builtin.template:
+    src: config.js.j2
+    dest: /etc/thelounge/config.js
+    owner: thelounge
+    group: thelounge
+    mode: '0660'
+  notify: _tina_pm_restart_thelounge
+
+- name: Start and enable TheLounge service
+  ansible.builtin.service:
+    name: thelounge
+    state: started
+    enabled: true
+
+- name: Install ferm configuration for TheLounge
+  ansible.builtin.template:
+    src: ferm.conf.j2
+    dest: /etc/ferm/ferm.d/thelounge.conf
+    owner: root
+    group: adm
+    mode: '0644'
+  notify: _tina_reload_ferm
+  when: thelounge__install_ferm_svc | bool
