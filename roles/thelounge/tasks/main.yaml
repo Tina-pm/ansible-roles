@@ -1,11 +1,8 @@
-- name: Install TheLounge package
+- name: Install required packages
   ansible.builtin.package:
-    name: thelounge
-    state: present
-
-- name: Install acl package
-  ansible.builtin.package:
-    name: acl
+    name:
+      - thelounge
+      - acl
     state: present
 
 - name: Set up SSL certificate ACL
