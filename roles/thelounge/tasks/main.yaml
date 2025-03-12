@@ -5,20 +5,6 @@
       - acl
     state: present
 
-- name: Set up SSL certificate ACL
-  ansible.builtin.acl:
-    path: '{{ item }}'
-    entity: thelounge
-    etype: user
-    permissions: r
-    state: present
-  loop:
-    - '{{ thelounge__https_key }}'
-    - '{{ thelounge__https_certificate }}'
-  when:
-    - thelounge__https_key != ''
-    - thelounge__https_certificate != ''
-
 - name: Configure TheLounge
   ansible.builtin.template:
     src: config.js.j2
