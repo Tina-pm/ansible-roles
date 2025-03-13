@@ -10,22 +10,8 @@ _a2_conffile_owner: |-
 _a2_conffile_group: |-
   {{ apache2__conffile_group or 'root' }}
 
-_a2_listen_http: |-
-  {{
-    []
-    if not apache2__listen_http else
-    [apache2__listen_http]
-    if apache2__listen_http is not iterable or apache2__listen_http is string
-    else apache2__listen_http
-  }}
-_a2_listen_https: |-
-  {{
-    []
-    if not apache2__listen_https else
-    [apache2__listen_https]
-    if apache2__listen_https is not iterable or apache2__listen_https is string
-    else apache2__listen_https
-  }}
+_a2_listen_http: '{{ apache2__listen_http | d([]) | tina_pm.common.to_list }}'
+_a2_listen_https: '{{ apache2__listen_https | d([]) | tina_pm.common.to_list }}'
 
 _a2_fragments: |-
   {% filter from_yaml %}
@@ -86,12 +72,7 @@ _a2_install_ferm_svc: |-
 
 _a2_ferm_allow_from: |-
   {{
-    None
-    if not apache2__ferm_allow_from else
-    [apache2__ferm_allow_from]
-    if apache2__ferm_allow_from is not iterable or
-    apache2__ferm_allow_from is string
-    else apache2__ferm_allow_from
+    (apache2__ferm_allow_from | d([]) | tina_pm.common.to_list) or None
   }}
 # Extract port numbers from apache2__listen_http(s).
 __a2_ports: |-
