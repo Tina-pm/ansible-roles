@@ -2,8 +2,8 @@
 {% with -%}
 {%- set repo = item.value %}
 {%- set options = (
-    '[' + repo.options.items() | map('join', '=') | join(' ') + '] '
-    ) if repo.get('options') else '' %}
+  '[' + repo.options.items() | map('join', '=') | join(' ') + '] '
+  ) if repo.get('options') else '' %}
 {%- set distro = repo.distro | d('./') %}
 {%- set components = repo.get('components') or '' %}
 {%- set components = components if components is string else components | join(' ') -%}

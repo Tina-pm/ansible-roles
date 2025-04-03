@@ -7,13 +7,13 @@ Listen {{ port }}
 
 <IfModule ssl_module>
 {% for port in _a2_listen_https %}
-    Listen {{ port }}
+  Listen {{ port }}
 {% endfor %}
 </IfModule>
 
 <IfModule mod_gnutls.c>
 {% for port in _a2_listen_https %}
-    Listen {{ port }}
+  Listen {{ port }}
 {% endfor %}
 </IfModule>
 {% endif %}

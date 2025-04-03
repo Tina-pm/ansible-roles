@@ -1,10 +1,10 @@
 # {{ ansible_managed }}
 domain (ip ip6) table filter chain INPUT {
-    proto tcp
+  proto tcp
 {% if node_exporter__allow_from %}
 {% set saddr = node_exporter__allow_from %}
 {% set saddr = saddr if saddr is string else saddr | join(' ') %}
-    saddr @ipfilter(({{ saddr}}))
+  saddr @ipfilter(({{ saddr}}))
 {% endif %}
-    dport {{ node_exporter__listen_port }} ACCEPT;
+  dport {{ node_exporter__listen_port }} ACCEPT;
 }

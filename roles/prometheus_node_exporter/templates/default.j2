@@ -7,32 +7,32 @@
 
 ARGS=" \
 {% if node_exporter__disk_ignored_devs %}
-      {{ _flag }}collector.diskstats.ignored-devices={{
-          node_exporter__disk_ignored_devs
-          }} \
+  {{ _flag }}collector.diskstats.ignored-devices={{
+    node_exporter__disk_ignored_devs
+  }} \
 {% endif %}
 {% if node_exporter__fs_ignored_mounts %}
-      {{ _flag }}collector.filesystem.ignored-mount-points={{
-          node_exporter__fs_ignored_mounts
-          }} \
+  {{ _flag }}collector.filesystem.ignored-mount-points={{
+    node_exporter__fs_ignored_mounts
+  }} \
 {% endif %}
 {% if node_exporter__net_ignored_devs %}
 {% if node_exporter__version is version('1.0.0', 'ge') %}
-      {{ _flag }}collector.netdev.device-exclude={{
-          node_exporter__net_ignored_devs
-          }} \
+  {{ _flag }}collector.netdev.device-exclude={{
+    node_exporter__net_ignored_devs
+  }} \
 {% else %}
-      {{ _flag }}collector.netdev.ignored-devices={{
-          node_exporter__net_ignored_devs
-          }} \
+  {{ _flag }}collector.netdev.ignored-devices={{
+    node_exporter__net_ignored_devs
+  }} \
 {% endif %}
 {% endif %}
 {% if node_exporter__enabled_collectors %}
-      {{ _flag }}collectors.enabled={{
-          node_exporter__enabled_collectors
-          }} \
+  {{ _flag }}collectors.enabled={{
+    node_exporter__enabled_collectors
+  }} \
 {% endif %}
-      {{ _flag }}web.listen-address={{
-          node_exporter__listen_addr ~ ':' ~ node_exporter__listen_port
-          }} \
-      {{ node_exporter__extra_args }}"
+  {{ _flag }}web.listen-address={{
+    node_exporter__listen_addr ~ ':' ~ node_exporter__listen_port
+  }} \
+  {{ node_exporter__extra_args }}"

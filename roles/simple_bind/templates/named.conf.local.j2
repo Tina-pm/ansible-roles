@@ -2,16 +2,16 @@
 
 {% for zone in simple_bind__forward_zones or [] -%}
 zone "{{ zone.zone }}" {
-        type forward;
-        forward {{ zone.forward | default('first') }};
-        forwarders {
+  type forward;
+  forward {{ zone.forward | default('first') }};
+  forwarders {
 {% for forwarder in zone.get('forwarders') or [] %}
-            {{ forwarder }};
+    {{ forwarder }};
 {% endfor -%}
-        };
-        file "db.{{ zone.zone }}";
+  };
+  file "db.{{ zone.zone }}";
 {% for extra in zone.get('extra_conf') or [] %}
-            {{ extra }};
+  {{ extra }};
 {% endfor %}
 };
 
@@ -19,15 +19,15 @@ zone "{{ zone.zone }}" {
 
 {% for zone in simple_bind__secondary_zones or [] -%}
 zone "{{ zone.zone }}" {
-        type slave;
-        masters {
+  type slave;
+  masters {
 {% for primary in zone.get('primaries') or [] %}
-            {{ primary }};
+    {{ primary }};
 {% endfor %}
-        };
-        file "db.{{ zone.zone }}";
+  };
+  file "db.{{ zone.zone }}";
 {% for extra in zone.get('extra_conf') or [] %}
-            {{ extra }};
+  {{ extra }};
 {% endfor %}
 };
 
