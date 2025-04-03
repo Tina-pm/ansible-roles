@@ -9,12 +9,6 @@
       - python3-systemd
     state: present
 
-- name: Start and enable service
-  ansible.builtin.service:
-    name: fail2ban
-    state: started
-    enabled: true
-
 - name: Place jail configuration file
   ansible.builtin.template:
     src: jail.local.j2
@@ -51,3 +45,9 @@
     mode: '0644'
   notify: _tina_reload_ferm
   when: fail2ban__install_ferm_svc | bool
+
+- name: Start and enable service
+  ansible.builtin.service:
+    name: fail2ban
+    state: started
+    enabled: true

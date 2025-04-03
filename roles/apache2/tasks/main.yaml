@@ -23,12 +23,6 @@
     mode: '0644'
   notify: _tina_restart_apache2
 
-- name: Start and enable service
-  ansible.builtin.service:
-    name: apache2
-    state: started
-    enabled: true
-
 - name: Install ferm configuration
   ansible.builtin.template:
     src: ferm.conf.j2
@@ -52,3 +46,9 @@
 - name: Install configuration fragments
   ansible.builtin.include_tasks: conf_fragment.yaml
   loop: '{{ _a2_fragments }}'
+
+- name: Start and enable service
+  ansible.builtin.service:
+    name: apache2
+    state: started
+    enabled: true

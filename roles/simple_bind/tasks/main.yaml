@@ -6,21 +6,6 @@
     name: bind9
     state: present
 
-- name: Start and enable service
-  block:
-    - name: Start bind9
-      ansible.builtin.service:
-        name: bind9
-        state: started
-        enabled: true
-  rescue:
-    # systemd unit name changed in Debian bullseye.
-    - name: Start named
-      ansible.builtin.service:
-        name: named
-        state: started
-        enabled: true
-
 - name: Install configuration files
   ansible.builtin.template:
     src: '{{ item }}.j2'
@@ -43,3 +28,18 @@
     mode: '0644'
   notify: _tina_reload_ferm
   when: simple_bind__install_ferm_svc | bool
+
+- name: Start and enable service
+  block:
+    - name: Start bind9
+      ansible.builtin.service:
+        name: bind9
+        state: started
+        enabled: true
+  rescue:
+    # systemd unit name changed in Debian bullseye.
+    - name: Start named
+      ansible.builtin.service:
+        name: named
+        state: started
+        enabled: true

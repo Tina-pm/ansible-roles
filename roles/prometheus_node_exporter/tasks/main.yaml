@@ -29,12 +29,6 @@
     mode: '0644'
   notify: _tina_restart_node_exporter
 
-- name: Start and enable service
-  ansible.builtin.service:
-    name: prometheus-node-exporter
-    state: started
-    enabled: true
-
 - name: Install ferm configuration
   ansible.builtin.template:
     src: ferm.conf.j2
@@ -44,3 +38,9 @@
     mode: '0644'
   notify: _tina_reload_ferm
   when: node_exporter__install_ferm_svc | bool
+
+- name: Start and enable service
+  ansible.builtin.service:
+    name: prometheus-node-exporter
+    state: started
+    enabled: true
