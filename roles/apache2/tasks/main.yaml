@@ -40,8 +40,7 @@
     owner: root
     group: root
     mode: '0644'
-  notify: _tina_reload_ferm
-  when: _a2_install_ferm_svc | bool
+  when: _a2_install_logrotate_conf | bool
 
 - name: Install configuration fragments
   ansible.builtin.include_tasks: conf_fragment.yaml
