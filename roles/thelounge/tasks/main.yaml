@@ -9,7 +9,7 @@
     state: present
 
 - name: Set up SSL certificate ACL
-  ansible.builtin.acl:
+  ansible.posix.acl:
     path: '{{ item }}'
     entity: thelounge
     etype: user
