@@ -39,17 +39,13 @@
   notify: _tina_reload_ferm
   when: simple_bind__install_ferm_svc | bool
 
+- name: Populate service facts
+  ansible.builtin.service_facts:
+  # Run normally even in check mode.
+  check_mode: false
+
 - name: Start and enable service
-  block:
-    - name: Start bind9
-      ansible.builtin.service:
-        name: bind9
-        state: started
-        enabled: true
-  rescue:
-    # systemd unit name changed in Debian bullseye.
-    - name: Start named
-      ansible.builtin.service:
-        name: named
-        state: started
-        enabled: true
+  ansible.builtin.service:
+    name: '{{ _sbind_svcname }}'
+    state: started
+    enabled: true

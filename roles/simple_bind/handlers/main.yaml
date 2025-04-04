@@ -8,7 +8,7 @@
 
 - name: _tina_reload_bind
   ansible.builtin.service:
-    name: bind9
+    name: '{{ _sbind_svcname }}'
     state: reloaded
 
 - name: _tina_reload_ferm

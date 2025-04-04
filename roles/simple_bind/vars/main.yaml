@@ -21,3 +21,15 @@ _sbind_term:
     {{ 'secondary' if _sbind_has_9_13 else 'slave' }}
   primaries: |-
     {{ 'primaries' if _sbind_has_9_13 else 'masters' }}
+
+# Find service name.
+_sbind_svcnames:
+  - bind9.service
+  - named.service
+_sbind_svcname: |-
+  {{
+    _sbind_svcnames |
+    select('in', ansible_facts.services) |
+    first |
+    default('named')
+  }}
