@@ -17,7 +17,9 @@
     - named.conf
     - named.conf.options
     - named.conf.local
-  notify: _tina_reload_bind
+  notify:
+    - _tina_validate_bind_conf
+    - _tina_reload_bind
 
 - name: Place ferm config file
   ansible.builtin.template:
