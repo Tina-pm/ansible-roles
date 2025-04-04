@@ -5,5 +5,5 @@ domain (ip ip6) table filter chain INPUT {
 {% if _a2_ferm_allow_from %}
   saddr @ipfilter(({{ ' '.join(_a2_ferm_allow_from) }}))
 {% endif %}
-  dport ({{ ' '.join(_a2_ferm_ports | map('string')) }}) ACCEPT;
+  dport ({{ ' '.join(_a2_ports | map('string')) }}) ACCEPT;
 }

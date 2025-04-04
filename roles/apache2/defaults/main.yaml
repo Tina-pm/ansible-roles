@@ -53,10 +53,8 @@ apache2__sites: {}
 
 # If true, install ferm configuration file.
 apache2__install_ferm_svc: false
-# Optionally limit access to a list of IP addresses.
+# Optionally limit access by a list of IP addresses/blocks.
 apache2__ferm_allow_from: ~
-# Ports to allow in ferm, default constructed from apache2__listen_*.
-apache2__ferm_ports: ~
 
 # Log directories to create.
 apache2__logdirs:

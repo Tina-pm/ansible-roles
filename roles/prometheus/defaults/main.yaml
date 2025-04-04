@@ -7,8 +7,11 @@ prometheus__retention_time:
 prometheus__retention_size:
 prometheus__external_url:
 prometheus__extra_args:
+
+# If true, install ferm configuration file.
 prometheus__install_ferm_svc: false
-prometheus__allow_from:
+# Optionally limit access by a list of IP addresses/blocks.
+prometheus__ferm_allow_from: ~
 
 prometheus__rules: []
 prometheus__alertmanagers: []
