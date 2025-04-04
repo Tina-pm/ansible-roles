@@ -6,6 +6,14 @@
     name: bind9
     state: present
 
+- name: Find installed version
+  ansible.builtin.command:
+    argv: [/usr/sbin/named, -v]
+  register: _sbind_chkver
+  changed_when: false
+  # Run normally even in check mode.
+  check_mode: false
+
 - name: Install configuration files
   ansible.builtin.template:
     src: '{{ item }}.j2'

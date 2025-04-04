@@ -1,0 +1,23 @@
+---
+# vim:ts=2:sw=2:et:ai:sts=2
+
+# Process output of `named -v`.
+_sbind_version: |-
+  {{
+    (
+      (
+        _sbind_chkver.stdout |
+        ansible.builtin.regex_search('^BIND (\S+) .*', '\1', multiline=True)
+      ) or ['0.0~invalid']
+    ) | first
+  }}
+_sbind_has_9_13: |-
+  {{ _sbind_version is ansible.builtin.version('9.13.0', 'ge') }}
+
+_sbind_term:
+  primary: |-
+    {{ 'primary' if _sbind_has_9_13 else 'master' }}
+  secondary: |-
+    {{ 'secondary' if _sbind_has_9_13 else 'slave' }}
+  primaries: |-
+    {{ 'primaries' if _sbind_has_9_13 else 'masters' }}
