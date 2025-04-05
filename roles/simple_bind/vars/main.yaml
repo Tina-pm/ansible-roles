@@ -33,3 +33,30 @@ _sbind_svcname: |-
     first |
     default('named')
   }}
+
+# Pre-process configuration options.
+
+_sbind_listen: |-
+  {% set sections = ('listen_on', 'listen_on_v6') %}
+  {% set result = dict(sections | zip(([], []))) %}
+  {% for section in sections %}
+  {% set opt = (simple_bind__options or {}).get(section) or [] %}
+  {% set opt = [opt] if opt is not iterable or opt is string else opt %}
+  {% for item in opt | select %}
+  {% set item = item if item is mapping else dict(match_list=item) %}
+  {% set port = item.pop('port', None) or 53 %}
+  {% set match_list = item.pop('match_list', None) %}
+  {% set match_list =
+    ['any'] if not match_list else
+    [match_list]
+    if match_list is not iterable or match_list is string else
+    match_list
+  %}
+  {% set _ = result[section].append(
+      item | combine({'port': port, 'match_list': match_list})) %}
+  {% endfor %}
+  {% endfor %}
+  {{- result }}
+
+_sbind_ports: |-
+  {{ _sbind_listen.values() | sum(start=[]) | map(attribute='port') | unique }}
