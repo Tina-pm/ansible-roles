@@ -24,13 +24,13 @@
   notify: _tina_restart_blackbox_exporter
 
 - name: Install ferm configuration
-  ansible.builtin.template:
-    src: ferm.conf.j2
-    dest: /etc/ferm/ferm.d/prometheus-blackbox-exporter.conf
-    owner: root
-    group: adm
-    mode: '0644'
-  notify: _tina_reload_ferm
+  ansible.builtin.include_role:
+    name: ferm_svc
+  vars:
+    ferm_svc__name: prometheus-blackbox-exporter
+    ferm_svc__allow_protos: tcp
+    ferm_svc__allow_from: '{{ blackbox_exporter__ferm_allow_from }}'
+    ferm_svc__allow_ports: '{{ blackbox_exporter__listen_port }}'
   when: blackbox_exporter__install_ferm_svc | bool
 
 - name: Start and enable service

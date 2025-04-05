@@ -1,0 +1,43 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+argument_specs:
+  main:
+    short_description: Create ferm snippets for individual services
+    description:
+      - This role creates C(ferm) snippets for individual services.
+    author:
+      - Martina Ferrari
+    options:
+      ferm_svc__name:
+        description:
+          - Service name.
+        type: str
+        required: true
+
+      ferm_svc__allow_protos:
+        description:
+          - Allowed IP protocols.
+        type: list
+        elements: str
+        default: [tcp, udp]
+
+      ferm_svc__allow_from:
+        description:
+          - Allowed source IP addresses/blocks.
+          - If unspecified, accept connections from any address.
+        type: list
+        elements: str
+
+      ferm_svc__allow_to:
+        description:
+          - Allowed destionation IP addresses/blocks.
+          - If unspecified, accept connections to any address.
+        type: list
+        elements: str
+
+      ferm_svc__allow_ports:
+        description:
+          - Allowed destination ports.
+          - If unspecified, accept connections to any port.
+        type: list
+        elements: str

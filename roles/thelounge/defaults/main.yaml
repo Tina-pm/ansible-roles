@@ -1,3 +1,6 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
 thelounge__port: 9000
 thelounge__reverse_proxy: false
 thelounge__https_enable: false
@@ -11,3 +14,8 @@ thelounge__defaults_join: '#thelounge'
 thelounge__ldap_enable: false
 thelounge__ldap_url: ldaps://example.com
 thelounge__ldap_primary_key: uid
+
+# If true, install ferm configuration file.
+thelounge__install_ferm_svc: false
+# Optionally limit access by a list of IP addresses/blocks.
+thelounge__ferm_allow_from: ~

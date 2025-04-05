@@ -24,13 +24,13 @@
   notify: _tina_restart_apache2
 
 - name: Install ferm configuration
-  ansible.builtin.template:
-    src: ferm.conf.j2
-    dest: /etc/ferm/ferm.d/apache2.conf
-    owner: root
-    group: adm
-    mode: '0644'
-  notify: _tina_reload_ferm
+  ansible.builtin.include_role:
+    name: ferm_svc
+  vars:
+    ferm_svc__name: apache2
+    ferm_svc__allow_protos: tcp
+    ferm_svc__allow_from: '{{ apache2__ferm_allow_from }}'
+    ferm_svc__allow_ports: '{{ _a2_ports }}'
   when: apache2__install_ferm_svc | bool
 
 - name: Install logrotate configuration

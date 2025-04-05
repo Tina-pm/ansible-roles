@@ -29,14 +29,14 @@
     - _tina_validate_bind_conf
     - _tina_reload_bind
 
-- name: Place ferm config file
-  ansible.builtin.template:
-    src: ferm.conf.j2
-    dest: /etc/ferm/ferm.d/bind.conf
-    owner: root
-    group: adm
-    mode: '0644'
-  notify: _tina_reload_ferm
+- name: Install ferm configuration
+  ansible.builtin.include_role:
+    name: ferm_svc
+  vars:
+    ferm_svc__name: bind
+    ferm_svc__allow_protos: [tcp, udp]
+    ferm_svc__allow_from: '{{ simple_bind__ferm_allow_from }}'
+    ferm_svc__allow_ports: '{{ _sbind_ports }}'
   when: simple_bind__install_ferm_svc | bool
 
 - name: Populate service facts
