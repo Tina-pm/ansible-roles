@@ -1,30 +1,25 @@
+{% from 'macros.j2' import arg_bool, arg_list %}
+{# #}
 // {{ ansible_managed }}
 
-{% for zone in simple_bind__forward_zones or [] -%}
+{% for zone in simple_bind__forward_zones or [] %}
 zone "{{ zone.zone }}" {
   type forward;
   forward {{ zone.forward | default('first') }};
-  forwarders {
-{% for forwarder in zone.get('forwarders') or [] %}
-    {{ forwarder }};
-{% endfor -%}
-  };
+  forwarders {{ arg_list(zone.get('forwarders') or [], indent=2) }};
   file "db.{{ zone.zone }}";
 {% for extra in zone.get('extra_conf') or [] %}
   {{ extra }};
 {% endfor %}
 };
 
-{% endfor -%}
-
-{% for zone in simple_bind__secondary_zones or [] -%}
+{% endfor %}
+{% for zone in simple_bind__secondary_zones or [] %}
 zone "{{ zone.zone }}" {
   type {{ _sbind_term.secondary }};
-  {{ _sbind_term.primaries }} {
-{% for primary in zone.get('primaries') or [] %}
-    {{ primary }};
-{% endfor %}
-  };
+  {{ _sbind_term.primaries }} {{
+    arg_list(zone.get('primaries') or [], indent=2)
+  }};
   file "db.{{ zone.zone }}";
 {% for extra in zone.get('extra_conf') or [] %}
   {{ extra }};

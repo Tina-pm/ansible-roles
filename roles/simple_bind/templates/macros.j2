@@ -1,0 +1,13 @@
+{% macro arg_bool(value) %}
+{{ 'yes' if value else 'no' }}
+{%- endmacro %}
+
+{% macro arg_list(value, indent=0, indent_incr=2) %}
+{% filter indent(width=indent) %}
+{
+{% for item in value %}
+{{ ' ' * indent_incr }}{{ item }};
+{% endfor %}
+}
+{%- endfilter %}
+{%- endmacro %}
