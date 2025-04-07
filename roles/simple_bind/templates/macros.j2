@@ -11,3 +11,7 @@
 }
 {%- endfilter %}
 {%- endmacro %}
+
+{% macro arg_path(path) %}
+{{ path | ansible.builtin.to_json }}
+{%- endmacro %}

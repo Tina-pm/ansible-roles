@@ -14,6 +14,7 @@ simple_bind__options:
 #    - 'foo: bar'
 
 simple_bind__includes:
+  - /etc/bind/named.conf.default-zones
   - /etc/bind/zones.rfc1918
 
 simple_bind__secondary_zones:

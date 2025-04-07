@@ -60,3 +60,9 @@ _sbind_listen: |-
 
 _sbind_ports: |-
   {{ _sbind_listen.values() | sum(start=[]) | map(attribute='port') | unique }}
+
+_sbind_includes_always:
+  - /etc/bind/named.conf.options
+  - /etc/bind/named.conf.local
+_sbind_includes: |-
+  {{ _sbind_includes_always + (simple_bind__includes or []) }}
