@@ -30,6 +30,18 @@ view {{ view.name }} {
 {% if view.get('allow_recursion') is not none %}
   allow-recursion {{ arg_list(view.allow_recursion, indent=2) }};
 {% endif %}
+{% for zone in simple_bind__primary_zones or [] %}
+{% if in_view(zone, view) %}
+
+  zone "{{ zone.zone }}" {
+    type {{ _sbind_term.primary }};
+    file {{ arg_path(_sbind_confdir, view.name, 'db.' + zone.zone) }};
+{% for extra in zone.get('extra_conf') or [] %}
+    {{ extra }};
+{% endfor %}
+  };
+{% endif %}
+{% endfor %}
 {% for zone in simple_bind__forward_zones or [] %}
 {% if in_view(zone, view) %}
 

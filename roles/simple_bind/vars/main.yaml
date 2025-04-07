@@ -69,3 +69,34 @@ _sbind_includes_always:
   - named.conf.local
 _sbind_includes: |-
   {{ _sbind_includes_always + (simple_bind__includes or []) }}
+
+_sbind_zone_files: |-
+  {% set result = [] %}
+  {% for conf in simple_bind__primary_zones or [] %}
+  {% set zone = conf.zone | mandatory('missing zone name') %}
+  {% set view = conf.view | mandatory('missing view name') %}
+  {% set dest =
+    (_sbind_confdir, view, 'db.' + zone) | ansible.builtin.path_join
+  %}
+  {% set src = conf.src | mandatory('missing zone source') %}
+  {% set src_type = conf.get('src_type') or 'string' %}
+  {% set _ =
+    ('ok' if src_type in ('template', 'file', 'string')) |
+    mandatory('invalid source type: ' + src_type)
+  %}
+  {% set content =
+    lookup('file', src) if src_type == 'file' else
+    lookup('template', src) if src_type == 'template' else
+    src
+  %}
+  {% set _ = result.append(dict(dest=dest, content=content)) %}
+  {% endfor %}
+  {{- result -}}
+
+_sbind_zone_dirs: |-
+  {{
+    _sbind_zone_files |
+    map(attribute='dest') |
+    map('ansible.builtin.dirname') |
+    unique
+  }}

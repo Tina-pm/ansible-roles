@@ -37,6 +37,16 @@ simple_bind__views:
       - named.conf.default-zones
       - zones.rfc1918
 
+simple_bind__primary_zones:
+#  - zone: example.com
+#    view: default
+#    src_type: string  # Or 'template', 'file'
+#    src: |
+#      @ IN SOA example.com. root.example.com. ( 1 604800 86400 2419200 604800 )
+#      @ IN NS ns1.example.com.
+#    extra_conf:
+#      - 'foo: bar'
+
 simple_bind__secondary_zones:
 #  - zone: example.com
 #    view: default
