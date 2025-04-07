@@ -3,7 +3,7 @@
 - name: _tina_validate_bind_conf
   ansible.builtin.command:
     cmd: named-checkconf
-    chdir: /etc/bind
+    chdir: '{{ _sbind_confdir }}'
   changed_when: false
 
 - name: _tina_reload_bind

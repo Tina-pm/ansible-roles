@@ -1,6 +1,8 @@
 ---
 # vim:ts=2:sw=2:et:ai:sts=2
 
+simple_bind__config_dir: /etc/bind
+
 simple_bind__options:
   forward: first
   forwarders: []
@@ -14,8 +16,8 @@ simple_bind__options:
 #    - 'foo: bar'
 
 simple_bind__includes:
-  - /etc/bind/named.conf.default-zones
-  - /etc/bind/zones.rfc1918
+  - named.conf.default-zones
+  - zones.rfc1918
 
 simple_bind__secondary_zones:
 #  - zone: example.com

@@ -12,6 +12,7 @@
 {%- endfilter %}
 {%- endmacro %}
 
-{% macro arg_path(path) %}
-{{ path | ansible.builtin.to_json }}
+{# All arguments are joined to construct a path. #}
+{% macro arg_path() %}
+{{ varargs | ansible.builtin.path_join | ansible.builtin.to_json }}
 {%- endmacro %}

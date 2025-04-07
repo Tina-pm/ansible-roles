@@ -36,6 +36,9 @@ _sbind_svcname: |-
 
 # Pre-process configuration options.
 
+_sbind_confdir: |-
+  {{ simple_bind__config_dir or '/etc/bind' }}
+
 _sbind_listen: |-
   {% set sections = ('listen_on', 'listen_on_v6') %}
   {% set result = dict(sections | zip(([], []))) %}
@@ -62,7 +65,7 @@ _sbind_ports: |-
   {{ _sbind_listen.values() | sum(start=[]) | map(attribute='port') | unique }}
 
 _sbind_includes_always:
-  - /etc/bind/named.conf.options
-  - /etc/bind/named.conf.local
+  - named.conf.options
+  - named.conf.local
 _sbind_includes: |-
   {{ _sbind_includes_always + (simple_bind__includes or []) }}
