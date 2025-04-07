@@ -11,6 +11,10 @@
 {% endmacro %}
 {# #}
 // {{ ansible_managed }}
+{% for acl, items in simple_bind__acls.items() or {} %}
+
+acl {{ acl }} {{ arg_list(items) }};
+{% endfor %}
 {% for view in simple_bind__views or [] %}
 
 view {{ view.name }} {

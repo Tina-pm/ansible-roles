@@ -19,6 +19,10 @@ simple_bind__includes:
 #  - named.conf.default-zones
 #  - zones.rfc1918
 
+simple_bind__acls:
+#  myacl:
+#    - 192.168.0.0/16
+
 simple_bind__views:
   - name: default
     match_clients:
