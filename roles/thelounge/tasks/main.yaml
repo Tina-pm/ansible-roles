@@ -9,7 +9,7 @@
     state: present
 
 - name: Set up SSL certificate ACL
-  ansible.builtin.acl:
+  ansible.posix.acl:
     path: '{{ item }}'
     entity: thelounge
     etype: user
@@ -31,12 +31,6 @@
     mode: '0660'
   notify: _tina_pm_restart_thelounge
 
-- name: Start and enable TheLounge service
-  ansible.builtin.service:
-    name: thelounge
-    state: started
-    enabled: true
-
 - name: Install ferm configuration for TheLounge
   ansible.builtin.template:
     src: ferm.conf.j2
@@ -46,3 +40,9 @@
     mode: '0644'
   notify: _tina_reload_ferm
   when: thelounge__install_ferm_svc | bool
+
+- name: Start and enable TheLounge service
+  ansible.builtin.service:
+    name: thelounge
+    state: started
+    enabled: true

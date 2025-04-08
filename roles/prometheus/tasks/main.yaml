@@ -61,12 +61,6 @@
     validate: /usr/bin/promtool check config %s
   notify: _tina_reload_prometheus
 
-- name: Start and enable service
-  ansible.builtin.service:
-    name: prometheus
-    state: started
-    enabled: true
-
 - name: Install ferm configuration
   ansible.builtin.template:
     src: ferm.conf.j2
@@ -76,3 +70,9 @@
     mode: '0644'
   notify: _tina_reload_ferm
   when: prometheus__install_ferm_svc | bool
+
+- name: Start and enable service
+  ansible.builtin.service:
+    name: prometheus
+    state: started
+    enabled: true

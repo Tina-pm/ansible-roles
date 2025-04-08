@@ -22,7 +22,10 @@ iface {{ iface }} {{ family }} {{ method }}
   {{ cfg_key }} {{ value }}
 {% endfor %}
 {% else %}
-  {{ cfg_key }} {{ cfg_value }}
+  {{ cfg_key }} {{
+    'off' if cfg_value is false else
+    'on' if cfg_value is true else cfg_value
+  }}
 {% endif %}
 {% endfor %}
 {% endfor %}

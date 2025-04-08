@@ -78,12 +78,6 @@ _a2_fragments: |-
   {% endfor %}
   {% endfilter %}
 
-_a2_manage_sites: |-
-  {{ apache2__manage_sites | d(False) }}
-
-_a2_install_ferm_svc: |-
-  {{ apache2__install_ferm_svc | d(False) }}
-
 _a2_ferm_allow_from: |-
   {{
     None
@@ -118,9 +112,6 @@ _a2_logdirs_owner: |-
   {{ apache2__logdirs_owner or 'root' }}
 _a2_logdirs_group: |-
   {{ apache2__logdirs_group or 'adm' }}
-
-_a2_install_logrotate_conf: |-
-  {{ apache2__install_logrotate_conf | d(False) }}
 
 __a2_logrotate_conf: |-
   {{ apache2__logrotate_conf or {} }}

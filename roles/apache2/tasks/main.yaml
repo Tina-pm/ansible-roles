@@ -23,12 +23,6 @@
     mode: '0644'
   notify: _tina_restart_apache2
 
-- name: Start and enable service
-  ansible.builtin.service:
-    name: apache2
-    state: started
-    enabled: true
-
 - name: Install ferm configuration
   ansible.builtin.template:
     src: ferm.conf.j2
@@ -37,7 +31,7 @@
     group: adm
     mode: '0644'
   notify: _tina_reload_ferm
-  when: _a2_install_ferm_svc | bool
+  when: apache2__install_ferm_svc | bool
 
 - name: Install logrotate configuration
   ansible.builtin.template:
@@ -46,9 +40,14 @@
     owner: root
     group: root
     mode: '0644'
-  notify: _tina_reload_ferm
-  when: _a2_install_ferm_svc | bool
+  when: apache2__install_logrotate_conf | bool
 
 - name: Install configuration fragments
   ansible.builtin.include_tasks: conf_fragment.yaml
   loop: '{{ _a2_fragments }}'
+
+- name: Start and enable service
+  ansible.builtin.service:
+    name: apache2
+    state: started
+    enabled: true
