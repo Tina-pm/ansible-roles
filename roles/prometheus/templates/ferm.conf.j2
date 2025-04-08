@@ -1,13 +1,13 @@
 # {{ ansible_managed }}
 domain (ip ip6) table filter chain INPUT {
-    proto tcp
+  proto tcp
 {% if prometheus__allow_from %}
 {% set saddr = prometheus__allow_from %}
 {% set saddr = saddr if saddr is string else saddr | join(' ') %}
-    saddr @ipfilter(({{ saddr }}))
+  saddr @ipfilter(({{ saddr }}))
 {% endif %}
 {% if prometheus__listen_addr %}
-    daddr {{ prometheus__listen_addr }}
+  daddr {{ prometheus__listen_addr }}
 {% endif %}
-    dport {{ prometheus__listen_port }} ACCEPT;
+  dport {{ prometheus__listen_port }} ACCEPT;
 }

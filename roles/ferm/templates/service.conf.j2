@@ -3,7 +3,7 @@
 {% with %}
 {%- set chain = item.value.get('chain') or 'svc-' + item.key %}
 {%- set _ = ('ok' if chain | string | length < 30) |
-        mandatory('Chain name must be less than 30 chars: ' + chain) %}
+    mandatory('Chain name must be less than 30 chars: ' + chain) %}
 {%- set saddr = item.value.get('saddr', ('::/0', '0/0')) %}
 {%- set daddr = item.value.get('daddr', ('::/0', '0/0')) %}
 {%- set proto = item.value.get('proto', ('tcp', 'udp')) %}
@@ -20,17 +20,17 @@
 {%- set dport = (item.key,) %}
 {% endif %}
 domain (ip ip6) table filter chain "{{ chain }}" {
-    saddr @ipfilter(({{ saddr | join(' ') }}))
-    daddr @ipfilter(({{ daddr | join(' ') }}))
+  saddr @ipfilter(({{ saddr | join(' ') }}))
+  daddr @ipfilter(({{ daddr | join(' ') }}))
 {% if sport %}
-    proto ({{ proto | join(' ') }}) sport ({{ sport | join(' ') }})
+  proto ({{ proto | join(' ') }}) sport ({{ sport | join(' ') }})
 {% endif %}
-    ACCEPT;
+  ACCEPT;
 }
 domain (ip ip6) table filter chain INPUT
-    proto ({{ proto | join(' ') }})
+  proto ({{ proto | join(' ') }})
 {% if dport %}
-    dport ({{ dport | join(' ') }})
+  dport ({{ dport | join(' ') }})
 {% endif %}
-    jump {{ chain }};
+  jump {{ chain }};
 {% endwith %}

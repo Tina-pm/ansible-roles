@@ -8,19 +8,19 @@
 {%- set listen6 = opt.get('listen_on_v6') or listen6def -%}
 
 {% for domain, any, conf in (
-    ('ip', ['0/0'], listen4),
-    ('ip6', ['::/0'], listen6),
-    ) -%}
+  ('ip', ['0/0'], listen4),
+  ('ip6', ['::/0'], listen6),
+  ) -%}
 domain {{ domain }} table filter chain bind {
 {% for listen in conf | default([]) %}
-    {%- set port = listen.get('port', 53) -%}
-    {%- set mlist = listen.get('match_list', []) -%}
-    {%- set mlist = [mlist] if mlist is string else mlist -%}
-    {%- set mlist = mlist | reject('eq', 'none') | list -%}
-    {%- set mlist = any if 'any' in mlist else mlist -%}
+  {%- set port = listen.get('port', 53) -%}
+  {%- set mlist = listen.get('match_list', []) -%}
+  {%- set mlist = [mlist] if mlist is string else mlist -%}
+  {%- set mlist = mlist | reject('eq', 'none') | list -%}
+  {%- set mlist = any if 'any' in mlist else mlist -%}
 {% if mlist %}
-    proto (tcp udp) dport {{ port }}
-        daddr ({{ mlist | join(' ') }}) ACCEPT;
+  proto (tcp udp) dport {{ port }}
+    daddr ({{ mlist | join(' ') }}) ACCEPT;
 {% endif %}
 {%- endfor %}
 }

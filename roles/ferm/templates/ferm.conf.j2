@@ -5,44 +5,44 @@
 # {{ ansible_managed }}
 
 domain (ip ip6) table filter {
-    chain INPUT-pre;
-    chain OUTPUT-pre;
-    chain FORWARD-pre;
-    chain blacklist;
+  chain INPUT-pre;
+  chain OUTPUT-pre;
+  chain FORWARD-pre;
+  chain blacklist;
 
-    chain INPUT {
-        policy DROP;
+  chain INPUT {
+    policy DROP;
 
-        jump INPUT-pre;
-        jump blacklist;
+    jump INPUT-pre;
+    jump blacklist;
 
-        mod state state INVALID DROP;
-        mod state state (ESTABLISHED RELATED) ACCEPT;
-        interface lo ACCEPT;
+    mod state state INVALID DROP;
+    mod state state (ESTABLISHED RELATED) ACCEPT;
+    interface lo ACCEPT;
 
-        # Network infrastructure: ICMP, ICMPv6, and DHCPv6.
-        proto icmp daddr @ipfilter((0/0)) ACCEPT;
-        proto ipv6-icmp daddr @ipfilter((::/0)) ACCEPT;
-        proto udp daddr @ipfilter((fe80::/10))
-            sport dhcpv6-server dport dhcpv6-client ACCEPT;
+    # Network infrastructure: ICMP, ICMPv6, and DHCPv6.
+    proto icmp daddr @ipfilter((0/0)) ACCEPT;
+    proto ipv6-icmp daddr @ipfilter((::/0)) ACCEPT;
+    proto udp daddr @ipfilter((fe80::/10))
+      sport dhcpv6-server dport dhcpv6-client ACCEPT;
 
 {% if ferm__open_ssh %}
-        proto tcp dport ssh ACCEPT;
+    proto tcp dport ssh ACCEPT;
 {% endif %}
-    }
-    chain FORWARD {
-        policy DROP;
+  }
+  chain FORWARD {
+    policy DROP;
 
-        jump FORWARD-pre;
-        jump blacklist;
+    jump FORWARD-pre;
+    jump blacklist;
 
-        mod state state INVALID DROP;
-        mod state state (ESTABLISHED RELATED) ACCEPT;
-    }
-    chain OUTPUT {
-        policy ACCEPT;
-        jump OUTPUT-pre;
-    }
+    mod state state INVALID DROP;
+    mod state state (ESTABLISHED RELATED) ACCEPT;
+  }
+  chain OUTPUT {
+    policy ACCEPT;
+    jump OUTPUT-pre;
+  }
 }
 
 {% if ferm__version is version('2.3', 'ge') %}
