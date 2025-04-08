@@ -29,4 +29,7 @@ simple_bind__forward_zones:
 #    extra_conf:
 #      - 'foo: bar'
 
+# If true, install ferm configuration file.
 simple_bind__install_ferm_svc: false
+# Optionally limit access by a list of IP addresses/blocks.
+simple_bind__ferm_allow_from: ~

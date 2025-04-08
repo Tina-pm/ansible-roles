@@ -19,8 +19,8 @@ zone "{{ zone.zone }}" {
 
 {% for zone in simple_bind__secondary_zones or [] -%}
 zone "{{ zone.zone }}" {
-  type slave;
-  masters {
+  type {{ _sbind_term.secondary }};
+  {{ _sbind_term.primaries }} {
 {% for primary in zone.get('primaries') or [] %}
     {{ primary }};
 {% endfor %}

@@ -2,12 +2,6 @@
 
 {% with -%}
 {%- set opt = simple_bind__options or {} -%}
-{%- set listen4lo = [{'match_list': '127.0.0.0/8'}] -%}
-{%- set listen6lo = [{'match_list': '::1/128'}] -%}
-{%- set listen4def = [{'match_list': 'none'}] -%}
-{%- set listen6def = [{'match_list': 'none'}] -%}
-{%- set listen4 = listen4lo + (opt.get('listen_on') or listen4def) -%}
-{%- set listen6 = listen6lo + (opt.get('listen_on_v6') or listen6def) -%}
 
 options {
   directory "/var/cache/bind";
@@ -22,14 +16,12 @@ options {
   };
 {% endif -%}
 
-{% for cmd, conf in (('listen-on', listen4), ('listen-on-v6', listen6)) -%}
-{%- for listen in conf -%}
-{%- set port = (' port %s' % listen.port) if listen.get('port') else '' -%}
-{%- set mlist = listen.get('match_list') or [] -%}
-{%- set mlist = [mlist] if mlist is string else mlist -%}
+{% for section, sconf in _sbind_listen.items() -%}
+{% set stmt = section | replace('_', '-') %}
+{% for item in sconf %}
 
-{%- if mlist %}
-  {{ cmd }} {{- port }} { {{ mlist | join('; ') }}; };
+{%- if item %}
+  {{ stmt }} port {{ item.port }} { {{ item.match_list | join('; ') }}; };
 {% endif -%}
 {%- endfor -%}
 {%- endfor %}
