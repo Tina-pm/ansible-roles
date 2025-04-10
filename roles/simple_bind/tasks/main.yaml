@@ -13,6 +13,8 @@
   changed_when: false
   # Run normally even in check mode.
   check_mode: false
+  # Ignore errors in check mode (package not installed usually).
+  ignore_errors: '{{ ansible_check_mode }}'
 
 - name: Install configuration files
   ansible.builtin.template:
@@ -70,3 +72,5 @@
     name: '{{ _sbind_svcname }}'
     state: started
     enabled: true
+  # Ignore errors in check mode (package not installed usually).
+  ignore_errors: '{{ ansible_check_mode }}'
