@@ -60,7 +60,9 @@
     group: adm
     mode: '0644'
   notify: _tina_reload_ferm
-  with_dict: '{{ ferm__services }}'
+  loop: '{{ ferm__services | ansible.builtin.dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
 
 - name: Find obsolete service config files  # noqa: risky-shell-pipe
   ansible.builtin.shell: >-
@@ -74,7 +76,7 @@
   ansible.builtin.file:
     path: /etc/ferm/ferm.d/svc-{{ item }}.conf
     state: absent
-  with_items: '{{ ferm__config_files.stdout_lines }}'
+  loop: '{{ ferm__config_files.stdout_lines }}'
   when: item not in ferm__services
   notify: _tina_reload_ferm
 
@@ -86,7 +88,9 @@
     group: adm
     mode: '0644'
   notify: _tina_reload_ferm
-  with_dict: '{{ ferm__custom_configs }}'
+  loop: '{{ ferm__custom_configs | ansible.builtin.dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
 
 - name: Find obsolete custom config files  # noqa: risky-shell-pipe
   ansible.builtin.shell: >-
@@ -100,7 +104,7 @@
   ansible.builtin.file:
     path: /etc/ferm/ferm.d/custom-{{ item }}.conf
     state: absent
-  with_items: '{{ ferm__config_files.stdout_lines }}'
+  loop: '{{ ferm__config_files.stdout_lines }}'
   when: item not in ferm__custom_configs
   notify: _tina_reload_ferm
 

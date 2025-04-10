@@ -12,7 +12,7 @@
     mode: '{{ _a2_logdirs_mode }}'
     owner: '{{ _a2_logdirs_owner or "root" }}'
     group: '{{ _a2_logdirs_group or "adm" }}'
-  with_items: '{{ _a2_logdirs }}'
+  loop: '{{ _a2_logdirs }}'
 
 - name: Install ports.conf
   ansible.builtin.template:
@@ -45,6 +45,8 @@
 - name: Install configuration fragments
   ansible.builtin.include_tasks: conf_fragment.yaml
   loop: '{{ _a2_fragments }}'
+  loop_control:
+    label: '{{ item.afile }}'
 
 - name: Start and enable service
   ansible.builtin.service:

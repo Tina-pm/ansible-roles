@@ -22,6 +22,8 @@
     dest: /etc/apt/sources.list.d/{{ item.key }}.list
     mode: '0644'
   loop: '{{ apt__custom_sources | d({}) | dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
   when: item.value
   register: _apt_custom_sources
 
@@ -30,6 +32,8 @@
     path: /etc/apt/sources.list.d/{{ item.key }}.list
     state: absent
   loop: '{{ apt__custom_sources | d({}) | dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
   when: not item.value
   register: _apt_custom_sources_rm
 
@@ -41,6 +45,8 @@
     group: root
     mode: '0644'
   loop: '{{ apt__trusted_keys | d({}) | dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
   when: item.value
   register: _apt_trusted_keys
 
@@ -49,6 +55,8 @@
     path: /etc/apt/trusted.gpg.d/{{ item.key }}.gpg
     state: absent
   loop: '{{ apt__trusted_keys | d({}) | dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
   when: not item.value
   register: _apt_trusted_keys_rm
 
@@ -60,6 +68,8 @@
     group: root
     mode: '0644'
   loop: '{{ apt__custom_preferences | d({}) | dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
   when: item.value
   register: _apt_custom_preferences
 
@@ -68,6 +78,8 @@
     path: /etc/apt/preferences.d/{{ item.key }}
     state: absent
   loop: '{{ apt__custom_preferences | d({}) | dict2items }}'
+  loop_control:
+    label: '{{ item.key }}'
   when: not item.value
   register: _apt_custom_preferences_rm
 

@@ -19,7 +19,7 @@
 - name: Install configuration files
   ansible.builtin.template:
     src: '{{ item }}.j2'
-    dest: '{{ _sbind_confdir }}/{{ item }}'
+    dest: '{{ (_sbind_confdir, item) | ansible.builtin.path_join }}'
     owner: root
     group: root
     mode: '0644'
@@ -27,6 +27,8 @@
     - named.conf
     - named.conf.options
     - named.conf.local
+  loop_control:
+    label: '{{ (_sbind_confdir, item) | ansible.builtin.path_join }}'
   notify:
     - _tina_validate_bind_conf
     - _tina_reload_bind
@@ -48,6 +50,8 @@
     group: root
     mode: '0644'
   loop: '{{ _sbind_zone_files }}'
+  loop_control:
+    label: '{{ item.dest }}'
   notify:
     - _tina_validate_bind_conf
     - _tina_reload_bind

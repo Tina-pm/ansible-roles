@@ -31,7 +31,7 @@
     mode: '0644'
     validate: /usr/bin/promtool check rules %s
   notify: _tina_reload_prometheus
-  with_items: '{{ prometheus__rules }}'
+  loop: '{{ prometheus__rules }}'
   when: not item.endswith('.j2')
 
 - name: Install rules templates
@@ -48,7 +48,7 @@
     mode: '0644'
     validate: /usr/bin/promtool check rules %s
   notify: _tina_reload_prometheus
-  with_items: '{{ prometheus__rules }}'
+  loop: '{{ prometheus__rules }}'
   when: item.endswith('.j2')
 
 - name: Configure prometheus
