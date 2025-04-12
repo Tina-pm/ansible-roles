@@ -85,7 +85,7 @@ _sbind_zone_files: |-
     mandatory('invalid source type: ' + src_type)
   %}
   {% set content =
-    lookup('file', src) if src_type == 'file' else
+    lookup('file', src, rstrip=false) if src_type == 'file' else
     lookup('template', src) if src_type == 'template' else
     src
   %}
