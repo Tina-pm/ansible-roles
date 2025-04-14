@@ -30,6 +30,14 @@ view {{ view.name }} {
 {% if view.get('allow_recursion') is not none %}
   allow-recursion {{ arg_list(view.allow_recursion, indent=2) }};
 {% endif %}
+{% for zone in simple_bind__in_view_zones or [] %}
+{% if in_view(zone, view) %}
+
+  zone "{{ zone.zone }}" {
+    in-view {{ zone.in_view | mandatory('missing target view') }};
+  };
+{% endif %}
+{% endfor %}
 {% for zone in simple_bind__primary_zones or [] %}
 {% if in_view(zone, view) %}
 

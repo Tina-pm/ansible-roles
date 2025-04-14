@@ -83,6 +83,7 @@ argument_specs:
             allow_recursion:
               - localhost
               - localnets
+            in_view_zones: []
             includes:
               - named.conf.default-zones
               - zones.rfc1918
@@ -117,8 +118,8 @@ argument_specs:
 
           includes: *includes
 
-      simple_bind__primary_zones:
-        description: The main copy of the data for a zone.
+      simple_bind__in_view_zones:
+        description: A zone copied from a previously defined view.
         type: list
         elements: dict
         options:
@@ -131,6 +132,19 @@ argument_specs:
             description: View that serves this zone.
             type: str
             default: default
+
+          in_view:
+            description: View that defines this zone.
+            type: str
+            required: true
+
+      simple_bind__primary_zones:
+        description: The main copy of the data for a zone.
+        type: list
+        elements: dict
+        options:
+          zone: *zone
+          view: *view
 
           src:
             description:

@@ -37,6 +37,11 @@ simple_bind__views:
       - named.conf.default-zones
       - zones.rfc1918
 
+simple_bind__in_view_zones:
+#  - zone: example.com
+#    view: default
+#    in_view: external
+
 simple_bind__primary_zones:
 #  - zone: example.com
 #    view: default
