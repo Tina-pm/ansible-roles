@@ -160,6 +160,13 @@ argument_specs:
             choices: [string, template, file]
             default: string
 
+          template_vars:
+            description:
+              - Additional variables for templating.
+              - The variables C(ZONE) and C(VIEW) are always available.
+              - Ignored unless C(src_type == 'template').
+            type: dict
+
           extra_conf: *extra_conf
 
       simple_bind__secondary_zones:

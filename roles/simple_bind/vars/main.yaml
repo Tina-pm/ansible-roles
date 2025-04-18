@@ -84,9 +84,17 @@ _sbind_zone_files: |-
     ('ok' if src_type in ('template', 'file', 'string')) |
     mandatory('invalid source type: ' + src_type)
   %}
+  {% set tmplvars =
+    {
+      'ZONE': zone if zone.endswith('.') else zone + '.',
+      'VIEW': view,
+    } | combine(conf.get('template_vars') or {})
+  %}
   {% set content =
-    lookup('file', src, rstrip=false) if src_type == 'file' else
-    lookup('template', src) if src_type == 'template' else
+    lookup('file', src, rstrip=false)
+    if src_type == 'file' else
+    lookup('template', src, template_vars=tmplvars)
+    if src_type == 'template' else
     src
   %}
   {% set _ = result.append(dict(dest=dest, content=content)) %}
