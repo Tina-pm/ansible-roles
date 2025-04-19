@@ -72,7 +72,7 @@ view {{ view.name }} {
     {{ _sbind_term.primaries }} {{
       arg_list(zone.get('primaries') or [], indent=4)
     }};
-    file "db.{{ zone.zone }}";
+    file "db.{{ zone.zone }}.{{ zone.view }}";
 {% for extra in zone.get('extra_conf') or [] %}
     {{ extra }};
 {% endfor %}
