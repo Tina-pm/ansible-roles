@@ -6,5 +6,8 @@ blackbox_exporter__listen_port: 9115
 blackbox_exporter__modules: {}
 blackbox_exporter__extra_args:
 blackbox_exporter__config_file: /etc/prometheus/blackbox.yml
+
+# If true, install ferm configuration file.
 blackbox_exporter__install_ferm_svc: false
-blackbox_exporter__allow_from:
+# Optionally limit access by a list of IP addresses/blocks.
+blackbox_exporter__ferm_allow_from: ~

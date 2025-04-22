@@ -1,0 +1,43 @@
+{# Shared template to create ferm snippets for individual services. #}
+{% with %}
+{% set proto =
+  ['tcp', 'udp'] if not (ferm_svc__allow_protos | d()) else
+  [ferm_svc__allow_protos] if (
+    ferm_svc__allow_protos is not iterable or ferm_svc__allow_protos is string
+  ) else ferm_svc__allow_protos
+%}
+{% set saddr =
+  None if not (ferm_svc__allow_from | d()) else
+  [ferm_svc__allow_from] if (
+    ferm_svc__allow_from is not iterable or ferm_svc__allow_from is string
+  ) else ferm_svc__allow_from
+%}
+{% set daddr =
+  None if not (ferm_svc__allow_to | d()) else
+  [ferm_svc__allow_to] if (
+    ferm_svc__allow_to is not iterable or ferm_svc__allow_to is string
+  ) else ferm_svc__allow_to
+%}
+{% set dport =
+  None if not (ferm_svc__allow_ports | d()) else
+  [ferm_svc__allow_ports] if (
+    ferm_svc__allow_ports is not iterable or ferm_svc__allow_ports is string
+  ) else ferm_svc__allow_ports
+%}
+# {{ ansible_managed }}
+
+# Service: {{ ferm_svc__name }}
+domain (ip ip6) table filter chain INPUT {
+  proto ({{ ' '.join(proto | map('string')) }})
+{% if saddr %}
+  saddr @ipfilter(({{ ' '.join(saddr | map('string')) }}))
+{% endif %}
+{% if daddr %}
+  daddr @ipfilter(({{ ' '.join(daddr | map('string')) }}))
+{% endif %}
+{% if dport %}
+  dport ({{ ' '.join(dport | map('string')) }})
+{% endif %}
+  ACCEPT;
+}
+{% endwith %}

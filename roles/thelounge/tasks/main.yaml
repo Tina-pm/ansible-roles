@@ -31,14 +31,14 @@
     mode: '0660'
   notify: _tina_pm_restart_thelounge
 
-- name: Install ferm configuration for TheLounge
-  ansible.builtin.template:
-    src: ferm.conf.j2
-    dest: /etc/ferm/ferm.d/thelounge.conf
-    owner: root
-    group: adm
-    mode: '0644'
-  notify: _tina_reload_ferm
+- name: Install ferm configuration
+  ansible.builtin.include_role:
+    name: ferm_svc
+  vars:
+    ferm_svc__name: thelounge
+    ferm_svc__allow_protos: tcp
+    ferm_svc__allow_from: '{{ thelounge__ferm_allow_from }}'
+    ferm_svc__allow_ports: '{{ thelounge__port }}'
   when: thelounge__install_ferm_svc | bool
 
 - name: Start and enable TheLounge service

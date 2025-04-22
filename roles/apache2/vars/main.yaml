@@ -78,28 +78,11 @@ _a2_fragments: |-
   {% endfor %}
   {% endfilter %}
 
-_a2_ferm_allow_from: |-
-  {{
-    None
-    if not apache2__ferm_allow_from else
-    [apache2__ferm_allow_from]
-    if apache2__ferm_allow_from is not iterable or
-    apache2__ferm_allow_from is string
-    else apache2__ferm_allow_from
-  }}
 # Extract port numbers from apache2__listen_http(s).
-__a2_ports: |-
+_a2_ports: |-
   {{
     (_a2_listen_http + _a2_listen_https) or [http] |
     map('regex_replace', '^(.+:)?(.*)$', '\2') | list
-  }}
-_a2_ferm_ports: |-
-  {{
-    __a2_ports
-    if not apache2__ferm_ports else
-    [apache2__ferm_ports]
-    if apache2__ferm_ports is not iterable or apache2__ferm_ports is string
-    else apache2__ferm_ports
   }}
 
 _a2_logdirs: |-

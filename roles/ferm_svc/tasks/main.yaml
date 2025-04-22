@@ -1,0 +1,23 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+# Shared role to create ferm snippets for individual services.
+#
+# Parameters:
+#  * ferm_svc__name: Service name (mandatory).
+#  * ferm_svc__allow_protos: Allowed IP protocols.
+#    Default: [tcp, udp].
+#  * ferm_svc__allow_from: Allowed source IP addresses/blocks.
+#    Default: accept connections from any address.
+#  * ferm_svc__allow_to: Allowed destination IP addresses/blocks.
+#    Default: accept connections to any address.
+#  * ferm_svc__allow_ports: Allowed destination ports.
+#    Default: accept connections to any port.
+
+- name: Install ferm configuration fragment
+  ansible.builtin.template:
+    src: ferm.conf.j2
+    dest: /etc/ferm/ferm.d/{{ ferm_svc__name }}.conf
+    owner: root
+    group: adm
+    mode: '0644'
+  notify: _tina_reload_ferm

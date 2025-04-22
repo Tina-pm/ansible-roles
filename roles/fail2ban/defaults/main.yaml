@@ -21,4 +21,5 @@ fail2ban__path_overrides:
 #    - /var/log/apache2/access.log
 #    - /var/log/apache2/*/access.log
 
+# Install ferm configuration fragment to hook fail2ban rules.
 fail2ban__install_ferm_svc: false

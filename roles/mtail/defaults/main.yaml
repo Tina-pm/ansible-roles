@@ -5,8 +5,11 @@ mtail__listen_address: ''
 mtail__listen_port: 3903
 mtail__logs: []
 mtail__extra_args:
+
+# If true, install ferm configuration file.
 mtail__install_ferm_svc: false
-mtail__allow_from:
+# Optionally limit access by a list of IP addresses/blocks.
+mtail__ferm_allow_from: ~
 
 # Program files to copy.
 mtail__programs: []
