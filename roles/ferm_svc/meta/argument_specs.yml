@@ -30,7 +30,7 @@ argument_specs:
 
       ferm_svc__allow_to:
         description:
-          - Allowed destionation IP addresses/blocks.
+          - Allowed destination IP addresses/blocks.
           - If unspecified, accept connections to any address.
         type: list
         elements: str

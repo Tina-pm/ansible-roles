@@ -8,7 +8,7 @@
 #    Default: [tcp, udp].
 #  * ferm_svc__allow_from: Allowed source IP addresses/blocks.
 #    Default: accept connections from any address.
-#  * ferm_svc__allow_to: Allowed destionation IP addresses/blocks.
+#  * ferm_svc__allow_to: Allowed destination IP addresses/blocks.
 #    Default: accept connections to any address.
 #  * ferm_svc__allow_ports: Allowed destination ports.
 #    Default: accept connections to any port.
