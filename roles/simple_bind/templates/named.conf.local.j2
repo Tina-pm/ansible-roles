@@ -1,34 +1,89 @@
+{% from 'macros.j2' import arg_bool, arg_list, arg_path %}
+{# #}
+{% set view_names = simple_bind__views | map(attribute='name') |
+  map('mandatory', 'missing view name') %}
+{# #}
+{% macro in_view(zone, view) %}
+{% set zone_view = zone.get('view') or 'default' %}
+{% set _ = ('ok' if zone_view in view_names) |
+  mandatory('invalid view: ' + zone_view) %}
+{{- zone_view == view.name or None -}}
+{% endmacro %}
+{# #}
 // {{ ansible_managed }}
+{% for acl, items in simple_bind__acls.items() or {} %}
 
-{% for zone in simple_bind__forward_zones or [] -%}
-zone "{{ zone.zone }}" {
-  type forward;
-  forward {{ zone.forward | default('first') }};
-  forwarders {
-{% for forwarder in zone.get('forwarders') or [] %}
-    {{ forwarder }};
-{% endfor -%}
+acl {{ acl }} {{ arg_list(items) }};
+{% endfor %}
+{% for view in simple_bind__views or [] %}
+
+view {{ view.name }} {
+  match-clients {{
+    arg_list(
+      view.match_clients | mandatory('missing match clients list'),
+      indent=2)
+  }};
+{% if view.get('allow_transfer') is not none %}
+  allow-transfer {{ arg_list(view.allow_transfer, indent=2) }};
+{% endif %}
+  recursion {{ arg_bool(view.get('recursion')) }};
+{% if view.get('allow_recursion') is not none %}
+  allow-recursion {{ arg_list(view.allow_recursion, indent=2) }};
+{% endif %}
+{% for zone in simple_bind__in_view_zones or [] %}
+{% if in_view(zone, view) %}
+
+  zone "{{ zone.zone }}" {
+    in-view {{ zone.in_view | mandatory('missing target view') }};
   };
-  file "db.{{ zone.zone }}";
-{% for extra in zone.get('extra_conf') or [] %}
-  {{ extra }};
+{% endif %}
 {% endfor %}
-};
+{% for zone in simple_bind__primary_zones or [] %}
+{% if in_view(zone, view) %}
 
-{% endfor -%}
-
-{% for zone in simple_bind__secondary_zones or [] -%}
-zone "{{ zone.zone }}" {
-  type {{ _sbind_term.secondary }};
-  {{ _sbind_term.primaries }} {
-{% for primary in zone.get('primaries') or [] %}
-    {{ primary }};
+  zone "{{ zone.zone }}" {
+    type {{ _sbind_term.primary }};
+    file {{ arg_path(_sbind_confdir, view.name, 'db.' + zone.zone) }};
+{% for extra in zone.get('extra_conf') or [] %}
+    {{ extra }};
 {% endfor %}
   };
-  file "db.{{ zone.zone }}";
-{% for extra in zone.get('extra_conf') or [] %}
-  {{ extra }};
+{% endif %}
 {% endfor %}
-};
+{% for zone in simple_bind__forward_zones or [] %}
+{% if in_view(zone, view) %}
 
+  zone "{{ zone.zone }}" {
+    type forward;
+    forward {{ zone.forward | default('first') }};
+    forwarders {{ arg_list(zone.get('forwarders') or [], indent=4) }};
+    file "db.{{ zone.zone }}";
+{% for extra in zone.get('extra_conf') or [] %}
+    {{ extra }};
+{% endfor %}
+  };
+{% endif %}
+{% endfor %}
+{% for zone in simple_bind__secondary_zones or [] %}
+{% if in_view(zone, view) %}
+
+  zone "{{ zone.zone }}" {
+    type {{ _sbind_term.secondary }};
+    {{ _sbind_term.primaries }} {{
+      arg_list(zone.get('primaries') or [], indent=4)
+    }};
+    file "db.{{ zone.zone }}.{{ zone.view }}";
+{% for extra in zone.get('extra_conf') or [] %}
+    {{ extra }};
+{% endfor %}
+  };
+{% endif %}
+{% endfor %}
+{% if view.get('includes') %}
+
+{% for file in view.includes %}
+  include {{ arg_path(_sbind_confdir, file) }};
+{% endfor %}
+{% endif %}
+};
 {% endfor %}

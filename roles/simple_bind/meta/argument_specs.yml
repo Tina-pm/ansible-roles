@@ -1,0 +1,208 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+argument_specs:
+  main:
+    short_description: Install and configure Bind9 DNS server
+    author:
+      - Martina Ferrari
+    options:
+      simple_bind__config_dir:
+        description:
+          Root configuration directory.
+        type: path
+        default: /etc/bind
+
+      simple_bind__options:
+        description: C(options) block in C(named.conf.options)
+        type: dict
+        options:
+          forward: &forward
+            description:
+              Allow or disallow fallback to recursion if forwarding failed.
+            type: str
+            choices: [first, only]
+            default: first
+
+          forwarders: &forwarders
+            description: Hosts to forward queries to.
+            type: list
+            elements: str
+            default: []
+
+          listen_on: &listen_on
+            description: IPv4 addresses on which to listen for DNS queries.
+            type: list
+            elements: dict
+            default:
+              - port: 53
+                match_list: [any]
+            options:
+              port:
+                description: Port number
+                type: int
+              match_list:
+                description: Address match elements
+                type: list
+                elements: str
+                default: [any]
+
+          listen_on_v6:
+            <<: *listen_on
+            description: IPv6 addresses on which to listen for DNS queries.
+
+          extra_conf: &extra_conf
+            description:
+              List of free-form configuration directives.
+            type: list
+            elements: str
+
+      simple_bind__includes: &includes
+        description:
+          - List of files to include in the global scope.
+          - Relative paths are resolved relative to C(simple_bind__config_dir).
+        type: list
+        elements: path
+
+      simple_bind__acls:
+        description:
+          Assign a symbolic name to an address match list.
+        type: dict
+
+      simple_bind__views:
+        description:
+          Enable answering queries differently depending on client IP address.
+        type: list
+        elements: dict
+        default:
+          - name: default
+            match_clients:
+              - any
+            allow_transfer:
+              - any
+            recursion: true
+            allow_recursion:
+              - localhost
+              - localnets
+            in_view_zones: []
+            includes:
+              - named.conf.default-zones
+              - zones.rfc1918
+        options:
+          name:
+            description: View name.
+            type: str
+            required: true
+
+          match_clients:
+            description:
+              Client IP addresses or C(acl)s that will be served by this view.
+            type: str
+            required: true
+
+          allow_transfer:
+            description:
+              Client IP addresses or C(acl)s allowed to transfer zones.
+            type: list
+            elements: str
+
+          recursion:
+            description: Allow recursion and caching.
+            type: bool
+            default: true
+
+          allow_recursion:
+            description:
+              Client IP addresses or C(acl)s allowed to make recursive queries.
+            type: list
+            elements: str
+
+          includes: *includes
+
+      simple_bind__in_view_zones:
+        description: A zone copied from a previously defined view.
+        type: list
+        elements: dict
+        options:
+          zone: &zone
+            description: Zone name.
+            type: str
+            required: true
+
+          view: &view
+            description: View that serves this zone.
+            type: str
+            default: default
+
+          in_view:
+            description: View that defines this zone.
+            type: str
+            required: true
+
+      simple_bind__primary_zones:
+        description: The main copy of the data for a zone.
+        type: list
+        elements: dict
+        options:
+          zone: *zone
+          view: *view
+
+          src:
+            description:
+              - Content of the zone file.
+              - Accepts textual zone content, or a file name to copy or
+                template (according on the C(src_type) option).
+            type: str
+            required: true
+
+          src_type:
+            description: Type of source content.
+            type: str
+            choices: [string, template, file]
+            default: string
+
+          template_vars:
+            description:
+              - Additional variables for templating.
+              - The variables C(ZONE) and C(VIEW) are always available.
+              - Ignored unless C(src_type == 'template').
+            type: dict
+
+          extra_conf: *extra_conf
+
+      simple_bind__secondary_zones:
+        description:
+          Duplicate of the data for a zone, transferred from a primary server.
+        type: list
+        elements: dict
+        options:
+          zone: *zone
+          view: *view
+
+          primaries:
+            description: Primary servers to transfer the zone data from.
+            type: list
+            elements: str
+            required: true
+
+          extra_conf: *extra_conf
+
+      simple_bind__forward_zones:
+        description: Configure forwarding on a per-domain basis.
+        type: list
+        elements: dict
+        options:
+          zone: *zone
+          view: *view
+          forwarders: *forwarders
+          forward: *forward
+          extra_conf: *extra_conf
+
+      simple_bind__install_ferm_svc:
+        description: If true, install ferm configuration file.
+        type: bool
+        default: false
+
+      simple_bind__ferm_allow_from:
+        description: Optionally limit access by a list of IP addresses/blocks.
+        type: list
+        elements: str

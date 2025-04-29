@@ -36,6 +36,9 @@ _sbind_svcname: |-
 
 # Pre-process configuration options.
 
+_sbind_confdir: |-
+  {{ simple_bind__config_dir or '/etc/bind' }}
+
 _sbind_listen: |-
   {% set sections = ('listen_on', 'listen_on_v6') %}
   {% set result = dict(sections | zip(([], []))) %}
@@ -60,3 +63,48 @@ _sbind_listen: |-
 
 _sbind_ports: |-
   {{ _sbind_listen.values() | sum(start=[]) | map(attribute='port') | unique }}
+
+_sbind_includes_always:
+  - named.conf.options
+  - named.conf.local
+_sbind_includes: |-
+  {{ _sbind_includes_always + (simple_bind__includes or []) }}
+
+_sbind_zone_files: |-
+  {% set result = [] %}
+  {% for conf in simple_bind__primary_zones or [] %}
+  {% set zone = conf.zone | mandatory('missing zone name') %}
+  {% set view = conf.view | mandatory('missing view name') %}
+  {% set dest =
+    (_sbind_confdir, view, 'db.' + zone) | ansible.builtin.path_join
+  %}
+  {% set src = conf.src | mandatory('missing zone source') %}
+  {% set src_type = conf.get('src_type') or 'string' %}
+  {% set _ =
+    ('ok' if src_type in ('template', 'file', 'string')) |
+    mandatory('invalid source type: ' + src_type)
+  %}
+  {% set tmplvars =
+    {
+      'ZONE': zone if zone.endswith('.') else zone + '.',
+      'VIEW': view,
+    } | combine(conf.get('template_vars') or {})
+  %}
+  {% set content =
+    lookup('file', src, rstrip=false)
+    if src_type == 'file' else
+    lookup('template', src, template_vars=tmplvars)
+    if src_type == 'template' else
+    src
+  %}
+  {% set _ = result.append(dict(dest=dest, content=content)) %}
+  {% endfor %}
+  {{- result -}}
+
+_sbind_zone_dirs: |-
+  {{
+    _sbind_zone_files |
+    map(attribute='dest') |
+    map('ansible.builtin.dirname') |
+    unique
+  }}

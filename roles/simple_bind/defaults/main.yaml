@@ -1,6 +1,8 @@
 ---
 # vim:ts=2:sw=2:et:ai:sts=2
 
+simple_bind__config_dir: /etc/bind
+
 simple_bind__options:
   forward: first
   forwarders: []
@@ -14,16 +16,52 @@ simple_bind__options:
 #    - 'foo: bar'
 
 simple_bind__includes:
-  - /etc/bind/zones.rfc1918
+#  - named.conf.default-zones
+#  - zones.rfc1918
+
+simple_bind__acls:
+#  myacl:
+#    - 192.168.0.0/16
+
+simple_bind__views:
+  - name: default
+    match_clients:
+      - any
+    allow_transfer:
+      - any
+    recursion: true
+    allow_recursion:
+      - localhost
+      - localnets
+    includes:
+      - named.conf.default-zones
+      - zones.rfc1918
+
+simple_bind__in_view_zones:
+#  - zone: example.com
+#    view: default
+#    in_view: external
+
+simple_bind__primary_zones:
+#  - zone: example.com
+#    view: default
+#    src_type: string  # Or 'template', 'file'
+#    src: |
+#      @ IN SOA example.com. root.example.com. ( 1 604800 86400 2419200 604800 )
+#      @ IN NS ns1.example.com.
+#    extra_conf:
+#      - 'foo: bar'
 
 simple_bind__secondary_zones:
 #  - zone: example.com
+#    view: default
 #    primaries: [192.168.1.1]
 #    extra_conf:
 #      - 'foo: bar'
 
 simple_bind__forward_zones:
 #  - zone: example.com
+#    view: default
 #    forwarders: [192.168.1.1]
 #    forward: only
 #    extra_conf:
