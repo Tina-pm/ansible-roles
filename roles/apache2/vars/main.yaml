@@ -61,7 +61,7 @@ _a2_fragments: |-
 
   {% set present = state in ('present', 'enabled') %}
   {% set enabled = state == 'enabled' %}
-  {% set content = lookup('file', src) if src_type == 'file' else
+  {% set content = lookup('file', src, rstrip=false) if src_type == 'file' else
       lookup('template', src) if src_type == 'template' else
       src %}
   {% set ext = 'load' if kind == 'mod' else 'conf' %}

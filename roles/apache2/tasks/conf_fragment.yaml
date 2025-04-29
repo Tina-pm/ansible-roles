@@ -19,6 +19,8 @@
     owner: '{{ _a2_conffile_owner }}'
     group: '{{ _a2_conffile_group }}'
   notify: '{{ item.notify }}'
+  # Avoid failures in check mode.
+  ignore_errors: '{{ ansible_check_mode }}'
 
 - name: Run {{ item.ctlcmd }} {{ item.name }}
   ansible.builtin.command:

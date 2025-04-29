@@ -29,14 +29,14 @@ argument_specs:
             elements: str
             default: []
 
-          listen_on: &listen_on
+          listen_on:
             description: IPv4 addresses on which to listen for DNS queries.
             type: list
             elements: dict
             default:
               - port: 53
                 match_list: [any]
-            options:
+            options: &listen_on_opts
               port:
                 description: Port number
                 type: int
@@ -47,8 +47,13 @@ argument_specs:
                 default: [any]
 
           listen_on_v6:
-            <<: *listen_on
             description: IPv6 addresses on which to listen for DNS queries.
+            type: list
+            elements: dict
+            default:
+              - port: 53
+                match_list: [any]
+            options: *listen_on_opts
 
           extra_conf: &extra_conf
             description:

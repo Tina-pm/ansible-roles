@@ -42,16 +42,43 @@
       }}"
     exclusive: true
 
+- name: '[{{ user.name }}] set-up user home: find files'
+  # Scan users__home_dir_templates only once and segment results to avoid
+  # unnecessary loop interations later.
+  ansible.builtin.set_fact:
+    _usr_home_dirs: |-
+      {{ _usr_home_allfiles_by_state.get('directory') or [] }}
+    _usr_home_files: |-
+      {{
+        (_usr_home_allfiles_by_state.get('file') or []) |
+        rejectattr('path', 'ansible.builtin.search', '.*\.j2$')
+      }}
+    _usr_home_templates: |-
+      {{
+        (_usr_home_allfiles_by_state.get('file') or []) |
+        selectattr('path', 'ansible.builtin.search', '.*\.j2$')
+      }}
+    _usr_home_links: |-
+      {{ _usr_home_allfiles_by_state.get('link') or [] }}
+  vars:
+    _usr_home_srcdir: |-
+      {{ (users__home_dir_templates, user.name) | ansible.builtin.path_join }}
+    _usr_home_allfiles_by_state: |-
+      {{
+        query('community.general.filetree', _usr_home_srcdir) |
+        groupby('state') | community.general.dict
+      }}
+
 - name: '[{{ user.name }}] set-up user home: directories'
   ansible.builtin.file:
-    path: '{{ user.home }}/{{ item.path }}'
+    path: '{{ (user.home, item.path) | ansible.builtin.path_join }}'
     mode: '{{ _usr_home_dmode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
     state: directory
-  with_community.general.filetree: '{{
-    users__home_dir_templates }}/{{ user.name }}'
-  when: item.state == 'directory'
+  loop: '{{ _usr_home_dirs }}'
+  loop_control:
+    label: '{{ (user.home, item.path) | ansible.builtin.path_join }}'
 
 - name: '[{{ user.name }}] set-up user home: normal files'
   ansible.builtin.copy:
@@ -62,9 +89,9 @@
     mode: '{{ _usr_home_fmode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
-  with_community.general.filetree: '{{
-    users__home_dir_templates }}/{{ user.name }}'
-  when: item.state == 'file' and not item.src.endswith('.j2')
+  loop: '{{ _usr_home_files }}'
+  loop_control:
+    label: '{{ (user.home, item.path) | ansible.builtin.path_join }}'
 
 - name: '[{{ user.name }}] set-up user home: templates'
   ansible.builtin.template:
@@ -75,9 +102,9 @@
     mode: '{{ _usr_home_fmode }}'
     owner: '{{ user.name }}'
     group: '{{ user.name }}'
-  with_community.general.filetree: '{{
-    users__home_dir_templates }}/{{ user.name }}'
-  when: item.state == 'file' and item.src.endswith('.j2')
+  loop: '{{ _usr_home_templates }}'
+  loop_control:
+    label: '{{ (user.home, item.path) | ansible.builtin.path_join }}'
 
 - name: '[{{ user.name }}] set-up user home: symlinks'
   ansible.builtin.file:
@@ -89,6 +116,6 @@
     state: link
     force: true
     follow: false
-  with_community.general.filetree: '{{
-    users__home_dir_templates }}/{{ user.name }}'
-  when: item.state == 'link'
+  loop: '{{ _usr_home_links }}'
+  loop_control:
+    label: '{{ (user.home, item.path) | ansible.builtin.path_join }}'

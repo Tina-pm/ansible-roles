@@ -50,8 +50,8 @@
       authorized: '{{ _user.authorized | d([]) }}'
   loop: '{{ users__create_users or [] }}'
   loop_control:
+    label: '{{ _user.name }}'
     loop_var: _user
-  no_log: true
 
 - name: Set mail forwarding for root
   ansible.builtin.lineinfile:

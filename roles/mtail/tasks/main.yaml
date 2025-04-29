@@ -23,7 +23,7 @@
     group: root
     mode: '0644'
   notify: _tina_restart_mtail
-  with_items: '{{ mtail__programs or [] }}'
+  loop: '{{ mtail__programs or [] }}'
 
 - name: Install ferm configuration
   ansible.builtin.include_role:
