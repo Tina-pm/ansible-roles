@@ -22,7 +22,19 @@
     state: absent
   when: base_setup__disable_resolved
 
-# Needs to be executed after `dbus` is installed and started.
+- name: Install dbus
+  ansible.builtin.package:
+    name: dbus
+    state: present
+  when: base_setup__set_hostname
+
+- name: Start dbus
+  ansible.builtin.service:
+    name: dbus
+    state: started
+    enabled: true
+  when: base_setup__set_hostname
+
 - name: Set hostname
   ansible.builtin.hostname:
     name: '{{ _base_setup__hostname_short }}'
