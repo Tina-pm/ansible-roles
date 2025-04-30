@@ -1,0 +1,25 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+argument_specs:
+  main:
+    short_description: Install and configure the SSH daemon (sshd)
+    description:
+      - This role installs and configures the SSH daemon (sshd).
+      - Ensures host keys are present.
+    author:
+      - Martina Ferrari
+    options:
+      sshd__package:
+        description: Name of the package to install.
+        type: str
+        default: openssh-server
+
+      sshd__password_auth_allowed:
+        description: Specifies whether password authentication is allowed.
+        type: bool
+        default: false
+
+      sshd__root_login_allowed:
+        description: Specifies whether root can log in using ssh.
+        type: bool
+        default: false

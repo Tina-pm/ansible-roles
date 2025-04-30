@@ -1,0 +1,54 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+- name: Install sshd package
+  ansible.builtin.package:
+    name: '{{ sshd__package }}'
+    state: present
+
+- name: Verify sshd host keys presence
+  ansible.builtin.find:
+    paths: /etc/ssh
+    patterns: ssh_host_*
+  register: _sshd_host_keys
+
+- name: Regenerate sshd regenerate host keys
+  ansible.builtin.command:
+    cmd: dpkg-reconfigure openssh-server
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  when: not _sshd_host_keys.files
+  notify: _tina_reload_sshd
+  changed_when: true
+
+- name: Disable sshd password authentication
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PasswordAuthentication\s'
+    insertafter: '^#\s*PasswordAuthentication\s'
+    line: |-
+      PasswordAuthentication {{
+        'yes' if sshd__password_auth_allowed else 'no'
+      }}
+  when: sshd__password_auth_allowed in (True, False)
+  notify: _tina_reload_sshd
+
+- name: Disable sshd root login
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PermitRootLogin\s'
+    insertafter: '^#\s*PermitRootLogin\s'
+    line: |-
+      PermitRootLogin {{
+        'prohibit-password' if sshd__root_login_allowed else 'no'
+      }}
+  when: sshd__root_login_allowed in (True, False)
+  notify: _tina_reload_sshd
+
+- name: Enable and start sshd service
+  ansible.builtin.service:
+    name: sshd
+    state: started
+    enabled: true

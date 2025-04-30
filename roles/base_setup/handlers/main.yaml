@@ -5,11 +5,6 @@
     name: postfix
     state: reloaded
 
-- name: _tina_reload_sshd
-  ansible.builtin.service:
-    name: sshd
-    state: reloaded
-
 - name: _tina_reconfigure_locales
   ansible.builtin.shell:
     cmd: >-
