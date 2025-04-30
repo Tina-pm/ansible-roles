@@ -1,0 +1,47 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+# Avoid using the `hostname` module as it is buggy:
+# https://github.com/ansible/ansible/issues/85069
+
+- name: Get current kernel hostname
+  ansible.builtin.command:
+    argv: [hostname]
+  register: _hostname_current
+  changed_when: false
+  check_mode: false
+
+- name: Set kernel hostname
+  ansible.builtin.command:
+    argv: [hostname, '{{ _hostname_short }}']
+  vars:
+    current: '{{ _hostname_current.stdout | trim }}'
+  changed_when: true
+  when: current != _hostname_short
+
+- name: Set persistent hostname
+  ansible.builtin.copy:
+    content: |
+      {{ _hostname_short }}
+    dest: /etc/hostname
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Set FDQN with IPv4 localhost address
+  ansible.builtin.lineinfile:
+    dest: /etc/hosts
+    line: |-
+      127.0.1.1	{{ hostname__fqdn }}	{{ _hostname_short }}
+    regexp: '^127\.0\.1\.1\s'
+    insertafter: '^127\.0\.0\.1\s'
+    state: present
+
+- name: Set FDQN with IPv6 localhost address
+  ansible.builtin.lineinfile:
+    dest: /etc/hosts
+    line: |-
+      ::1	{{ hostname__fqdn }}	{{ _hostname_short }}
+    regexp: '^::1\s+(?!(?:ip6-)?localhost)\S+'
+    insertafter: '^::1\s'
+    state: present

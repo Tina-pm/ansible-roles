@@ -22,53 +22,11 @@
     state: absent
   when: base_setup__disable_resolved
 
-# Avoid using the `hostname` module as it is buggy:
-# https://github.com/ansible/ansible/issues/85069
-
-- name: Get current kernel hostname
-  ansible.builtin.command:
-    argv: [hostname]
-  register: current_hostname
-  changed_when: false
-  check_mode: false
-  when: base_setup__set_hostname
-
-- name: Set kernel hostname
-  ansible.builtin.command:
-    argv: [hostname, '{{ _base_setup__hostname_short }}']
+- name: Set hostname and FQDN
+  ansible.builtin.include_role:
+    name: hostname
   vars:
-    current: '{{ current_hostname.stdout | trim }}'
-  changed_when: true
-  when: base_setup__set_hostname and current != _base_setup__hostname_short
-
-- name: Set persistent hostname
-  ansible.builtin.copy:
-    content: |
-      {{ _base_setup__hostname_short }}
-    dest: /etc/hostname
-    owner: root
-    group: root
-    mode: '0644'
-  when: base_setup__set_hostname
-
-- name: Set FDQN with IPv4 localhost address
-  ansible.builtin.lineinfile:
-    dest: /etc/hosts
-    line: |-
-      127.0.1.1	{{ base_setup__set_hostname }}	{{ _base_setup__hostname_short }}
-    regexp: '^127\.0\.1\.1\s'
-    insertafter: '^127\.0\.0\.1\s'
-    state: present
-  when: base_setup__set_hostname
-
-- name: Set FDQN with IPv6 localhost address
-  ansible.builtin.lineinfile:
-    dest: /etc/hosts
-    line: |-
-      ::1	{{ base_setup__set_hostname }}	{{ _base_setup__hostname_short }}
-    regexp: '^::1\s+(?!(?:ip6-)?localhost)\S+'
-    insertafter: '^::1\s'
-    state: present
+    hostname__fqdn: '{{ base_setup__set_hostname }}'
   when: base_setup__set_hostname
 
 - name: Setup APT, upgrade installed packages, and install base packages

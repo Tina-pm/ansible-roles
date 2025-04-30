@@ -1,0 +1,18 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+argument_specs:
+  main:
+    short_description: Set system's hostname
+    description:
+      - This role sets both the hostname and the fully-qualified domain name of
+        a system.
+      - Edits C(/etc/hostname) to store the persistent hostname, and
+        C(/etc/hosts) to assign the fully-qualified domain name to the localhost
+        address.
+    author:
+      - Martina Ferrari
+    options:
+      hostname__fqdn:
+        description: Fully-qualified domain name of the host.
+        type: str
+        required: true

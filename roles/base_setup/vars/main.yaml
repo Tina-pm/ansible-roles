@@ -1,11 +1,5 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
-_base_setup__hostname_short: |-
-  {{
-    base_setup__set_hostname.split(".")[0]
-    if base_setup__set_hostname else
-    base_setup__set_hostname
-  }}
 
 _base_setup__pkg_install: |-
   {{
