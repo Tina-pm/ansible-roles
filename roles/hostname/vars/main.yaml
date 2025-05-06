@@ -1,0 +1,5 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+_hostname_short: |-
+  {{ hostname__fqdn and hostname__fqdn.split('.')[0] }}
