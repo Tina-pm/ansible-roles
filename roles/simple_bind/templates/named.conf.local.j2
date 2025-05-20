@@ -11,7 +11,7 @@
 {% endmacro %}
 {# #}
 // {{ ansible_managed }}
-{% for acl, items in simple_bind__acls.items() or {} %}
+{% for acl, items in (simple_bind__acls or {}).items() %}
 
 acl {{ acl }} {{ arg_list(items) }};
 {% endfor %}
