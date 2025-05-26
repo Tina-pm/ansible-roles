@@ -7,7 +7,7 @@
       {{ apt__distro }}. Set FORCE_APT_DIST_UPGRADE=1 to override.
   when:
     ansible_distribution_release != apt__distro and
-    not lookup('env','FORCE_APT_DIST_UPGRADE')
+    lookup('env', 'FORCE_APT_DIST_UPGRADE') is ansible.builtin.falsy
 
 - name: Configure APT sources
   ansible.builtin.template:
@@ -24,7 +24,7 @@
   loop: '{{ apt__custom_sources | d({}) | dict2items }}'
   loop_control:
     label: '{{ item.key }}'
-  when: item.value
+  when: item.value is ansible.builtin.truthy
   register: _apt_custom_sources
 
 - name: Delete custom APT sources
@@ -34,7 +34,7 @@
   loop: '{{ apt__custom_sources | d({}) | dict2items }}'
   loop_control:
     label: '{{ item.key }}'
-  when: not item.value
+  when: item.value is ansible.builtin.falsy
   register: _apt_custom_sources_rm
 
 - name: Configure custom APT trusted keys
@@ -47,7 +47,7 @@
   loop: '{{ apt__trusted_keys | d({}) | dict2items }}'
   loop_control:
     label: '{{ item.key }}'
-  when: item.value
+  when: item.value is ansible.builtin.truthy
   register: _apt_trusted_keys
 
 - name: Delete custom APT trusted keys
@@ -57,7 +57,7 @@
   loop: '{{ apt__trusted_keys | d({}) | dict2items }}'
   loop_control:
     label: '{{ item.key }}'
-  when: not item.value
+  when: item.value is ansible.builtin.falsy
   register: _apt_trusted_keys_rm
 
 - name: Configure custom APT preferences
@@ -70,7 +70,7 @@
   loop: '{{ apt__custom_preferences | d({}) | dict2items }}'
   loop_control:
     label: '{{ item.key }}'
-  when: item.value
+  when: item.value is ansible.builtin.truthy
   register: _apt_custom_preferences
 
 - name: Delete custom APT preferences
@@ -80,7 +80,7 @@
   loop: '{{ apt__custom_preferences | d({}) | dict2items }}'
   loop_control:
     label: '{{ item.key }}'
-  when: not item.value
+  when: item.value is ansible.builtin.falsy
   register: _apt_custom_preferences_rm
 
 - name: Configure installation of recommended packages
@@ -107,13 +107,13 @@
   ansible.builtin.apt:
     upgrade: dist
     purge: '{{ apt__purge_removed }}'
-  when: apt__run_upgrade
+  when: apt__run_upgrade | bool
 
 - name: Remove unneeded packages
   ansible.builtin.apt:
     autoremove: true
     purge: '{{ apt__purge_removed }}'
-  when: apt__run_autoremove
+  when: apt__run_autoremove | bool
 
 - name: Install packages
   ansible.builtin.apt:

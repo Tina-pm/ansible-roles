@@ -7,7 +7,7 @@
     mode: '{{ _a2_conffile_mode }}'
     owner: '{{ _a2_conffile_owner }}'
     group: '{{ _a2_conffile_group }}'
-  when: item.content and item.present
+  when: item.content is ansible.builtin.truthy and item.present
   notify: '{{ item.notify }}'
 
 - name: Assert {{ item.afile }} state
