@@ -9,12 +9,7 @@
     state: present
 
 - name: Set up SSL certificate ACL
-  ansible.posix.acl:
-    path: '{{ item }}'
-    entity: thelounge
-    etype: user
-    permissions: r
-    state: present
+  ansible.builtin.include_tasks: ssl_certificate_acl.yaml
   loop:
     - '{{ thelounge__https_key }}'
     - '{{ thelounge__https_certificate }}'

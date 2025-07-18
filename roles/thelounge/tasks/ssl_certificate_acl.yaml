@@ -1,0 +1,22 @@
+- name: Set up SSL certificate directory default ACL
+  ansible.posix.acl:
+    path: '{{ item  | dirname }}'
+    entity: thelounge
+    etype: user
+    permissions: r
+    default: true
+    state: present
+- name: Set up SSL certificate directory ACL
+  ansible.posix.acl:
+    path: '{{ item  | dirname }}'
+    entity: thelounge
+    etype: user
+    permissions: rx
+    state: present
+- name: Set up SSL certificate ACL
+  ansible.posix.acl:
+    path: '{{ item }}'
+    entity: thelounge
+    etype: user
+    permissions: r
+    state: present
