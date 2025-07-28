@@ -62,7 +62,7 @@ apt__distro_has_proposed_updates: |-
   {{ apt__distro_is_current and not apt__distro_is_unstable }}
 
 apt__distro_has_backports: |-
-  {{ apt__distro_ver is version('7', 'ge') and not apt__distro_is_unstable }}
+  {{ apt__distro_ver is version('12', 'ge') and not apt__distro_is_unstable }}
 
 apt__python3_is_default: |-
   {{ apt__distro_ver is version('11', 'ge') }}
