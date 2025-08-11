@@ -90,7 +90,10 @@ _a2_logdirs: |-
 _a2_logdirs_mode: |-
   {{ '%o' % ((apache2__logdirs_mode or '0750') | int(base=8)) }}
 _a2_logdirs_filemode: |-
-  {{ '%o' % ((apache2__logdirs_mode or '0750') | int(base=8)).__and__(0o666) }}
+  {{
+    '%o' % ((apache2__logdirs_mode or '0750') | int(base=8) |
+    tina_pm.common.bw_and(0o666))
+  }}
 _a2_logdirs_owner: |-
   {{ apache2__logdirs_owner or 'root' }}
 _a2_logdirs_group: |-
