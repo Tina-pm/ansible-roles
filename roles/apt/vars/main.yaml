@@ -4,14 +4,16 @@
 # Distribution aliases.
 apt__distro_aliases:
   unstable: sid
-  testing: trixie
-  stable: bookworm
-  oldstable: bullseye
-  oldoldstable: buster
+  testing: forky
+  stable: trixie
+  oldstable: bookworm
+  oldoldstable: bullseye
 
 # Mapping between distribution names and versions.
 apt__distro_name2ver:
   sid: 999
+  duke: 15
+  forky: 14
   trixie: 13
   bookworm: 12
   bullseye: 11
