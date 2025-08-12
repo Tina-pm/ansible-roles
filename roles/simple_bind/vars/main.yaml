@@ -47,8 +47,8 @@ _sbind_listen: |-
   {% set opt = [opt] if opt is not iterable or opt is string else opt %}
   {% for item in opt | select %}
   {% set item = item if item is mapping else dict(match_list=item) %}
-  {% set port = item.pop('port', None) or 53 %}
-  {% set match_list = item.pop('match_list', None) %}
+  {% set port = item.get('port') or 53 %}
+  {% set match_list = item.get('match_list') %}
   {% set match_list =
     ['any'] if not match_list else
     [match_list]
