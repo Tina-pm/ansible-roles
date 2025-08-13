@@ -4,7 +4,7 @@
   ansible.builtin.user:
     name: '{{ user_name }}'
     state: absent
-    remove: '{{ users__remove_users_files | d() | bool }}'
+    remove: '{{ users__remove_users_files | d(False) | bool }}'
 
 - name: '[{{ user_name }}] remove mail forwarding'
   ansible.builtin.lineinfile:
