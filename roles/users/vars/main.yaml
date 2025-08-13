@@ -13,15 +13,14 @@
 # executable bit.
 _usr_home_xfile: |-
   {{
-    (item.mode | int(base=8)).__and__(0o111) != 0 and
+    (item.mode | int(base=8) | tina_pm.common.bw_and(0o111)) != 0 and
     users__home_dir_templates_copy_xbit
   }}
 _usr_home_fmode: |-
   {{
     '0%o' % (
-      (users__home_dir_templates_force_file_mode or item.mode) | int(base=8)
-    ).__or__(
-      0o111 if _usr_home_xfile else 0
+      (users__home_dir_templates_force_file_mode or item.mode) | int(base=8) |
+      tina_pm.common.bw_or(0o111 if _usr_home_xfile else 0)
     )
   }}
 _usr_home_dmode: |-

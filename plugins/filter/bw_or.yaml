@@ -1,0 +1,28 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+DOCUMENTATION:
+  name: bw_or
+  author: Martina Ferrari
+  version_added: 2.1.0
+  short_description: or (bitwise operator C(|))
+  description:
+    - Returns the "bitwise or" of the received values.
+  options:
+    _input:
+      description: First value.
+      type: int
+      required: true
+    _second_val:
+      description: Second value.
+      type: int
+      required: true
+
+EXAMPLES: |
+  # Force write bits in file mode
+  # 0o644 | 0o222 == 0o666
+  {{ 0o644 | tina_pm.common.bw_or(0o222) }}
+
+RETURN:
+  _value:
+    description: The result of C(a | b).
+    type: int

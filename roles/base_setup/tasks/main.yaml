@@ -20,14 +20,14 @@
   ansible.builtin.package:
     name: libnss-resolve
     state: absent
-  when: base_setup__disable_resolved
+  when: base_setup__disable_resolved | bool
 
 - name: Set hostname and FQDN
   ansible.builtin.include_role:
     name: hostname
   vars:
     hostname__fqdn: '{{ base_setup__set_hostname }}'
-  when: base_setup__set_hostname
+  when: base_setup__set_hostname is ansible.builtin.truthy
 
 - name: Setup APT, upgrade installed packages, and install base packages
   ansible.builtin.include_role:
@@ -47,7 +47,9 @@
     regexp: '^relayhost\s*='
     insertafter: '^\s*#relayhost'
     state: present
-  when: base_setup__mail_relay and base_setup__setup_postfix
+  when:
+    base_setup__mail_relay is ansible.builtin.truthy and
+    base_setup__setup_postfix | bool
   notify: _tina_reload_postfix
 
 - name: Set hostname for postfix
@@ -56,7 +58,9 @@
     line: myhostname = {{ base_setup__set_hostname }}
     regexp: '^myhostname\s*='
     state: present
-  when: base_setup__set_hostname and base_setup__setup_postfix
+  when:
+    base_setup__set_hostname is ansible.builtin.truthy and
+    base_setup__setup_postfix | bool
   notify: _tina_reload_postfix
 
 - name: Set mailname
@@ -67,7 +71,9 @@
     owner: root
     group: root
     mode: '0644'
-  when: base_setup__set_hostname and base_setup__setup_postfix
+  when:
+    base_setup__set_hostname is ansible.builtin.truthy and
+    base_setup__setup_postfix | bool
   notify: _tina_reload_postfix
 
 - name: 'Set up sudoers: sudo group'
@@ -77,7 +83,7 @@
     regexp: '^%sudo\s'
     line: '%sudo ALL=(ALL) ALL'
     validate: visudo -cf %s
-  when: base_setup__setup_sudo
+  when: base_setup__setup_sudo | bool
 
 - name: 'Set up sudoers: sudo-nopw group'
   ansible.builtin.lineinfile:
@@ -86,7 +92,7 @@
     regexp: '^%sudo-nopw\s'
     line: '%sudo-nopw ALL=(ALL) NOPASSWD: ALL'
     validate: visudo -cf %s
-  when: base_setup__setup_sudo
+  when: base_setup__setup_sudo | bool
 
 - name: Set default locale
   ansible.builtin.debconf:
@@ -94,7 +100,7 @@
     question: locales/default_environment_locale
     value: '{{ base_setup__default_locale }}'
     vtype: select
-  when: base_setup__setup_locales
+  when: base_setup__setup_locales | bool
   notify: _tina_reconfigure_locales
 
 - name: Set list of locales to be generated
@@ -103,7 +109,7 @@
     question: locales/locales_to_be_generated
     value: '{{ base_setup__locales_to_be_generated | join(", ") }}'
     vtype: multiselect
-  when: base_setup__setup_locales
+  when: base_setup__setup_locales | bool
   notify: _tina_reconfigure_locales
 
 - name: Bash defaults

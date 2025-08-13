@@ -1,0 +1,23 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+DOCUMENTATION:
+  name: bw_not
+  author: Martina Ferrari
+  version_added: 2.1.0
+  short_description: not/complement (bitwise operator C(~))
+  description:
+    - Returns the "bitwise complement" of the received value.
+  options:
+    _input:
+      description: Input value.
+      type: int
+      required: true
+
+EXAMPLES: |
+  # ~0b00101010 == -0b101011
+  {{ 0b00101010 | tina_pm.common.bw_not) }}
+
+RETURN:
+  _value:
+    description: The result of C(~a).
+    type: int

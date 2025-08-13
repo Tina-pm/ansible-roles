@@ -10,7 +10,7 @@
 {{- zone_view == view.name or None -}}
 {% endmacro %}
 {# #}
-// {{ ansible_managed }}
+// Ansible managed
 {% for acl, items in (simple_bind__acls or {}).items() %}
 
 acl {{ acl }} {{ arg_list(items) }};

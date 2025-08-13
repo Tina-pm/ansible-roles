@@ -1,0 +1,28 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+DOCUMENTATION:
+  name: bw_and
+  author: Martina Ferrari
+  version_added: 2.1.0
+  short_description: and (bitwise operator C(&))
+  description:
+    - Returns the "bitwise and" of the received values.
+  options:
+    _input:
+      description: First value.
+      type: int
+      required: true
+    _second_val:
+      description: Second value.
+      type: int
+      required: true
+
+EXAMPLES: |
+  # Mask execute bits in file mode
+  # 0o755 & 0o666 == 0o644
+  {{ 0o755 | tina_pm.common.bw_and(0o666) }}
+
+RETURN:
+  _value:
+    description: The result of C(a & b).
+    type: int

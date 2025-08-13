@@ -119,7 +119,7 @@
           saddr @ipfilter(({{ saddr }}))
           REJECT;
   notify: _tina_reload_ferm
-  when: ferm__blacklist is defined and ferm__blacklist
+  when: ferm__blacklist is ansible.builtin.truthy
   vars:
     saddr: >-
       {{ ferm__blacklist if ferm__blacklist is string else
