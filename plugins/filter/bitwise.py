@@ -21,7 +21,7 @@ class FilterModule:
   def bw_or(self, x, y):
     return x | y
 
-  def bw_xor(self, y, x):
+  def bw_xor(self, x, y):
     return x ^ y
 
   def bw_not(self, x):
