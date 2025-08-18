@@ -41,10 +41,11 @@ _sbind_confdir: |-
 
 _sbind_listen: |-
   {% set sections = ('listen_on', 'listen_on_v6') %}
-  {% set result = dict(sections | zip(([], []))) %}
+  {% set ns = namespace(result=[]) %}
   {% for section in sections %}
   {% set opt = (simple_bind__options or {}).get(section) or [] %}
   {% set opt = [opt] if opt is not iterable or opt is string else opt %}
+  {% set ns.sresult = [] %}
   {% for item in opt | select %}
   {% set item = item if item is mapping else dict(match_list=item) %}
   {% set port = item.get('port') or 53 %}
@@ -55,11 +56,12 @@ _sbind_listen: |-
     if match_list is not iterable or match_list is string else
     match_list
   %}
-  {% set _ = result[section].append(
-      item | combine({'port': port, 'match_list': match_list})) %}
+  {% set ns.sresult = ns.sresult + [
+      item | combine({'port': port, 'match_list': match_list})] %}
   {% endfor %}
+  {% set ns.result = ns.result + [ns.sresult] %}
   {% endfor %}
-  {{- result }}
+  {{- dict(sections | zip(ns.result)) }}
 
 _sbind_ports: |-
   {{ _sbind_listen.values() | sum(start=[]) | map(attribute='port') | unique }}
@@ -71,7 +73,7 @@ _sbind_includes: |-
   {{ _sbind_includes_always + (simple_bind__includes or []) }}
 
 _sbind_zone_files: |-
-  {% set result = [] %}
+  {% set ns = namespace(result=[]) %}
   {% for conf in simple_bind__primary_zones or [] %}
   {% set zone = conf.zone | mandatory('missing zone name') %}
   {% set view = conf.view | mandatory('missing view name') %}
@@ -97,9 +99,9 @@ _sbind_zone_files: |-
     if src_type == 'template' else
     src
   %}
-  {% set _ = result.append(dict(dest=dest, content=content)) %}
+  {% set ns.result = ns.result + [dict(dest=dest, content=content)] %}
   {% endfor %}
-  {{- result -}}
+  {{- ns.result -}}
 
 _sbind_zone_dirs: |-
   {{
