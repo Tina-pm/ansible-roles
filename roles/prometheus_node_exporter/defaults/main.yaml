@@ -7,7 +7,7 @@ node_exporter__disk_ignored_devs:
 node_exporter__fs_ignored_mounts: '^/(sys|proc|dev|run)($|/)'
 node_exporter__net_ignored_devs: '^lo$'
 node_exporter__enabled_collectors:
-node_exporter__extra_args:
+node_exporter__extra_args: ~
 
 # If true, install ferm configuration file.
 node_exporter__install_ferm_svc: false

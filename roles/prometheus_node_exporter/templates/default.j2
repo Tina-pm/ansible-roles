@@ -35,4 +35,4 @@ ARGS=" \
   {{ _flag }}web.listen-address={{
     node_exporter__listen_addr ~ ':' ~ node_exporter__listen_port
   }} \
-  {{ node_exporter__extra_args }}"
+  {{ node_exporter__extra_args or '' }}"
