@@ -27,7 +27,7 @@ module.exports = {
   // This value is set to `undefined` by default to listen on all interfaces.
   host: {{
     "undefined" | safe
-    if thelounge__host is not defined
+    if thelounge__host is ansible.builtin.falsy
     else thelounge__host | to_json
   }},
   // ### `port`
@@ -77,8 +77,8 @@ module.exports = {
   // which case the other two string settings are ignored.
   https: {
     enable: {{ thelounge__https_enable | to_json }},
-    key: "{{ thelounge__https_key }}",
-    certificate: "{{ thelounge__https_certificate }}",
+    key: {{ thelounge__https_key | to_json }},
+    certificate: {{ thelounge__https_certificate | to_json }},
     ca: "",
   },
   // ## Client settings
@@ -256,7 +256,7 @@ module.exports = {
     nick: "thelounge%%",
     username: "thelounge",
     realname: "",
-    join: "{{ thelounge__defaults_join }}",
+    join: {{ thelounge__defaults_join | to_json }},
     leaveMessage: "",
   },
   // ### `lockNetwork`
@@ -408,7 +408,7 @@ module.exports = {
     enable: {{ thelounge__ldap_enable | to_json }},
     // - `url`: A url of the form `ldaps://<ip>:<port>`.
     //   For plain connections, use the `ldap` scheme.
-    url: "{{ thelounge__ldap_url }}",
+    url: {{ thelounge__ldap_url | to_json }},
     // - `tlsOptions`: LDAP connection TLS options (only used if scheme is
     //   `ldaps://`). It is an object whose values are Node.js' `tls.connect()`
     //   options. It is set to `{}` by default.
@@ -421,12 +421,12 @@ module.exports = {
     //   ```
     tlsOptions: {},
     // - `primaryKey`: LDAP primary key. It is set to `"uid"` by default.
-    primaryKey: "{{ thelounge__ldap_primary_key }}",
+    primaryKey: {{ thelounge__ldap_primary_key | to_json }},
     // - `baseDN`: LDAP base DN, alternative to `searchDN`. For example, set it
     //   to `"ou=accounts,dc=example,dc=com"`.
     //   When unset, the LDAP auth logic with use `searchDN` instead to locate users.
 {% if thelounge__ldap_base_dn is defined %}
-    baseDN: "{{ thelounge__ldap_base_dn }}",
+    baseDN: {{ thelounge__ldap_base_dn | to_json }},
 {% endif %}
     // - `searchDN`: LDAP search DN settings. This defines the procedure by
     //   which The Lounge first looks for the user DN before authenticating them.

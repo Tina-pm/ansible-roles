@@ -1,6 +1,7 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
+thelounge__host: ~
 thelounge__port: 9000
 thelounge__reverse_proxy: false
 thelounge__https_enable: false

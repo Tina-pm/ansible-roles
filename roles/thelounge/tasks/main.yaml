@@ -19,8 +19,7 @@
     - '{{ thelounge__https_key }}'
     - '{{ thelounge__https_certificate }}'
   when:
-    - thelounge__https_key != ''
-    - thelounge__https_certificate != ''
+    - item is ansible.builtin.truthy
 
 - name: Configure TheLounge
   ansible.builtin.template:
