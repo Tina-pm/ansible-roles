@@ -79,6 +79,12 @@ apt__default_security_distro: |-
     )
   }}
 
+apt__default_updates_distro: '{{ apt__distro }}-updates'
+
+apt__default_prop_updates_distro: '{{ apt__distro }}-proposed-updates'
+
+apt__default_backports_distro: '{{ apt__distro }}-backports'
+
 apt__default_mirror: |-
   {{
     'http://deb.debian.org/debian/'
@@ -92,6 +98,12 @@ apt__default_security_mirror: |-
     if apt__distro_is_current else
     'http://archive.debian.org/debian-security/'
   }}
+
+apt__default_updates_mirror: '{{ apt__mirror }}'
+
+apt__default_prop_updates_mirror: '{{ apt__mirror }}'
+
+apt__default_backports_mirror: '{{ apt__mirror }}'
 
 apt__default_components: |-
   {{

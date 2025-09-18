@@ -7,6 +7,12 @@ apt__components: '{{ apt__default_components }}'
 
 apt__security_distro: '{{ apt__default_security_distro }}'
 apt__security_mirror: '{{ apt__default_security_mirror }}'
+apt__updates_distro: '{{ apt__default_updates_distro }}'
+apt__updates_mirror: '{{ apt__default_updates_mirror }}'
+apt__prop_updates_distro: '{{ apt__default_prop_updates_distro }}'
+apt__prop_updates_mirror: '{{ apt__default_prop_updates_mirror }}'
+apt__backports_distro: '{{ apt__default_backports_distro }}'
+apt__backports_mirror: '{{ apt__default_backports_mirror }}'
 
 apt__install_recommends: false
 

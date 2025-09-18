@@ -13,17 +13,17 @@ deb {{ apt__security_mirror }} {{ apt__security_distro }} {{ components }}
 {% endif %}
 {% if apt__distro_has_updates %}
 
-deb {{ apt__mirror }} {{ apt__distro }}-updates {{ components }}
-# deb-src {{ apt__mirror }} {{ apt__distro }}-updates {{ components }}
+deb {{ apt__updates_mirror }} {{ apt__updates_distro }} {{ components }}
+# deb-src {{ apt__updates_mirror }} {{ apt__updates_distro }} {{ components }}
 {% endif %}
 {% if apt__distro_has_proposed_updates %}
 
-deb {{ apt__mirror }} {{ apt__distro }}-proposed-updates {{ components }}
-# deb-src {{ apt__mirror }} {{ apt__distro }}-proposed-updates {{ components }}
+deb {{ apt__prop_updates_mirror }} {{ apt__prop_updates_distro }} {{ components }}
+# deb-src {{ apt__prop_updates_mirror }} {{ apt__prop_updates_distro }} {{ components }}
 {% endif %}
 {% if apt__distro_has_backports %}
 
-deb {{ apt__mirror }} {{ apt__distro }}-backports {{ components }}
-# deb-src {{ apt__mirror }} {{ apt__distro }}-backports {{ components }}
+deb {{ apt__backports_mirror }} {{ apt__backports_distro }} {{ components }}
+# deb-src {{ apt__backports_mirror }} {{ apt__backports_distro }} {{ components }}
 {% endif %}
 {%- endwith %}
