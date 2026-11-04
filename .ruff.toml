@@ -1,0 +1,35 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+
+line-length = 80
+indent-width = 2
+target-version = "py311"
+
+exclude = [
+  "ansible/.collections",
+]
+
+[format]
+# XXX(Tina): Do we want to keep this?
+quote-style = "double"
+
+[lint]
+select = [
+  # pycodestyle
+  "E",
+  # Pyflakes
+  "F",
+  # pyupgrade
+  "UP",
+  # flake8-bugbear
+  "B",
+  # flake8-simplify
+  "SIM",
+  # isort
+  "I",
+]
+
+[lint.isort]
+# Leave an empty line between direct and from import
+lines-between-types = 1
+# Leave two empty lines after imports
+lines-after-imports = 2
