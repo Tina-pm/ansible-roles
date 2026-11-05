@@ -4,6 +4,9 @@ name: molecule
 # Workflow disabled due to errors:
 # https://github.com/Tina-pm/ansible-roles/issues/80
 on:
+  push:
+    branches:
+      - never
 #  pull_request:
 #  push:
 #    branches:
