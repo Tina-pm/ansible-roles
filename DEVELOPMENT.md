@@ -13,19 +13,17 @@ install`.
 [molecule]: https://ansible.readthedocs.io/projects/molecule/
 [#986204]: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=986204
 
-
 ### Running tests
 
 Tests are located in the [molecule/default] directory, and can be run with:
 
 ```sh
-$ molecule test
+molecule test
 ```
 
 A Github workflow runs this on every pull request, and pushes to main.
 
 [molecule/default]: molecule/default
-
 
 ### Developing tests
 
@@ -35,17 +33,15 @@ created, configured, and destroyed on every run.
 During development, it's more ergonomic to run `molecule converge` and
 `molecule verify` as appropriate:
 
-  - _molecule converge_ applies the [converge.yml] playbook to configured
-    instances (should be run after making changes to the collection or the
-    test fixtures);
+- _molecule converge_ applies the [converge.yml] playbook to configured
+  instances (should be run after making changes to the collection or the
+  test fixtures);
 
-  - _molecule verify_ runs the [verify.yml] playbook to assert the correctness
-    of the resulting state (should be run after _molecule converge_).
+- _molecule verify_ runs the [verify.yml] playbook to assert the correctness
+  of the resulting state (should be run after _molecule converge_).
 
 [converge.yml]: molecule/default/converge.yml
 [verify.yml]: molecule/default/verify.yml
-
-
 
 ## Plugging your development copy into another repository
 
@@ -58,28 +54,34 @@ your modified version under `ansible_collections/tina_pm/common`.
 
 ### Detailed instructions
 
-1.  Create an “override directory” that can be used as a
-    `collection_path`. (A _per-collection_ override directory is recommended.
-    As an example, I use `~/work/tinapm/.ansible_collections/<fqcn>`).
+- Create an “override directory” that can be used as a
+  `collection_path`. (A _per-collection_ override directory is recommended.
+  As an example, I use `~/work/tinapm/.ansible_collections/<fqcn>`).
 
-  - Inside override directories, create an `ansible_collections` subdirectory,
-    and symlink your Git repository into it using nested directories for FQCN.
-    As an example, this is what I have:
+- Inside override directories, create an `ansible_collections` subdirectory,
+  and symlink your Git repository into it using nested directories for FQCN.
+  As an example, this is what I have:
 
-        $ cd ~/work/tinapm; ls -A1
-        .ansible_collections
-        tina-roles.repo
-        tina-sysadm.repo
+  ```console
+  $ cd ~/work/tinapm; ls -A1
+  .ansible_collections
+  tina-roles.repo
+  tina-sysadm.repo
 
-        $ cd .ansible_collections/tina_pm.common
-        $ ls -l ansible_collections/tina_pm
-        lrwxr-xr-x  ...  common -> ../../../../tina-roles.repo
+  $ cd .ansible_collections/tina_pm.common
+  $ ls -l ansible_collections/tina_pm
+  lrwxr-xr-x  ...  common -> ../../../../tina-roles.repo
+  ```
 
-   - For every collection you want to override, place the override directory
-     in the colon-separated `ANSIBLE_COLLECTIONS_PATH` environment variable:
+- For every collection you want to override, place the override directory
+  in the colon-separated `ANSIBLE_COLLECTIONS_PATH` environment variable:
 
-         $ export ANSIBLE_COLLECTIONS_PATH=$HOME/work/tinapm/.ansible_collections/tina_pm.common
+  <!-- markdownlint-disable line-length -->
+  ```sh
+  export ANSIBLE_COLLECTIONS_PATH=$HOME/work/tinapm/.ansible_collections/tina_pm.common
+  ```
+  <!-- markdownlint-enable line-length -->
 
-   - Beware of not removing access to collections you're not overriding. For
-     this, ensure you append to `$ANSIBLE_COLLECTIONS_PATH` the collection
-     locations shown by running `ansible --version` in your repository.
+- Beware of not removing access to collections you're not overriding. For
+  this, ensure you append to `$ANSIBLE_COLLECTIONS_PATH` the collection
+  locations shown by running `ansible --version` in your repository.

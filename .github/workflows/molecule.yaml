@@ -1,12 +1,17 @@
 ---
 name: molecule
 
+# Workflow disabled due to errors:
+# https://github.com/Tina-pm/ansible-roles/issues/80
 on:
-  pull_request:
   push:
     branches:
-      - main
-      - force_ci/molecule/**  # For development/debugging of the workflow.
+      - never
+#  pull_request:
+#  push:
+#    branches:
+#      - main
+#      - force_ci/molecule/**  # For development/debugging of the workflow.
 
 permissions:
   contents: read
