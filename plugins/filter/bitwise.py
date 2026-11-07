@@ -7,12 +7,12 @@
 class FilterModule:
   def filters(self):
     return {
-      'bw_and': self.bw_and,
-      'bw_or': self.bw_or,
-      'bw_xor': self.bw_xor,
-      'bw_not': self.bw_not,
-      'bw_shl': self.bw_shl,
-      'bw_shr': self.bw_shr,
+      "bw_and": self.bw_and,
+      "bw_or": self.bw_or,
+      "bw_xor": self.bw_xor,
+      "bw_not": self.bw_not,
+      "bw_shl": self.bw_shl,
+      "bw_shr": self.bw_shr,
     }
 
   def bw_and(self, x, y):
@@ -25,7 +25,7 @@ class FilterModule:
     return x ^ y
 
   def bw_not(self, x):
-    return ~ x
+    return ~x
 
   def bw_shl(self, x, b):
     return x << b
