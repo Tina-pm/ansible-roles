@@ -3,5 +3,5 @@
 
 - name: _tina_reload_sshd
   ansible.builtin.service:
-    name: sshd
+    name: '{{ _sshd_service_name }}'
     state: reloaded
