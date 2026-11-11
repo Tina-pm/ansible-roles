@@ -1,6 +1,11 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
-sshd__package: openssh-server
+# Set to null to keep existing system defaults.
 sshd__password_auth_allowed: false
 sshd__root_login_allowed: false
+
+# OS-dependent values.
+sshd__package_name: openssh-server
+sshd__service_name: sshd
+sshd__config_path: /etc/ssh/sshd_config
