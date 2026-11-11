@@ -94,29 +94,19 @@
     validate: visudo -cf %s
   when: base_setup__setup_sudo | bool
 
-- name: Set default locale
-  ansible.builtin.debconf:
-    name: locales
-    question: locales/default_environment_locale
-    value: '{{ base_setup__default_locale }}'
-    vtype: select
-  when: base_setup__setup_locales | bool
-  notify: _tina_reconfigure_locales
-
-- name: Set list of locales to be generated
-  ansible.builtin.debconf:
-    name: locales
-    question: locales/locales_to_be_generated
-    value: '{{ base_setup__locales_to_be_generated | join(", ") }}'
-    vtype: multiselect
-  when: base_setup__setup_locales | bool
-  notify: _tina_reconfigure_locales
-
 - name: Bash defaults
   ansible.builtin.template:
     src: bash.bashrc.j2
     dest: /etc/bash.bashrc
     mode: '0644'
+
+- name: Configure locales
+  ansible.builtin.include_role:
+    name: locales
+  vars:
+    locales__default_locale: '{{ base_setup__default_locale }}'
+    locales__generate: '{{ base_setup__locales_to_be_generated }}'
+  when: base_setup__setup_locales is ansible.builtin.truthy
 
 - name: Configure sshd
   ansible.builtin.include_role:

@@ -4,10 +4,3 @@
   ansible.builtin.service:
     name: postfix
     state: reloaded
-
-- name: _tina_reconfigure_locales
-  ansible.builtin.shell:
-    cmd: >-
-      rm -f /etc/default/locale /etc/locale.gen &&
-      dpkg-reconfigure -f noninteractive locales
-  changed_when: true
