@@ -81,16 +81,12 @@
     dest: /etc/sudoers
     state: present
     regexp: '^%sudo\s'
-    line: '%sudo ALL=(ALL) ALL'
-    validate: visudo -cf %s
-  when: base_setup__setup_sudo | bool
-
-- name: 'Set up sudoers: sudo-nopw group'
-  ansible.builtin.lineinfile:
-    dest: /etc/sudoers
-    state: present
-    regexp: '^%sudo-nopw\s'
-    line: '%sudo-nopw ALL=(ALL) NOPASSWD: ALL'
+    line: |-
+      {{
+        '%sudo ALL=(ALL) ALL'
+        if base_setup__passwordless_sudo is ansible.builtin.truthy else
+        '%sudo ALL=(ALL) NOPASSWD: ALL'
+      }}
     validate: visudo -cf %s
   when: base_setup__setup_sudo | bool
 

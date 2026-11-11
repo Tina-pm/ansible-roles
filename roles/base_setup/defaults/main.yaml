@@ -8,6 +8,7 @@ base_setup__pkg_install: []
 base_setup__svc_enable_start: []
 
 base_setup__setup_sudo: true
+base_setup__passwordless_sudo: false
 
 base_setup__setup_postfix: true
 base_setup__mail_relay: ~
