@@ -10,13 +10,14 @@ argument_specs:
       - Martina Ferrari
     options:
       sshd__password_auth_allowed:
-        description: Specifies whether password authentication is allowed.
-        type: bool
+        description:
+          Specifies whether password authentication is allowed (bool or None).
+        type: raw
         default: false
 
       sshd__root_login_allowed:
-        description: Specifies whether root can log in using ssh.
-        type: bool
+        description: Specifies whether root can log in using ssh (bool or None).
+        type: raw
         default: false
 
       sshd__package_name:
