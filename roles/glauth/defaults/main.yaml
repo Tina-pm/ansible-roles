@@ -62,3 +62,7 @@ glauth__config_datastore_groups: []
 #       - action: search
 #         object: '*'
 glauth__config_datastore_users: []
+
+# Set a default value for the deprecated `ansible_managed` variable, in case the
+# user has not configured it manually.
+ansible_managed: Ansible managed

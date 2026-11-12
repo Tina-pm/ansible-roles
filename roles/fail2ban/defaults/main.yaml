@@ -23,3 +23,7 @@ fail2ban__path_overrides:
 
 # Install ferm configuration fragment to hook fail2ban rules.
 fail2ban__install_ferm_svc: false
+
+# Set a default value for the deprecated `ansible_managed` variable, in case the
+# user has not configured it manually.
+ansible_managed: Ansible managed
