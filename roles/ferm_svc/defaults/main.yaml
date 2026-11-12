@@ -1,0 +1,6 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+# Set a default value for the deprecated `ansible_managed` variable, in case the
+# user has not configured it manually.
+ansible_managed: Ansible managed

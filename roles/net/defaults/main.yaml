@@ -20,3 +20,7 @@ net__lo_config:
     config:
       inet:
         method: loopback
+
+# Set a default value for the deprecated `ansible_managed` variable, in case the
+# user has not configured it manually.
+ansible_managed: Ansible managed

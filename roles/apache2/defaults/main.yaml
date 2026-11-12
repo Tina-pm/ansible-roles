@@ -71,3 +71,7 @@ apache2__logrotate_conf:
   interval: daily
   rotate: 14
   create: # Default constructed from apache2__logdirs_*.
+
+# Set a default value for the deprecated `ansible_managed` variable, in case the
+# user has not configured it manually.
+ansible_managed: Ansible managed

@@ -40,3 +40,7 @@ prometheus__monitored_nodes_config: {}
 
 # Free-form scrape configurations.
 prometheus__scrape_configs: []
+
+# Set a default value for the deprecated `ansible_managed` variable, in case the
+# user has not configured it manually.
+ansible_managed: Ansible managed
