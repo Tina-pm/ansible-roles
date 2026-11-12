@@ -11,31 +11,59 @@
     name: '{{ _sshd_package_name }}'
     state: present
 
-- name: Configure password authentication
+- name: Ensure configuration fragments dir exists
+  ansible.builtin.file:
+    path: '{{ _sshd_configd_dir }}'
+    state: directory
+    mode: '0755'
+
+- name: Ensure configuration fragments are included
   ansible.builtin.lineinfile:
-    dest: '{{ _sshd_config_path }}'
+    path: '{{ _sshd_config_path }}'
     state: present
-    regexp: '^PasswordAuthentication\s'
-    insertafter: '^#\s*PasswordAuthentication\s'
+    regexp: '^Include {{ _sshd_config_path }}/\*'
+    insertbefore: BOF
     line: |-
+      Include {{ _sshd_config_path }}/*.conf
+  notify: _tina_reload_sshd
+
+- name: Configure password authentication allowed
+  ansible.builtin.copy:
+    dest: '{{ _sshd_configd_dir }}/00-password-authentication.conf'
+    content: |
+      # {{ ansible_managed }}
       PasswordAuthentication {{
         'yes' if sshd__password_auth_allowed else 'no'
       }}
-  when: sshd__password_auth_allowed not in (None, '')
+    mode: '0644'
   notify: _tina_reload_sshd
+  when: sshd__password_auth_allowed not in (None, '')
 
-- name: Configure root login
-  ansible.builtin.lineinfile:
-    dest: '{{ _sshd_config_path }}'
-    state: present
-    regexp: '^PermitRootLogin\s'
-    insertafter: '^#\s*PermitRootLogin\s'
-    line: |-
+- name: Remove password authentication allowed configuration
+  ansible.builtin.file:
+    path: '{{ _sshd_configd_dir }}/00-password-authentication.conf'
+    state: absent
+  notify: _tina_reload_sshd
+  when: sshd__password_auth_allowed in (None, '')
+
+- name: Configure root login allowed
+  ansible.builtin.copy:
+    dest: '{{ _sshd_configd_dir }}/00-permit-root-login.conf'
+    content: |
+      # {{ ansible_managed }}
       PermitRootLogin {{
         'prohibit-password' if sshd__root_login_allowed else 'no'
       }}
-  when: sshd__root_login_allowed not in (None, '')
+    mode: '0644'
   notify: _tina_reload_sshd
+  when: sshd__root_login_allowed not in (None, '')
+
+- name: Remove root login allowed configuration
+  ansible.builtin.file:
+    dest: '{{ _sshd_configd_dir }}/00-permit-root-login.conf'
+    state: absent
+  notify: _tina_reload_sshd
+  when: sshd__root_login_allowed in (None, '')
 
 - name: Enable and start service
   ansible.builtin.service:

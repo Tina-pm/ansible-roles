@@ -30,6 +30,11 @@ argument_specs:
         default: sshd
 
       sshd__config_path:
-        description: Path to the configuration file.
+        description: Path to the main configuration file.
         type: str
         default: /etc/ssh/sshd_config
+
+      sshd__configd_dir:
+        description: Path to the configuration fragments directory.
+        type: str
+        default: /etc/ssh/sshd_config.d
