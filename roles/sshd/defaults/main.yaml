@@ -14,5 +14,7 @@ sshd__root_login_allowed: false
 sshd__package_name: ~
 # Name of the system service.
 sshd__service_name: ~
-# Path to the configuration file.
+# Path to the main configuration file.
 sshd__config_path: ~
+# Path to the configuration fragments directory.
+sshd__configd_dir: ~
