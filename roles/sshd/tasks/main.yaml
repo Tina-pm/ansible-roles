@@ -1,54 +1,72 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
-- name: Install sshd package
+- name: Gather facts
+  ansible.builtin.setup:
+    gather_subset: '!all,!min,os_family'
+  when: ansible_facts.os_family is not defined
+
+- name: Install server package
   ansible.builtin.package:
-    name: '{{ sshd__package }}'
+    name: '{{ _sshd_package_name }}'
     state: present
 
-- name: Verify sshd host keys presence
-  ansible.builtin.find:
-    paths: /etc/ssh
-    patterns: ssh_host_*
-  register: _sshd_host_keys
+- name: Ensure configuration fragments dir exists
+  ansible.builtin.file:
+    path: '{{ _sshd_configd_dir }}'
+    state: directory
+    mode: '0755'
 
-- name: Regenerate sshd regenerate host keys
-  ansible.builtin.command:
-    cmd: dpkg-reconfigure openssh-server
-  environment:
-    DEBIAN_FRONTEND: noninteractive
-  when: not _sshd_host_keys.files
-  notify: _tina_reload_sshd
-  changed_when: true
-
-- name: Disable sshd password authentication
+- name: Ensure configuration fragments are included
   ansible.builtin.lineinfile:
-    dest: /etc/ssh/sshd_config
+    path: '{{ _sshd_config_path }}'
     state: present
-    regexp: '^PasswordAuthentication\s'
-    insertafter: '^#\s*PasswordAuthentication\s'
+    regexp: '^Include {{ _sshd_config_path }}/\*'
+    insertbefore: BOF
     line: |-
+      Include {{ _sshd_config_path }}/*.conf
+  notify: _tina_reload_sshd
+
+- name: Configure password authentication allowed
+  ansible.builtin.copy:
+    dest: '{{ _sshd_configd_dir }}/00-password-authentication.conf'
+    content: |
+      # {{ ansible_managed }}
       PasswordAuthentication {{
         'yes' if sshd__password_auth_allowed else 'no'
       }}
-  when: sshd__password_auth_allowed in (True, False)
+    mode: '0644'
   notify: _tina_reload_sshd
+  when: sshd__password_auth_allowed not in (None, '')
 
-- name: Disable sshd root login
-  ansible.builtin.lineinfile:
-    dest: /etc/ssh/sshd_config
-    state: present
-    regexp: '^PermitRootLogin\s'
-    insertafter: '^#\s*PermitRootLogin\s'
-    line: |-
+- name: Remove password authentication allowed configuration
+  ansible.builtin.file:
+    path: '{{ _sshd_configd_dir }}/00-password-authentication.conf'
+    state: absent
+  notify: _tina_reload_sshd
+  when: sshd__password_auth_allowed in (None, '')
+
+- name: Configure root login allowed
+  ansible.builtin.copy:
+    dest: '{{ _sshd_configd_dir }}/00-permit-root-login.conf'
+    content: |
+      # {{ ansible_managed }}
       PermitRootLogin {{
         'prohibit-password' if sshd__root_login_allowed else 'no'
       }}
-  when: sshd__root_login_allowed in (True, False)
+    mode: '0644'
   notify: _tina_reload_sshd
+  when: sshd__root_login_allowed not in (None, '')
 
-- name: Enable and start sshd service
+- name: Remove root login allowed configuration
+  ansible.builtin.file:
+    dest: '{{ _sshd_configd_dir }}/00-permit-root-login.conf'
+    state: absent
+  notify: _tina_reload_sshd
+  when: sshd__root_login_allowed in (None, '')
+
+- name: Enable and start service
   ansible.builtin.service:
-    name: sshd
+    name: '{{ _sshd_service_name }}'
     state: started
     enabled: true
