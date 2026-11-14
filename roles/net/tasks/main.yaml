@@ -1,6 +1,20 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
+- name: Validate network backend configuration
+  ansible.builtin.assert:
+    that:
+      - net__backend in ['auto', 'ifupdown', 'networkmanager']
+      - net__backend != 'auto' or
+        ansible_facts.os_family in _net__backend_by_os_family
+    quiet: true
+    fail_msg: >-
+      Unsupported network backend configuration: net__backend is
+      "{{ net__backend }}" and the OS family is
+      "{{ ansible_facts.os_family }}". Supported backends are ifupdown and
+      networkmanager; auto selects ifupdown on Debian and NetworkManager on
+      RedHat-family systems.
+
 - name: Check cloud-init presence
   ansible.builtin.stat:
     path: /etc/cloud/cloud.cfg
@@ -22,7 +36,9 @@
     patterns:
       - ??-cloud-init.yaml
   register: _netplan_cfg
-  when: _cloud_init_cfg.stat.exists
+  when:
+    - _cloud_init_cfg.stat.exists
+    - ansible_facts.os_family == 'Debian'
 
 - name: Find netplan generated configuration files
   ansible.builtin.find:
@@ -34,42 +50,66 @@
       - ??-netplan-*.network
       - ??-netplan-*.rules
   register: _networkd_cfg
-  when: _cloud_init_cfg.stat.exists
+  when:
+    - _cloud_init_cfg.stat.exists
+    - ansible_facts.os_family == 'Debian'
 
 - name: Remove generated configuration files
   ansible.builtin.file:
     path: '{{ item.path }}'
     state: absent
-  loop: '{{ _networkd_cfg.files + _netplan_cfg.files }}'
-  when: _cloud_init_cfg.stat.exists
+  loop: >-
+    {{ ((_networkd_cfg.files if _networkd_cfg is defined else []) +
+        (_netplan_cfg.files if _netplan_cfg is defined else [])) }}
+  when:
+    - _cloud_init_cfg.stat.exists
+    - ansible_facts.os_family == 'Debian'
 
-- name: Ensure ifupdown is present
-  ansible.builtin.package:
-    name: ifupdown
-    state: present
+- name: Check NetworkManager connection directories
+  ansible.builtin.stat:
+    path: '{{ item }}'
+  loop:
+    - /etc/NetworkManager/system-connections
+    - /run/NetworkManager/system-connections
+  register: _nm_conn_dirs
+  when:
+    - _cloud_init_cfg.stat.exists
+    - _net__backend == 'networkmanager'
 
-- name: Create udev persistent rules
-  ansible.builtin.template:
-    src: 70-persistent-net.rules.j2
-    dest: /etc/udev/rules.d/70-persistent-net.rules
-    owner: root
-    group: root
-    mode: '0644'
-  notify:
-    - _tina_reconfigure_network
-    - _tina_update_initramfs
-  when: net__use_udev_persistent_rules | bool
+- name: Find cloud-init generated NetworkManager connection profiles
+  ansible.builtin.find:
+    paths: '{{ _nm_existing_conn_dirs }}'
+    patterns: cloud-init*
+    file_type: any
+  register: _nm_cloud_init_profiles
+  vars:
+    _nm_existing_conn_dirs: >-
+      {{ (_nm_conn_dirs.results if _nm_conn_dirs is defined else []) |
+         selectattr('stat.exists', 'defined') |
+         selectattr('stat.exists') | map(attribute='stat.path') | list }}
+  when:
+    - _cloud_init_cfg.stat.exists
+    - _net__backend == 'networkmanager'
+    - _nm_existing_conn_dirs | length > 0
 
-- name: Configure interfaces
-  ansible.builtin.template:
-    src: interfaces.j2
-    dest: /etc/network/interfaces
-    owner: root
-    group: root
-    mode: '0644'
-  notify:
-    - _tina_reconfigure_network
-  when: net__interfaces is ansible.builtin.truthy
+- name: Remove cloud-init generated NetworkManager connection profiles
+  ansible.builtin.file:
+    path: '{{ item.path }}'
+    state: absent
+  loop: >-
+    {{ _nm_cloud_init_profiles.files
+       if _nm_cloud_init_profiles is defined else [] }}
+  when:
+    - _cloud_init_cfg.stat.exists
+    - _net__backend == 'networkmanager'
+
+- name: Configure interfaces using ifupdown
+  ansible.builtin.include_tasks: ifupdown.yaml
+  when: _net__backend == 'ifupdown'
+
+- name: Configure interfaces using NetworkManager
+  ansible.builtin.include_tasks: networkmanager.yaml
+  when: _net__backend == 'networkmanager'
 
 - name: Apply configuration
   ansible.builtin.meta: flush_handlers

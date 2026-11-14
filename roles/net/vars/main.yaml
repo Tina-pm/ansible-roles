@@ -1,0 +1,130 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+# Network backend selected for each supported OS family.
+_net__backend_by_os_family:
+  Debian: ifupdown
+  RedHat: networkmanager
+
+# Effective backend: either explicitly configured or derived from facts.
+_net__backend: >-
+  {{
+    net__backend if net__backend != 'auto' else
+    _net__backend_by_os_family[ansible_facts.os_family]
+  }}
+
+# Interfaces to manage, including the loopback interface.
+_net__interfaces: >-
+  {{
+    {} if not net__interfaces else
+    (net__interfaces if 'lo' in net__interfaces else
+     (net__lo_config | combine(net__interfaces)))
+  }}
+
+# Interfaces to manage with NetworkManager (loopback is handled by NM itself).
+_net__nm_interfaces: >-
+  {{
+    _net__interfaces | dict2items |
+    rejectattr('key', 'equalto', 'lo') | items2dict
+  }}
+
+# Interfaces that have a configuration and thus need an NM connection profile.
+# Interfaces with only a persistent name are excluded.
+_net__nm_profile_interfaces: >-
+  {{
+    _net__nm_interfaces | dict2items |
+    selectattr('value.config', 'defined') |
+    selectattr('value.config') | items2dict
+  }}
+
+# Interfaces with a MAC address used for persistent interface naming.
+_net__nm_named_interfaces: >-
+  {{
+    _net__nm_interfaces | dict2items |
+    selectattr('value.udev_persistent_rule.address', 'defined') |
+    rejectattr('value.udev_persistent_rule.address', 'none') | list
+  }}
+
+# Interface methods as understood by NetworkManager.
+_net__nm_method_map:
+  static: manual
+  dhcp: auto
+  auto: auto
+  manual: disabled
+  none: disabled
+
+# Arguments for the community.general.nmcli module, one entry per profile.
+# This mirrors what interfaces.j2 renders for the ifupdown backend:
+# - an absent address family is disabled (IPv4) or ignored (IPv6)
+# - pointopoint becomes a host prefix and an explicit default route
+# - routes are a list of [network, gateway] pairs
+_net__nm_profiles: >-
+  {%- set _profiles = [] -%}
+  {%- for _iface, _entry in _net__nm_profile_interfaces.items() -%}
+  {%- set _rule = _entry.udev_persistent_rule | default({}) -%}
+  {%- set _profile = {
+        'conn_name': net__nm_connection_prefix ~ _iface,
+        'ifname': _iface,
+        'type': 'ethernet',
+        'autoconnect':
+          (_entry.allow | default('auto')) in ['auto', 'hotplug'],
+      } -%}
+  {%- if _rule.address is defined -%}
+  {%- set _ = _profile.update({'mac': _rule.address}) -%}
+  {%- endif -%}
+  {%- for _version, _key, _empty, _default, _prefix in [
+        ('4', 'inet', 'disabled', '0.0.0.0/0', '32'),
+        ('6', 'inet6', 'ignore', '::/0', '128'),
+      ] -%}
+  {%- set _family = _entry.config[_key] | default({}) -%}
+  {%- set _method = _net__nm_method_map[_family.method | default('static')]
+        if _family else _empty -%}
+  {%- set _ = _profile.update({'method' ~ _version: _method}) -%}
+  {%- if _method == 'manual' and _family.address is defined -%}
+  {%- set _addresses = [_family.address] if _family.address is string
+        else _family.address -%}
+  {%- if _family.pointopoint | default(false) -%}
+  {%- set _addresses = _addresses |
+        map('regex_replace', '^([^/]+).*$', '\\1/' ~ _prefix) | list -%}
+  {%- endif -%}
+  {%- set _ = _profile.update({'ip' ~ _version: _addresses}) -%}
+  {%- endif -%}
+  {%- if _family.gateway is defined and _family.gateway and
+        not (_family.pointopoint | default(false)) -%}
+  {%- set _ = _profile.update({'gw' ~ _version: _family.gateway}) -%}
+  {%- endif -%}
+  {%- set _routes = [] -%}
+  {%- if _family.pointopoint is defined -%}
+  {%- set _ = _routes.append({
+        'ip': _default,
+        'next_hop': _family.pointopoint,
+      }) -%}
+  {%- endif -%}
+  {%- for _route in _family.routes | default([]) -%}
+  {%- set _ = _routes.append({
+        'ip': _route[0],
+        'next_hop': _route[1],
+      }) -%}
+  {%- endfor -%}
+  {%- if _routes -%}
+  {%- set _ = _profile.update({
+        'routes' ~ _version ~ '_extended': _routes,
+      }) -%}
+  {%- endif -%}
+  {%- endfor -%}
+  {%- set _ = _profiles.append(_profile) -%}
+  {%- endfor -%}
+  {{ _profiles }}
+
+# NetworkManager connection ids for managed interfaces.
+_net__nm_connection_ids: >-
+  {{
+    _net__nm_profile_interfaces.keys() |
+    map('regex_replace', '^', net__nm_connection_prefix) | list
+  }}
+
+# systemd .link file names for interfaces with persistent names.
+_net__link_files: >-
+  {{
+    _net__nm_named_interfaces | map(attribute='key') |
+    map('regex_replace', '^(.*)$', '70-persistent-net-\1.link') | list
+  }}

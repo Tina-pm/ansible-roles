@@ -1,0 +1,106 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+- name: Ensure NetworkManager is installed
+  ansible.builtin.package:
+    name: NetworkManager
+    state: present
+
+- name: Ensure NetworkManager is enabled and running
+  ansible.builtin.systemd_service:
+    name: NetworkManager
+    state: started
+    enabled: true
+
+- name: Ensure systemd network directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/network
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  when: net__use_udev_persistent_rules | bool
+
+- name: Create systemd .link files for persistent interface names
+  ansible.builtin.template:
+    src: persistent-net.link.j2
+    dest: /etc/systemd/network/70-persistent-net-{{ item.key }}.link
+    owner: root
+    group: root
+    mode: '0644'
+  loop: '{{ _net__nm_named_interfaces }}'
+  loop_control:
+    label: '{{ item.key }}'
+  vars:
+    iface: '{{ item.key }}'
+    rule: '{{ item.value.udev_persistent_rule }}'
+  notify:
+    - _tina_reconfigure_network_nm
+    - _tina_update_initramfs
+  when: net__use_udev_persistent_rules | bool
+
+- name: Find managed systemd .link files
+  ansible.builtin.find:
+    paths: /etc/systemd/network
+    patterns: 70-persistent-net-*.link
+  register: _net_link_files
+  when: net__use_udev_persistent_rules | bool
+
+- name: Remove stale systemd .link files
+  ansible.builtin.file:
+    path: '{{ item.path }}'
+    state: absent
+  loop: >-
+    {{ _net_link_files.files if _net_link_files is defined else [] }}
+  loop_control:
+    label: '{{ item.path | basename }}'
+  notify: _tina_reconfigure_network_nm
+  when:
+    - net__use_udev_persistent_rules | bool
+    - item.path | basename not in _net__link_files
+
+- name: Create NetworkManager connection profiles
+  community.general.nmcli:
+    conn_name: '{{ item.conn_name }}'
+    ifname: '{{ item.ifname }}'
+    type: '{{ item.type }}'
+    state: present
+    autoconnect: '{{ item.autoconnect }}'
+    mac: '{{ item.mac | default(omit) }}'
+    method4: '{{ item.method4 }}'
+    method6: '{{ item.method6 }}'
+    ip4: '{{ item.ip4 | default(omit) }}'
+    ip6: '{{ item.ip6 | default(omit) }}'
+    gw4: '{{ item.gw4 | default(omit) }}'
+    gw6: '{{ item.gw6 | default(omit) }}'
+    routes4_extended: '{{ item.routes4_extended | default(omit) }}'
+    routes6_extended: '{{ item.routes6_extended | default(omit) }}'
+  loop: '{{ _net__nm_profiles }}'
+  loop_control:
+    label: '{{ item.conn_name }}'
+  notify: _tina_reconfigure_network_nm
+  when: net__interfaces is ansible.builtin.truthy
+
+- name: List existing NetworkManager connection profiles
+  ansible.builtin.command:
+    cmd: nmcli --terse --fields NAME connection show
+  register: _net_nm_connections
+  changed_when: false
+  check_mode: false
+  failed_when: false
+  when: net__interfaces is ansible.builtin.truthy
+
+- name: Remove stale NetworkManager connection profiles
+  community.general.nmcli:
+    conn_name: '{{ item }}'
+    state: absent
+  loop: >-
+    {{ (_net_nm_connections.stdout_lines | default([])) |
+       select('match', '^' ~ net__nm_connection_prefix) |
+       difference(_net__nm_connection_ids) }}
+  loop_control:
+    label: '{{ item }}'
+  notify: _tina_reconfigure_network_nm
+  when:
+    - net__interfaces is ansible.builtin.truthy
+    - _net_nm_connections.rc | default(1) == 0
