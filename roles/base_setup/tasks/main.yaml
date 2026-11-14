@@ -39,6 +39,7 @@
     apt__packages_to_install: '{{ _base_setup__pkg_install }}'
     apt__services_to_enable: '{{ _base_setup__svc_enable_start }}'
     apt__services_to_start: '{{ _base_setup__svc_enable_start }}'
+  when: ansible_facts.os_family == 'Debian'
 
 - name: Set mail relay
   ansible.builtin.lineinfile:
