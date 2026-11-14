@@ -1,6 +1,11 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
+# Group that grants sudo privileges, by OS family.
+_base_setup__sudo_group_by_os_family:
+  Debian: sudo
+  RedHat: wheel
+
 _base_setup__pkg_install: |-
   {{
     (['sudo'] if base_setup__setup_sudo | bool else []) +
