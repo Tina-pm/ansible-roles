@@ -9,6 +9,11 @@ base_setup__svc_enable_start: []
 
 base_setup__setup_sudo: true
 
+# Users in this group can use sudo. The group depends on the host's OS
+# family.
+base_setup__sudo_group: >-
+  {{ _base_setup__sudo_group_by_os_family[ansible_facts.os_family] }}
+
 base_setup__setup_postfix: true
 base_setup__mail_relay: ~
 
