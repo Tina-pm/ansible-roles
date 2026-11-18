@@ -1,6 +1,12 @@
 ---
 # vim:ts=2:sw=2:et:ai:sts=2
 
+# Network backend: `auto` selects ifupdown on Debian OS family and
+# NetworkManager on RedHat OS family. Set explicitly to force a backend.
+net__backend: auto
+
+net__nm_connection_prefix: net-
+
 net__use_udev_persistent_rules: false
 net__interfaces:
 #  eno1:

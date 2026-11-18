@@ -1,12 +1,13 @@
 # Net role
 
-(Re-)configures host networking using ifupdown, optionally renaming interfaces
-based on MAC address.
+(Re-)configures host networking and, optionally, renames interfaces based on
+their MAC address.
 
-Note: this role disables cloud-init handling of network configuration.
+Note: this role disables cloud-init handling of network configuration and
+removes cloud-init generated profiles when using NetworkManager.
 
 See /usr/share/doc/udev/README.Debian.gz for details on how interface renaming
-is handled.
+is handled in Debian OS family.
 
 ## Troubleshooting
 
