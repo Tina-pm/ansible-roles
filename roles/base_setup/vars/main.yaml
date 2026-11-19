@@ -1,12 +1,19 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
-_base_setup__pkg_install: |-
+_base_setup__pkg_install_for_debian: |-
   {{
     (['sudo'] if base_setup__setup_sudo | bool else []) +
     (['postfix'] if base_setup__setup_postfix | bool else []) +
     (['locales'] if base_setup__setup_locales | bool else []) +
-    (base_setup__pkg_install or [])
+    (base_setup__pkg_install_for_debian or [])
+  }}
+
+_base_setup__pkg_install_for_redhat: |-
+  {{
+    (['sudo'] if base_setup__setup_sudo | bool else []) +
+    (['postfix'] if base_setup__setup_postfix | bool else []) +
+    (base_setup__pkg_install_for_redhat or [])
   }}
 
 _base_setup__svc_enable_start: |-

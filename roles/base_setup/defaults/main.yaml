@@ -4,7 +4,11 @@ base_setup__disable_cloud_init: false
 base_setup__disable_resolved: false
 base_setup__set_hostname: ~
 
-base_setup__pkg_install: []
+base_setup__pkg_install_for_debian: []
+base_setup__pkg_install_for_redhat: []
+base_setup__pkg_install__common: []
+base_setup__pkg_install__debian: []
+base_setup__pkg_install__redhat: []
 base_setup__svc_enable_start: []
 
 base_setup__setup_sudo: true
