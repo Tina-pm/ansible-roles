@@ -36,9 +36,23 @@
     apt__run_upgrade: true
     apt__run_autoremove: true
     apt__purge_removed: true
-    apt__packages_to_install: '{{ _base_setup__pkg_install }}'
+    apt__packages_to_install: '{{ _base_setup__pkg_install_for_debian }}'
     apt__services_to_enable: '{{ _base_setup__svc_enable_start }}'
     apt__services_to_start: '{{ _base_setup__svc_enable_start }}'
+
+- name: Install common and RedHat base packages
+  ansible.builtin.package:
+    name: '{{ _base_setup__pkg_install_for_redhat }}'
+    state: present
+  when: ansible_facts.os_family == 'RedHat'
+
+- name: Enable and start RedHat base services
+  ansible.builtin.service:
+    name: '{{ item }}'
+    state: started
+    enabled: true
+  loop: '{{ _base_setup__svc_enable_start }}'
+  when: ansible_facts.os_family == 'RedHat'
 
 - name: Set mail relay
   ansible.builtin.lineinfile:
