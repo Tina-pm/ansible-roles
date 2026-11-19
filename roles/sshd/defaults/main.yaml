@@ -1,6 +1,20 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
-sshd__package: openssh-server
+# Specifies whether password authentication is allowed.
+# Set to null to keep existing system defaults.
 sshd__password_auth_allowed: false
+# Specifies whether root can log in using ssh.
+# Set to null to keep existing system defaults.
 sshd__root_login_allowed: false
+
+## Overrides for OS-dependent defaults.
+
+# Name of the package to install.
+sshd__package_name: ~
+# Name of the system service.
+sshd__service_name: ~
+# Path to the main configuration file.
+sshd__config_path: ~
+# Path to the configuration fragments directory.
+sshd__configd_dir: ~
