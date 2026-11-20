@@ -3,10 +3,10 @@
 - name: Abort if distribution mismatch
   ansible.builtin.fail:
     msg: |
-      distribution mismatch: {{ ansible_distribution_release }} !=
+      distribution mismatch: {{ ansible_facts["distribution_release"] }} !=
       {{ apt__distro }}. Set FORCE_APT_DIST_UPGRADE=1 to override.
   when:
-    ansible_distribution_release != apt__distro and
+    ansible_facts["distribution_release"] != apt__distro and
     lookup('env', 'FORCE_APT_DIST_UPGRADE') is ansible.builtin.falsy
 
 - name: Configure APT sources
