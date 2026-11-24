@@ -1,20 +1,10 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
-- name: Check locale setup is supported
-  ansible.builtin.assert:
-    that: ansible_facts.os_family in ['Debian', 'RedHat']
-    quiet: true
-    fail_msg: >-
-      Locale setup supports Debian and RedHat OS families, got
-      "{{ ansible_facts.os_family }}".
-
-- name: Configure locales using debconf
-  ansible.builtin.include_tasks: locales_debian.yaml
-  when:
-    - ansible_facts.os_family == 'Debian'
-
-- name: Configure locales using locale.conf
-  ansible.builtin.include_tasks: locales_redhat.yaml
-  when:
-    - ansible_facts.os_family == 'RedHat'
+- name: OS-specific tasks
+  ansible.builtin.include_role:
+    name: include_per_os
+  vars:
+    include_per_os__type: tasks
+    include_per_os__prefix: locales_
+    include_per_os__suffix: .yaml
