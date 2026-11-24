@@ -1,10 +1,16 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
+
+- name: Install locales package
+  ansible.builtin.package:
+    name: locales
+    state: present
+
 - name: Set default locale
   ansible.builtin.debconf:
     name: locales
     question: locales/default_environment_locale
-    value: '{{ base_setup__default_locale }}'
+    value: '{{ locales__default_locale }}'
     vtype: select
   notify: _tina_reconfigure_locales
 
@@ -12,6 +18,6 @@
   ansible.builtin.debconf:
     name: locales
     question: locales/locales_to_be_generated
-    value: '{{ base_setup__locales_to_be_generated | join(", ") }}'
+    value: '{{ locales__install | join(", ") }}'
     vtype: multiselect
   notify: _tina_reconfigure_locales

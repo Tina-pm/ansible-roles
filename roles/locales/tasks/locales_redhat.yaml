@@ -2,14 +2,14 @@
 ---
 - name: Install glibc language packs
   ansible.builtin.package:
-    name: '{{ _base_setup__locale_langpacks }}'
+    name: '{{ _locales_langpacks }}'
     state: present
 
 - name: Set default locale
   ansible.builtin.lineinfile:
     path: /etc/locale.conf
     regexp: '^LANG='
-    line: LANG={{ base_setup__default_locale }}
+    line: LANG={{ locales__default_locale }}
     owner: root
     group: root
     mode: '0644'

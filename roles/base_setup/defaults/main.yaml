@@ -12,11 +12,13 @@ base_setup__setup_sudo: true
 base_setup__setup_postfix: true
 base_setup__mail_relay: ~
 
+# Compatibility with new locales role.
 base_setup__setup_locales: true
 base_setup__default_locale: en_US.UTF-8
 base_setup__locales_to_be_generated:
   - en_US.UTF-8 UTF-8
 
+# Compatibility with new sshd role.
 # Set to null to disable managing the sshd configuration.
 base_setup__sshd_password_auth_allowed: false
 base_setup__sshd_root_login_allowed: false

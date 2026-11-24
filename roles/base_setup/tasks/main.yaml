@@ -94,26 +94,13 @@
     validate: visudo -cf %s
   when: base_setup__setup_sudo | bool
 
-- name: Check locale setup is supported
-  ansible.builtin.assert:
-    that: ansible_facts.os_family in ['Debian', 'RedHat']
-    quiet: true
-    fail_msg: >-
-      Locale setup supports Debian and RedHat OS families, got
-      "{{ ansible_facts.os_family }}".
-  when: base_setup__setup_locales | bool
-
-- name: Configure locales using debconf
-  ansible.builtin.include_tasks: locales_debian.yaml
-  when:
-    - base_setup__setup_locales | bool
-    - ansible_facts.os_family == 'Debian'
-
-- name: Configure locales using locale.conf
-  ansible.builtin.include_tasks: locales_redhat.yaml
-  when:
-    - base_setup__setup_locales | bool
-    - ansible_facts.os_family == 'RedHat'
+- name: Configure locales
+  ansible.builtin.include_role:
+    name: locales
+  vars:
+    locales__default_locale: '{{ base_setup__default_locale }}'
+    locales__install: '{{ base_setup__locales_to_be_generated }}'
+  when: base_setup__setup_locales is ansible.builtin.truthy
 
 - name: Bash defaults
   ansible.builtin.template:
