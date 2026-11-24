@@ -1,0 +1,26 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+- name: Gather facts
+  ansible.builtin.setup:
+    gather_subset: |-
+      {{ ['!all', '!min'] + _include_per_os_needed_facts }}
+  when: _include_per_os_missing_facts
+
+- name: Fail if not found
+  ansible.builtin.assert:
+    that: _include_per_os_filename is defined
+    quiet: true
+    fail_msg: >-
+      Failed to include file based on host facts,
+      tried: {{ _include_per_os_try_files | join(', ') }}
+      in paths: {{ _include_per_os_paths | join(', ') }}.
+  when: not include_per_os__skip
+
+- name: Include tasks file
+  ansible.builtin.include_tasks: '{{ _include_per_os_filename }}'
+  when: include_per_os__type == 'tasks'
+
+- name: Include vars file
+  ansible.builtin.include_vars: '{{ _include_per_os_filename }}'
+  when: include_per_os__type == 'vars'

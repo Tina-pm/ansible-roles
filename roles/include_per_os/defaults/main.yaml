@@ -1,0 +1,12 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+# See meta/argument_specs.yml for details.
+include_per_os__prefix: ''
+include_per_os__suffix: .yaml
+include_per_os__try_facts:
+  - [distribution, distribution_major_version]
+  - [distribution, distribution_release]
+  - [distribution]
+  - [os_family]
+include_per_os__skip: false
