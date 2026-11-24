@@ -1,0 +1,56 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+argument_specs:
+  main:
+    short_description: Include a task or variable file based on discovered facts
+    description:
+      - Allows including tasks or variables specific to an OS family,
+        distribution, etc.
+      - Tries to find a file using combinations of discovered facts, file names
+        are constructed joining one or more facts with dashes (C<->) and adding
+        prefix and suffix asrequested.
+      - As a side effect, necessary facts are gathered if not yet present.
+    author:
+      - Martina Ferrari
+    options:
+      include_per_os__type:
+        description:
+          Type of file to include.
+        type: str
+        choices: [tasks, vars]
+        required: true
+
+      include_per_os__prefix:
+        description:
+          Base file name prefix.
+        type: str
+        default: ''
+
+      include_per_os__suffix:
+        description:
+          Base file name suffix.
+        type: str
+        default: .yaml
+
+      include_per_os__try_facts:
+        description:
+          List of fact name combinations to try.
+        type: list
+        elements: list
+        default:
+          - [distribution, distribution_major_version]
+          - [distribution, distribution_release]
+          - [distribution]
+          - [os_family]
+
+      include_per_os__fallback:
+        description:
+          Optional filename to use if no fact-based file is found.
+        type: str
+
+      include_per_os__skip:
+        description:
+          If C<true>, do not raise an error if no fact-based file is found.
+        type: bool
+        default: false
