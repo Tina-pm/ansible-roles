@@ -1,14 +1,23 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
-# Debian locale.gen entries and RedHat language packs share one source. One
-# glibc-langpack package covers every locale of a language.
-_locales_langpacks: |-
+# Extract language codes from `locales__install` to obtain package names to
+# install (RedHat).
+# One glibc-langpack package covers every locale of a language.
+_locales_rh_pkg_prefix: glibc-langpack-
+_locales_rh_install_pkgs: |-
   {{
-    ([locales__default_locale] +
-      (locales__install |
-       map('regex_replace', '\s+.*$', '')))
-    | select('match', '^[a-zA-Z]+_')
-    | map('regex_replace', '^([a-zA-Z]+)_.*$', 'glibc-langpack-\1')
-    | map('lower') | unique | list
+    locales__install |
+    map('ansible.builtin.trim') |
+    map('ansible.builtin.lower') |
+    map(
+      'ansible.builtin.regex_replace',
+      '(?ix)
+       ^(?P<lang>[a-z]+)
+       (?P<territory>_[a-z]+)?
+       (?P<codeset>\.[a-z0-9-]+)?
+       (?P<modifier>@\w+)?
+       (?:\s.*|$)',
+      _locales_rh_pkg_prefix + '\g<lang>') |
+    ansible.builtin.unique
   }}
