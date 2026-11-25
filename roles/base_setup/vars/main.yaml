@@ -5,20 +5,7 @@ _base_setup__pkg_install: |-
   {{
     (['sudo'] if base_setup__setup_sudo | bool else []) +
     (['postfix'] if base_setup__setup_postfix | bool else []) +
-    (['locales'] if base_setup__setup_locales | bool else []) +
     (base_setup__pkg_install or [])
-  }}
-
-# Debian locale.gen entries and RedHat language packs share one source. One
-# glibc-langpack package covers every locale of a language.
-_base_setup__locale_langpacks: |-
-  {{
-    ([base_setup__default_locale] +
-      (base_setup__locales_to_be_generated |
-       map('regex_replace', '\s+.*$', '')))
-    | select('match', '^[a-zA-Z]+_')
-    | map('regex_replace', '^([a-zA-Z]+)_.*$', 'glibc-langpack-\1')
-    | map('lower') | unique | list
   }}
 
 _base_setup__svc_enable_start: |-

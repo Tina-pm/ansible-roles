@@ -1,0 +1,18 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+- name: Install locales package
+  ansible.builtin.package:
+    name: locales
+    state: present
+
+- name: Set list of locales to be generated
+  ansible.builtin.debconf:
+    name: locales
+    question: locales/locales_to_be_generated
+    value: '{{ locales__install | join(", ") }}'
+    vtype: multiselect
+  notify: _tina_reconfigure_locales
+
+- name: Run handlers
+  ansible.builtin.meta: flush_handlers

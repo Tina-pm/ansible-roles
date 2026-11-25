@@ -1,0 +1,63 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+argument_specs:
+  main:
+    short_description: Configure system locales.
+    description:
+      - Only Debian and RedHat OS families are supported.
+    author:
+      - Martina Ferrari
+    options:
+      locales__locale_conf:
+        description: System defaults for all locale variables
+        type: dict
+        options:
+          LANG:
+            type: str
+          LANGUAGE:
+            type: str
+          LC_CTYPE:
+            type: str
+          LC_NUMERIC:
+            type: str
+          LC_TIME:
+            type: str
+          LC_COLLATE:
+            type: str
+          LC_MONETARY:
+            type: str
+          LC_MESSAGES:
+            type: str
+          LC_PAPER:
+            type: str
+          LC_NAME:
+            type: str
+          LC_ADDRESS:
+            type: str
+          LC_TELEPHONE:
+            type: str
+          LC_MEASUREMENT:
+            type: str
+          LC_IDENTIFICATION:
+            type: str
+
+      locales__default_locale:
+        description:
+          - Default system locale.
+          - Just a shortcut for setting the V(<LANG>) key in
+            O<locales__locale_conf>.
+        type: str
+        default: en_US.UTF-8
+
+      locales__install:
+        description:
+          - List of locales that must be available to the user.
+          - On Debian systems, each entry is specified as C(<locale> <charset>)
+            (e.g. V(en_US.UTF-8 UTF-8)).
+          - On RedHat systems, each entry is specified as C(<locale>) where
+            locale attributes such as charset, territory, and modifier are
+            ignored.
+        type: list
+        elements: str
+        default:
+          - en_US.UTF-8 UTF-8

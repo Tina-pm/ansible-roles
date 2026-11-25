@@ -1,0 +1,100 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+# Extract language codes from `locales__install` to obtain package names to
+# install (RedHat).
+# One glibc-langpack package covers every locale of a language.
+_locales_rh_pkg_prefix: glibc-langpack-
+_locales_rh_install_pkgs: |-
+  {{
+    locales__install |
+    map('ansible.builtin.trim') |
+    map('ansible.builtin.lower') |
+    map(
+      'ansible.builtin.regex_replace',
+      '(?ix)
+       ^(?P<lang>[a-z]+)
+       (?P<territory>_[a-z]+)?
+       (?P<codeset>\.[a-z0-9-]+)?
+       (?P<modifier>@\w+)?
+       (?:\s.*|$)',
+      _locales_rh_pkg_prefix + '\g<lang>') |
+    ansible.builtin.unique
+  }}
+
+_locales_conffile: /etc/locale.conf
+_locales_valid_vars:
+  - LANG
+  - LANGUAGE
+  - LC_CTYPE
+  - LC_NUMERIC
+  - LC_TIME
+  - LC_COLLATE
+  - LC_MONETARY
+  - LC_MESSAGES
+  - LC_PAPER
+  - LC_NAME
+  - LC_ADDRESS
+  - LC_TELEPHONE
+  - LC_MEASUREMENT
+  - LC_IDENTIFICATION
+
+_locales_invalid_vars: |-
+  {{
+    (locales__locale_conf or {}).keys() |
+    ansible.builtin.difference(_locales_valid_vars)
+  }}
+
+# Combine `locales__default_locale` and `locales__locale_conf`.
+_locales_requested_conf: |-
+  {{
+    dict(LANG=locales__default_locale) |
+    ansible.builtin.combine(locales__locale_conf or {})
+  }}
+
+# Remove empty vars and vars equal to LANG.
+_locales_clean_conf: |-
+  {{
+    _locales_requested_conf |
+    ansible.builtin.dict2items |
+    ansible.builtin.selectattr('value', 'ansible.builtin.truthy') |
+    ansible.builtin.selectattr(
+      'value', 'ansible.builtin.ne', _locales_requested_conf.LANG) |
+    ansible.builtin.items2dict |
+    ansible.builtin.combine(dict(LANG=_locales_requested_conf.LANG))
+  }}
+
+# All the locale tags in the requested configuration, considering LANGUAGE is a
+# list of tags.
+_locales_used_locales: |-
+  {% set wo_languages =
+    (
+      _locales_requested_conf |
+      ansible.builtin.combine(dict(LANGUAGE=None))
+    ).values()
+  %}
+  {% set languages_val = _locales_requested_conf.get('LANGUAGE') or '' %}
+  {% set languages =
+    (languages_val | ansible.builtin.split(':') if languages_val else []) %}
+  {{
+    (wo_languages + languages) |
+    ansible.builtin.select() |
+    ansible.builtin.unique
+  }}
+
+_locales_validate_script: |
+  import locale
+  import sys
+
+  failed = []
+  for code in sys.argv[1:]:
+    try:
+      locale.setlocale(locale.LC_ALL, code)
+    except Locale.Error:
+      failed += code
+  if (failed):
+    print('Invalid locales: %s' % ', '.join(failed))
+  sys.exit(len(failed) > 0)
+
+_locales_validate_cmd_argv: |-
+  {{ ['python3', '-c', _locales_validate_script] + _locales_used_locales }}

@@ -1,0 +1,34 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+- name: Install locales (OS-specific tasks)
+  ansible.builtin.include_role:
+    name: include_per_os
+  vars:
+    include_per_os__type: tasks
+    include_per_os__prefix: locales_
+    include_per_os__suffix: .yaml
+
+# This method seems universal, or at least supported by RedHat, Debian, SUSE,
+# Arch, and derivatives.
+
+- name: Validate locales configuration keys
+  ansible.builtin.assert:
+    that: _locales_invalid_vars | length == 0
+    fail_msg: |-
+      Invalid locale variables: {{ ', '.join(_locales_invalid_vars) }}
+
+- name: Validate locales configuration values
+  ansible.builtin.command:
+    argv: '{{ _locales_validate_cmd_argv }}'
+  changed_when: false
+  # Run task even in check mode.
+  check_mode: false
+
+- name: Apply locales configuration
+  ansible.builtin.template:
+    src: locale.conf.j2
+    dest: '{{ _locales_conffile }}'
+    owner: root
+    group: root
+    mode: '0644'

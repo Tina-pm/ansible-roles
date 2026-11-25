@@ -1,0 +1,78 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+# Do we need to gather facts?
+_include_per_os_needed_facts: |-
+  {{
+    include_per_os__try_facts |
+    flatten |
+    unique
+  }}
+_include_per_os_missing_facts: |-
+  {{
+    _include_per_os_needed_facts |
+    map("extract", ansible_facts) |
+    reject("ansible.builtin.defined") |
+    length > 0
+  }}
+
+# Filter this role from the search path.
+_include_per_os_global_search_path: |-
+  {{
+    ansible_search_path |
+    ansible.builtin.reject('equalto', role_path) |
+    ansible.builtin.reject(
+      'equalto', (role_path, 'tasks') | ansible.builtin.path_join)
+  }}
+
+# Search in calling role(s) paths, or in the global search path if not called
+# from a role.
+_include_per_os_search_path: |-
+  {{
+    ansible_parent_role_paths |
+    d(_include_per_os_global_search_path)
+  }}
+
+# Append `<type>/` subdirectory.
+_include_per_os_paths: |-
+  {{
+    _include_per_os_search_path |
+    ansible.builtin.zip_longest([], fillvalue=include_per_os__type) |
+    ansible.builtin.map('ansible.builtin.path_join')
+  }}
+
+# Construct possible file names from ansible_facts.
+_include_per_os_try_names: |-
+  {{
+    include_per_os__try_facts |
+    ansible.builtin.map(
+      'ansible.builtin.map', 'ansible.builtin.extract', ansible_facts,
+    ) |
+    ansible.builtin.map('ansible.builtin.join', '-') |
+    ansible.builtin.map('ansible.builtin.lower')
+  }}
+_include_per_os_try_files: |-
+  {{
+    _include_per_os_try_names |
+    ansible.builtin.map(
+      'ansible.builtin.regex_replace',
+      '^(.*)$',
+      (include_per_os__prefix or '') + '\1' + (include_per_os__suffix or ''),
+    ) + (
+      [include_per_os__fallback] if
+      include_per_os__fallback is ansible.builtin.defined and
+      include_per_os__fallback is ansible.builtin.truthy
+      else []
+    )
+  }}
+
+# Actually find the file.
+_include_per_os_filename: |-
+  {{
+    query(
+      'ansible.builtin.first_found',
+      paths=_include_per_os_paths,
+      files=_include_per_os_try_files,
+      skip=True,
+    ) | first
+  }}
