@@ -80,8 +80,8 @@
   ansible.builtin.lineinfile:
     dest: /etc/sudoers
     state: present
-    regexp: '^%sudo\s'
-    line: '%sudo ALL=(ALL) ALL'
+    regexp: '^%{{ base_setup__sudo_group }}\s'
+    line: '%{{ base_setup__sudo_group }} ALL=(ALL) ALL'
     validate: visudo -cf %s
   when: base_setup__setup_sudo | bool
 
