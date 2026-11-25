@@ -8,8 +8,44 @@ argument_specs:
     author:
       - Martina Ferrari
     options:
+      locales__locale_conf:
+        description: System defaults for all locale variables
+        type: dict
+        options:
+          LANG:
+            type: str
+          LANGUAGE:
+            type: str
+          LC_CTYPE:
+            type: str
+          LC_NUMERIC:
+            type: str
+          LC_TIME:
+            type: str
+          LC_COLLATE:
+            type: str
+          LC_MONETARY:
+            type: str
+          LC_MESSAGES:
+            type: str
+          LC_PAPER:
+            type: str
+          LC_NAME:
+            type: str
+          LC_ADDRESS:
+            type: str
+          LC_TELEPHONE:
+            type: str
+          LC_MEASUREMENT:
+            type: str
+          LC_IDENTIFICATION:
+            type: str
+
       locales__default_locale:
-        description: Default system locale.
+        description:
+          - Default system locale.
+          - Just a shortcut for setting the V(<LANG>) key in
+            O<locales__locale_conf>.
         type: str
         default: en_US.UTF-8
 
