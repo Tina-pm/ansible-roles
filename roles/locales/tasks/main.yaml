@@ -1,10 +1,22 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
-- name: OS-specific tasks
+- name: Install locales (OS-specific tasks)
   ansible.builtin.include_role:
     name: include_per_os
   vars:
     include_per_os__type: tasks
     include_per_os__prefix: locales_
     include_per_os__suffix: .yaml
+
+# This method seems universal, or at least supported by RedHat, Debian, SUSE,
+# Arch, and derivatives.
+- name: Set default locale
+  ansible.builtin.lineinfile:
+    path: /etc/locale.conf
+    regexp: '^LANG='
+    line: LANG={{ locales__default_locale }}
+    owner: root
+    group: root
+    mode: '0644'
+    create: true

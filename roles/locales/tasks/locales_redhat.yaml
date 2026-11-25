@@ -5,13 +5,3 @@
   ansible.builtin.package:
     name: '{{ _locales_rh_install_pkgs }}'
     state: present
-
-- name: Set default locale
-  ansible.builtin.lineinfile:
-    path: /etc/locale.conf
-    regexp: '^LANG='
-    line: LANG={{ locales__default_locale }}
-    owner: root
-    group: root
-    mode: '0644'
-    create: true
