@@ -1,0 +1,30 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+
+- name: Ensure ifupdown is present
+  ansible.builtin.package:
+    name: ifupdown
+    state: present
+
+- name: Create udev persistent rules
+  ansible.builtin.template:
+    src: 70-persistent-net.rules.j2
+    dest: /etc/udev/rules.d/70-persistent-net.rules
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - _tina_reconfigure_network
+    - _tina_update_initramfs
+  when: net__use_udev_persistent_rules | bool
+
+- name: Configure interfaces
+  ansible.builtin.template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - _tina_reconfigure_network
+  when: net__interfaces is ansible.builtin.truthy

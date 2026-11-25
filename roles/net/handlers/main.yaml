@@ -12,9 +12,46 @@
       udevadm trigger --action add --subsystem-match net;
       ip addr flush scope global;
       ifup --verbose --all --force;
+  when: _net__backend == 'ifupdown'
   changed_when: true
 
-- name: _tina_update_initramfs
+- name: _tina_reconfigure_network_nm
+  ansible.builtin.shell:  # noqa: risky-shell-pipe
+    cmd: |
+      while IFS='|' read -r mac name; do
+        [ -n "$mac" ] || continue
+        for dev in /sys/class/net/*; do
+          [ "$(cat "$dev/address")" = "$mac" ] || continue
+          old="$(basename "$dev")"
+          [ "$old" = "$name" ] && continue
+          ip link set dev "$old" down || true
+          ip link set dev "$old" name "$name" || true
+        done
+      done <<'EOF'
+      {% for item in _net__nm_named_interfaces %}
+      {{ item.value.udev_persistent_rule.address | lower }}|{{ item.key }}
+      {% endfor %}
+      EOF
+      udevadm control --reload
+      udevadm trigger --action add --subsystem-match net
+      udevadm settle
+      nmcli connection reload
+      {% for connection in _net__nm_connection_ids %}
+      nmcli connection up '{{ connection }}' || true
+      {% endfor %}
+  when: _net__backend == 'networkmanager'
+  changed_when: true
+
+- name: _tina_update_initramfs_debian
   ansible.builtin.command:
     cmd: update-initramfs -u -k all
+  listen: _tina_update_initramfs
+  when: ansible_facts.os_family == 'Debian'
+  changed_when: true
+
+- name: _tina_update_initramfs_redhat
+  ansible.builtin.command:
+    cmd: dracut --force --regenerate-all
+  listen: _tina_update_initramfs
+  when: ansible_facts.os_family == 'RedHat'
   changed_when: true
