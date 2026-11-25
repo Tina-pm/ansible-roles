@@ -23,19 +23,15 @@ argument_specs:
       sshd__package_name:
         description: Name of the package to install.
         type: str
-        default: openssh-server
 
       sshd__service_name:
         description: Name of the system service.
         type: str
-        default: sshd
 
       sshd__config_path:
         description: Path to the main configuration file.
         type: str
-        default: /etc/ssh/sshd_config
 
       sshd__configd_dir:
         description: Path to the configuration fragments directory.
         type: str
-        default: /etc/ssh/sshd_config.d
