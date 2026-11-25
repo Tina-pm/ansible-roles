@@ -35,3 +35,11 @@ argument_specs:
       sshd__configd_dir:
         description: Path to the configuration fragments directory.
         type: str
+
+      sshd__config_mask:
+        description:
+          - File creation mask for configuration files and directories.
+          - Unset bits in the mask are cleared from the created file mode.
+            E.g. a mask of V<'0775'> will create files with mode C<'0664'> and
+            directories with mode C<'0775'>.
+        type: str

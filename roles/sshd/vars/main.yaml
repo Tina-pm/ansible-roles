@@ -5,3 +5,5 @@ _sshd_package_name: '{{ sshd__package_name or _sshd_def_package_name }}'
 _sshd_service_name: '{{ sshd__service_name or _sshd_def_service_name }}'
 _sshd_config_path: '{{ sshd__config_path or _sshd_def_config_path }}'
 _sshd_configd_dir: '{{ sshd__configd_dir or _sshd_def_configd_dir }}'
+_sshd_config_mask: |-
+  {{ (sshd__config_mask or _sshd_def_config_mask) | int(base=8) }}
