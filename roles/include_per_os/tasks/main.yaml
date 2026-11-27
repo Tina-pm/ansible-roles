@@ -19,8 +19,12 @@
 
 - name: Include tasks file
   ansible.builtin.include_tasks: '{{ _include_per_os_filename }}'
-  when: include_per_os__type == 'tasks'
+  when:
+    - include_per_os__type == 'tasks'
+    - _include_per_os_filename is defined
 
 - name: Include vars file
   ansible.builtin.include_vars: '{{ _include_per_os_filename }}'
-  when: include_per_os__type == 'vars'
+  when:
+    - include_per_os__type == 'vars'
+    - _include_per_os_filename is defined
