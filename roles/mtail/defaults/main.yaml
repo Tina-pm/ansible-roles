@@ -13,3 +13,7 @@ mtail__ferm_allow_from: ~
 
 # Program files to copy.
 mtail__programs: []
+
+# Set a default value for the deprecated `ansible_managed` variable, in case the
+# user has not configured it manually.
+ansible_managed: Ansible managed

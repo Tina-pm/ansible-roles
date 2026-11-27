@@ -11,3 +11,7 @@ blackbox_exporter__config_file: /etc/prometheus/blackbox.yml
 blackbox_exporter__install_ferm_svc: false
 # Optionally limit access by a list of IP addresses/blocks.
 blackbox_exporter__ferm_allow_from: ~
+
+# Set a default value for the deprecated `ansible_managed` variable, in case the
+# user has not configured it manually.
+ansible_managed: Ansible managed

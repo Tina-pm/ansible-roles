@@ -18,3 +18,7 @@ sshd__service_name: ~
 sshd__config_path: ~
 # Path to the configuration fragments directory.
 sshd__configd_dir: ~
+
+# Set a default value for the deprecated `ansible_managed` variable, in case the
+# user has not configured it manually.
+ansible_managed: Ansible managed
