@@ -19,7 +19,7 @@
   ansible.builtin.file:
     path: '{{ _sshd_configd_dir }}'
     state: directory
-    mode: '0755'
+    mode: '{{ 0o777 | tina_pm.common.bw_and(_sshd_config_mask) }}'
 
 - name: Ensure configuration fragments are included
   ansible.builtin.lineinfile:
@@ -39,7 +39,7 @@
       PasswordAuthentication {{
         'yes' if sshd__password_auth_allowed else 'no'
       }}
-    mode: '0644'
+    mode: '{{ 0o666 | tina_pm.common.bw_and(_sshd_config_mask) }}'
   notify: _tina_reload_sshd
   when: sshd__password_auth_allowed not in (None, '')
 
@@ -58,7 +58,7 @@
       PermitRootLogin {{
         'prohibit-password' if sshd__root_login_allowed else 'no'
       }}
-    mode: '0644'
+    mode: '{{ 0o666 | tina_pm.common.bw_and(_sshd_config_mask) }}'
   notify: _tina_reload_sshd
   when: sshd__root_login_allowed not in (None, '')
 

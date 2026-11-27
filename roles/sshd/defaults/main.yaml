@@ -18,3 +18,5 @@ sshd__service_name: ~
 sshd__config_path: ~
 # Path to the configuration fragments directory.
 sshd__configd_dir: ~
+# File creation mask for configuration files and directories.
+sshd__config_mask: ~

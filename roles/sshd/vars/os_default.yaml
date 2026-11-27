@@ -6,3 +6,4 @@ _sshd_def_package_name: openssh-server
 _sshd_def_service_name: sshd
 _sshd_def_config_path: /etc/ssh/sshd_config
 _sshd_def_configd_dir: /etc/ssh/sshd_config.d
+_sshd_def_config_mask: '0755'
