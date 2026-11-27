@@ -1,10 +1,14 @@
 # vim:ts=2:sw=2:et:ai:sts=2
 ---
 
-- name: Gather facts
-  ansible.builtin.setup:
-    gather_subset: '!all,!min,os_family'
-  when: ansible_facts.os_family is not defined
+- name: Load OS-specific defaults
+  ansible.builtin.include_role:
+    name: include_per_os
+  vars:
+    include_per_os__type: vars
+    include_per_os__prefix: os_
+    include_per_os__suffix: .yaml
+    include_per_os__fallback: os_default.yaml
 
 - name: Install server package
   ansible.builtin.package:

@@ -1,0 +1,8 @@
+# vim:ts=2:sw=2:et:ai:sts=2
+---
+# Per-OS defaults, for default OS.
+
+_sshd_def_package_name: openssh-server
+_sshd_def_service_name: sshd
+_sshd_def_config_path: /etc/ssh/sshd_config
+_sshd_def_configd_dir: /etc/ssh/sshd_config.d
